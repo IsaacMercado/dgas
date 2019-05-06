@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+
+    <div class="white-box">
+
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="box box-primary">
+                    <!-- form start -->
+
+                    <div class="box-body">
+                        <form role="form" method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="btn-group">
+                                    <button class="btn btn-success" type="submit">
+                                        <i class="fa fa-check"></i> Grabar
+                                    </button>
+
+                                    <a href="{% url 'gas_app:usuarios_list' %}"
+                                       class="btn btn-default"><i
+                                            class="fa fa-times"></i> Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock js %}

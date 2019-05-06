@@ -5,34 +5,21 @@ from django.views.generic import RedirectView, TemplateView
 #from django.core.urlresolvers import reverse
 from dgas.users.models import User
 from django.db.models import Sum
+from dgas.gas_app.models import Estacion
 
 
 class Dashboard(LoginRequiredMixin, TemplateView):
-    template_name = "pages/home.html"
+    template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super(Dashboard, self).get_context_data(**kwargs)
-        '''
-        total_dias = Vacacion.objects.filter(empleado_id=self.request.user.id).aggregate(Sum('nro_dias'))
-        if total_dias['nro_dias__sum']:
-            td = int(total_dias['nro_dias__sum'])
-        else:
-            td = 0
 
-        total_dias_disfrutados = VacacionSolicitud.objects.filter(empleado_id=self.request.user.id).aggregate(
-            Sum('nro_dias'))
-        if total_dias_disfrutados['nro_dias__sum']:
-            tdd = int(total_dias_disfrutados['nro_dias__sum'])
-        else:
-            tdd = 0
+        if self.request.user.groups.filter(name='Estacion').exists():
+            context['estaciones'] = Estacion.objects.filter(usuario_id=self.request.user.id)
 
-        context['total_por_disfrutar'] = td - tdd
+        if self.request.user.groups.filter(name='Recolector').exists():
+            context['estaciones'] = Estacion.objects.all()
 
-        hoy = datetime.date.today()
-
-        jornadas = Jornada.objects.filter(fecha_entrega__gte=hoy)
-        context['jornadas'] = jornadas
-        '''
 
         return context
 

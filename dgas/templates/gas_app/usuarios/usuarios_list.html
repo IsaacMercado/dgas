@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Listado de usuarios</h3>
+
+              <div class="box-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <div class="input-group-btn">
+                    <a href="{% url 'gas_app:usuario_create' %}"
+                       title="Agregar usuario"
+                       class="btn btn-block btn-primary btn-lg"><i class="fa fa-plus"></i> Agregar Usuario</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nombre</th>
+                            <th>Celular</th>
+                            <th>Acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ope in object_list %}
+                            <tr>
+                                <td>
+                                    {% if ope.foto_usuario %}
+                                        <img src="{{ ope.foto_usuario.thumbnail.40x40 }}"/> <!--ope.foto.crop.25x25 -->
+                                    {% else %}
+                                        no foto
+                                    {% endif %}
+                                </td>
+                                <td>{{ ope.last_name }} {{ ope.first_name }}</td>
+                                <td>{{ ope.telefono }}</td>
+                                <td>
+                                    {% for group in ope.groups.all %}
+                                        {{ group.name }}
+                                    {% endfor %}
+                                </td>
+
+                                <td class="text-nowrap">
+                                    <div class="btn-group">
+                                <a href="{% url 'gas_app:usuario_edit' ope.pk %}" class="btn btn-default"><i class="fa fa-edit"></i></a>
+                                <a href="{% url 'gas_app:usuario_change_passwd' ope.pk %}" class="btn btn-default"><i class="fa fa-key"></i></a>
+                                <a href="{% url 'gas_app:usuario_detail' ope.pk %}" class="btn btn-default"><i class="fa fa-eye text-warning"></i></a>
+                                <a href="{% url 'gas_app:usuario_delete' ope.pk %}" class="btn btn-default"><i class="fa fa-trash-o text-danger"></i></a>
+                                </div>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% include "_pagination.html" %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}

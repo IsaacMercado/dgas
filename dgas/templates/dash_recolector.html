@@ -1,0 +1,54 @@
+ <div class="row">
+    <div class="col-md-12">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">Estaciones de servicio</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Estación</th>
+                    <th>Al publico</th>
+                    <th>Disponibilidad de combustible</th>
+                    <th style="width: 40px">Porcentaje</th>
+                    <th style="width: 20px">Acción</th>
+                </tr>
+
+                {% for est in estaciones %}
+
+                    <tr>
+                        <td>{{ est.id }}</td>
+                        <td>{{ est.nombre }}</td>
+                        <td align="right">{{ est.disponible91.0|floatformat:2|intcomma }}</td>
+                        <td>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar {% if est.disponible91.1 == 1 %} progress-bar-danger {% elif  est.disponible91.1 == 2 %} progress-bar-yellow {% elif est.disponible91.1 == 3 %} progress-bar-success{% endif %}"
+                                     style="width: {{ est.disponible91.1|floatformat:0 }}%"></div>
+                        </td>
+                        <td align="center"><span
+                                class="badge bg-red">{{ est.disponible91.1|floatformat:2|intcomma }}%</span></td>
+                        <td>
+                            <a href="{% url 'gas_app:carga' est.id %}"
+                               data-toggle="tooltip" data-original-title="Detalles">
+                                <i class="fa fa-eye text-warning" style="font-size:30px;"></i> </a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="#">&laquo;</a></li>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /.box -->

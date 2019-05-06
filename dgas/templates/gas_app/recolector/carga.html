@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Dashboard - Operadores{% endblock %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+{% endblock css %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            Dashboard
+            <small>Control panel</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Recolectando en la estación: {{ estacion.nombre }}</h3>
+                </div>
+
+                <!-- Form Element sizes -->
+                <div class="box box-success">
+
+                    <div class="box-body">
+                        <div id="buqueda">
+                        <label>Placa:</label>
+                        <input class="form-control" type="hidden" placeholder="Default input" id="estacion"
+                               value="{{ estacion.id }}">
+                        <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
+
+                        <button onclick="getVehiculo()" type="button" class="btn btn-block btn-primary">Buscar
+                        </button>
+                        </div>
+
+                        <div id="carga">
+                            <br>
+                            <ul class="nav nav-tabs">
+                                <li class="pull-left header"><i class="fa fa-th"></i> Datos del Llenado</li>
+                            </ul>
+                            <br>
+                            <input class="form-control" type="text" placeholder="Default input" id="placa" readonly>
+                            <br>
+                            <input class="form-control" type="text" placeholder=".input-sm" id="cilindros"
+                                   readonly>
+                            <br>
+                            <input class="form-control" type="number" placeholder="cantidad" id="cantidad"
+                                   value="0">
+                            <br>
+                            <div class="btn-group">
+                            <button onclick="addCarga()" type="button" class="btn btn-primary">Resgistrar
+                                carga
+                            </button>
+                            <button onclick="addCancelarCarga()" type="button" class="btn btn-default">Cancelar
+                            </button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+
+                <!-- /.box-body -->
+                <div class="overlay" id="loading">
+                   <i class="fa fa-refresh fa-spin"></i>
+               </div>
+
+            </div>
+            <!-- /.box -->
+
+        </div>
+
+
+    </div>
+
+    <div class="modal fade" id="modal-add-vehiculo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Agregar vehículo</h4>
+                </div>
+                <div class="modal-body">
+
+                    <br>
+                    <label>Placa:</label>
+                    <input class="form-control" type="text" placeholder="Default input" id="add_placa" readonly>
+                    <br>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Cilindros</label>
+                        <select class="form-control" id="cilindros">
+                            <option value="1">1</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <br>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="addCancelarAdd()" >Cancelar</button>
+                    <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var URL = "/api/vehiculos/";
+        var URL_CARGAS = "/api/cargas/";
+        var URL_VEH = "/api/vehiculos/";
+
+        $(document).ready(
+            function () {
+                $("#carga").hide();
+                $("#loading").hide();
+
+            }
+        );
+
+        function getCourses() {
+            $.getJSON(URL, {}, showCourses);
+        }
+
+        function getVehiculo() {
+            $("#loading").show();
+            //if($("#buscar_placa").length<7){
+            //    alert('Número de placa invalida')
+            //}else{
+               $.getJSON(URL + $("#buscar_placa").val())
+                .done(showVehiculo)   // on success - 200
+                .fail(function ()    // on failure - 404
+                    {
+                        $("#add_placa").val($("#buscar_placa").val());
+                        $('#modal-add-vehiculo').modal('show');
+
+                    }
+                );
+            //}
+            $("#loading").hide();
+
+
+        }
+
+        function showVehiculo(vehiculo) {
+            $("#carga").show();
+            $("#buqueda").hide();
+            $("#placa").val(vehiculo.placa);
+            $("#cilindros").val(vehiculo.cilindros);
+        }
+
+        function addVehiculo() {
+            $("#loading").show();
+            $.ajax(
+                {
+                    url: URL_VEH,
+                    data: {
+                        "placa": $("#add_placa").val(),
+                        "cilindros": $("#cilindros").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    dataType: "json",
+                    type: "post",
+                    success: veh_add_success,
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+            $("#loading").hide();
+        }
+
+        function veh_add_success() {
+            alert("Added carga Successfully");
+            $("#add_placa").val("");
+            $('#modal-add-vehiculo').modal('hide');
+            getVehiculo()
+        }
+
+        function veh_add_error() {
+            alert("Could not add carga!");
+        }
+
+        function addCarga() {
+            $("#loading").show();
+            $.ajax(
+                {
+                    url: URL_CARGAS,
+                    data: {
+                        "estacion": $("#estacion").val(),
+                        "vehiculo": $("#placa").val(),
+                        "cantidad": $("#cantidad").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    dataType: "json",
+                    type: "post",
+                    success: add_success,
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+            $("#loading").hide();
+        }
+
+        function add_success() {
+            //alert("Added carga Successfully");
+            $("#carga").hide();
+            $("#buqueda").show();
+
+        }
+
+        function add_error() {
+            alert("Could not add carga!");
+        }
+
+        function addCancelarAdd() {
+            $("#buscar_placa").val('');
+            $('#modal-add-vehiculo').modal('hide');
+
+        }
+
+        function addCancelarCarga() {
+            $("#buscar_placa").val('');
+            $("#carga").hide();
+            $("#buqueda").show();
+        }
+
+    </script>
+
+{% endblock js %}

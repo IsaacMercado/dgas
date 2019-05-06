@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load static i18n %}
+{% load humanize %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <b>Nombre: </b> {{ object.nombre }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Usuario: </b> {{ object.usuario }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Capacidad en tanque para 91 octanos: </b> {{ object.capacidad_91 }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Reserva en tanque para 91 octanos: </b> {{ object.reserva_91 }}
+                        </li>
+
+                        <li class="list-group-item">
+                            <b>Capacidad en tanque para 95 octanos: </b> {{ object.capacidad_95 }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Reserva en tanque para 91 octanos: </b> {{ object.reserva_91 }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Operativa: </b> {{ object.operativa }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Disponibilidad: </b> {{ object.disponible91.0|floatformat:2|intcomma }}
+                        </li>
+
+
+                    </ul>
+
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nro. {{ aja }}</th>
+                            <th>Resumen</th>
+                            <th>Solucionado</th>
+                            <th>F. Reg</th>
+                            <th>F. Act</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for p in prq %}
+                            <tr>
+                               <td>{{ p.pk }}</td>
+                                <td>{{ p.resumen }}</td>
+                                <td>{{ p.solucionado }}</td>
+                                <td>{{ p.fecha_act }}</td>
+                                <td>{{ p.fecha_reg }}</td>
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">No hay registros</td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                    <a href="{% url 'gas_app:estaciones_list' %}"
+                       class="btn btn-primary"><i
+                            class="fa fa-reply"></i> Regresar al listado</a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+
+    </div>
+{% endblock content %}
+

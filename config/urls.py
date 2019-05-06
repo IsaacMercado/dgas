@@ -18,6 +18,8 @@ urlpatterns = [
     path("users/", include("dgas.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("gas/", include("dgas.gas_app.urls")),
+    path("api/", include("dgas.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

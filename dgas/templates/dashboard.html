@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load humanize %}
+{% block title %}Dashboard - Operadores{% endblock %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+{% endblock css %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            Dashboard
+            <small>Control panel</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+
+{% block content %}
+
+
+    <!-- Dasboard Operadores-->
+    {% for group in user.groups.all %}
+        {% if group.name == 'Administrador' %}
+            {% include "dash_administrador.html" %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Dasboard Operadores-->
+    {% for group in user.groups.all %}
+        {% if group.name == 'Estacion' %}
+            {% include "dash_estacion.html" %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Dasboard Operadores-->
+    {% for group in user.groups.all %}
+        {% if group.name == 'recolector' %}
+            {% include "dash_recolector.html" %}
+        {% endif %}
+    {% endfor %}
+
+
+
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+
+    <!-- start: PAGE CONTENT -->
+
+    <div class="row">
+        <div class="col-sm-12">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+
+                    <!-- start: FROM -->
+                    <form action="" method="post">{% csrf_token %}
+
+
+                        <table class="table table-bordered">
+
+                            <tr>
+                                <td><b>Operdor</b></td>
+                                <td>{{ object.last_name }} {{ object.first_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Cédula</b></td>
+                                <td>{{ object.cedula }}</td>
+                            </tr>
+
+                        </table>
+
+                        <p>¿ Seguro de eliminar este registro ?</p>
+
+                        <a href="" onclick="document.forms[0].submit();return false;"
+                           class="btn btn-danger">
+                            <i class="fa fa-trash-o"></i> Eliminar</a>
+                        <a href="{% url 'gas_app:usuarios_list' %}" class="btn btn-success"><i
+                                class="fa fa-times"></i> Cancelar</a>
+
+                    </form>
+                    <!-- end: FROM -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: PAGE CONTENT-->
+
+{% endblock content %}
