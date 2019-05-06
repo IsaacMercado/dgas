@@ -13,4 +13,4 @@ class CargaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Carga
-        fields = ('id', 'cantidad', 'estacion', 'vehiculo')
+        fields = ('id', 'cantidad', 'estacion', 'vehiculo', 'tipo_combustible')

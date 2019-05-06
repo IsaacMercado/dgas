@@ -44,7 +44,7 @@
 
     <!-- Dasboard Operadores-->
     {% for group in user.groups.all %}
-        {% if group.name == 'recolector' %}
+        {% if group.name == 'Recolector' %}
             {% include "dash_recolector.html" %}
         {% endif %}
     {% endfor %}

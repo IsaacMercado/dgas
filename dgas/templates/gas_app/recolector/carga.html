@@ -33,18 +33,24 @@
                     <h3 class="box-title">Recolectando en la estación: {{ estacion.nombre }}</h3>
                 </div>
 
+                <div class="alert alert-success" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Mensaje: </strong>
+                    Regitro procesado.
+                </div>
+
                 <!-- Form Element sizes -->
                 <div class="box box-success">
 
                     <div class="box-body">
                         <div id="buqueda">
-                        <label>Placa:</label>
-                        <input class="form-control" type="hidden" placeholder="Default input" id="estacion"
-                               value="{{ estacion.id }}">
-                        <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
+                            <label>Placa:</label>
+                            <input class="form-control" type="hidden" placeholder="Default input" id="estacion"
+                                   value="{{ estacion.id }}">
+                            <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
 
-                        <button onclick="getVehiculo()" type="button" class="btn btn-block btn-primary">Buscar
-                        </button>
+                            <button onclick="getVehiculo()" type="button" class="btn btn-block btn-primary">Buscar
+                            </button>
                         </div>
 
                         <div id="carga">
@@ -53,20 +59,33 @@
                                 <li class="pull-left header"><i class="fa fa-th"></i> Datos del Llenado</li>
                             </ul>
                             <br>
+                            <label>Placa:</label>
                             <input class="form-control" type="text" placeholder="Default input" id="placa" readonly>
                             <br>
+                            <label>Cilindros:</label>
                             <input class="form-control" type="text" placeholder=".input-sm" id="cilindros"
                                    readonly>
                             <br>
+                            <div class="form-group">
+                                <label>Tipo Combustible</label>
+                                <select class="form-control" name="tipo_combustible" id="tipo_combustible">
+                                    <option value="91">91</option>
+                                    <option value="95">95</option>
+                                    <option value="Gasoil">Gasoil</option>
+
+                                </select>
+                            </div>
+                            <br>
+                            <label>Cantidad:</label>
                             <input class="form-control" type="number" placeholder="cantidad" id="cantidad"
                                    value="0">
-                            <br>
+
                             <div class="btn-group">
-                            <button onclick="addCarga()" type="button" class="btn btn-primary">Resgistrar
-                                carga
-                            </button>
-                            <button onclick="addCancelarCarga()" type="button" class="btn btn-default">Cancelar
-                            </button>
+                                <button onclick="addCarga()" type="button" class="btn btn-primary">Resgistrar
+                                    carga
+                                </button>
+                                <button onclick="addCancelarCarga()" type="button" class="btn btn-default">Cancelar
+                                </button>
                             </div>
                         </div>
 
@@ -78,8 +97,8 @@
 
                 <!-- /.box-body -->
                 <div class="overlay" id="loading">
-                   <i class="fa fa-refresh fa-spin"></i>
-               </div>
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
 
             </div>
             <!-- /.box -->
@@ -106,7 +125,7 @@
                     <!-- select -->
                     <div class="form-group">
                         <label>Cilindros</label>
-                        <select class="form-control" id="cilindros">
+                        <select class="form-control" name="add_cilindros" id="add_cilindros">
                             <option value="1">1</option>
                             <option value="4">4</option>
                             <option value="6">6</option>
@@ -117,7 +136,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" onclick="addCancelarAdd()" >Cancelar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="addCancelarAdd()">Cancelar</button>
                     <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
                 </div>
             </div>
@@ -136,12 +155,14 @@
         var URL = "/api/vehiculos/";
         var URL_CARGAS = "/api/cargas/";
         var URL_VEH = "/api/vehiculos/";
+        var tipo;
+        var cil;
 
         $(document).ready(
             function () {
                 $("#carga").hide();
                 $("#loading").hide();
-
+                $("#success-alert").hide();
             }
         );
 
@@ -154,7 +175,7 @@
             //if($("#buscar_placa").length<7){
             //    alert('Número de placa invalida')
             //}else{
-               $.getJSON(URL + $("#buscar_placa").val())
+            $.getJSON(URL + $("#buscar_placa").val())
                 .done(showVehiculo)   // on success - 200
                 .fail(function ()    // on failure - 404
                     {
@@ -178,12 +199,13 @@
 
         function addVehiculo() {
             $("#loading").show();
+
             $.ajax(
                 {
                     url: URL_VEH,
                     data: {
                         "placa": $("#add_placa").val(),
-                        "cilindros": $("#cilindros").val(),
+                        "cilindros": $("#add_cilindros option:selected").text(),
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     dataType: "json",
@@ -199,7 +221,7 @@
         }
 
         function veh_add_success() {
-            alert("Added carga Successfully");
+            //salert("Added carga Successfully");
             $("#add_placa").val("");
             $('#modal-add-vehiculo').modal('hide');
             getVehiculo()
@@ -217,6 +239,7 @@
                     data: {
                         "estacion": $("#estacion").val(),
                         "vehiculo": $("#placa").val(),
+                        "tipo_combustible": $("#tipo_combustible option:selected").text(),
                         "cantidad": $("#cantidad").val(),
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
@@ -234,6 +257,10 @@
 
         function add_success() {
             //alert("Added carga Successfully");
+            $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                $("#success-alert").slideUp(500);
+            });
+            $("#buscar_placa").val('');
             $("#carga").hide();
             $("#buqueda").show();
 

@@ -27,4 +27,4 @@ class VehiculoAdmin(admin.ModelAdmin):
 
 @admin.register(Carga)
 class CargaAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'cantidad', 'created_by', 'created_at')
+    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')

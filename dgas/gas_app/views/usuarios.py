@@ -119,8 +119,7 @@ class GasUserUpdateView(GroupRequiredMixin, UpdateView):
     def form_valid(self, form):
 
         self.object = form.save(commit=False)
-        #self.object.username = form.cleaned_data['username']
-        #self.object.email = form.cleaned_data['username']
+        self.object.username = form.cleaned_data['email']
         self.object.save()
 
         messages.add_message(self.request, messages.SUCCESS, 'Se ha actualizado')
