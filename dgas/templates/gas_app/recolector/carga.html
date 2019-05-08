@@ -77,7 +77,10 @@
                             </div>
                             <br>
                             <label>Cantidad:</label>
-                            <input class="form-control" type="number" placeholder="cantidad" id="cantidad"
+                            <input class="form-control"
+                                   type="number"
+                                   placeholder="cantidad"
+                                   id="cantidad"
                                    value="0">
 
                             <div class="btn-group">
@@ -163,8 +166,33 @@
                 $("#carga").hide();
                 $("#loading").hide();
                 $("#success-alert").hide();
+
+                $("#buscar_placa").bind('keyup', function (e) {
+                    if (e.which >= 97 && e.which <= 122) {
+                        var newKey = e.which - 32;
+                        // I have tried setting those
+                        e.keyCode = newKey;
+                        e.charCode = newKey;
+                    }
+
+                    $("#buscar_placa").val(($("#buscar_placa").val()).toUpperCase());
+                });
+
+
+                $('#cantidad').on('input', function () {
+
+                    var value = $(this).val();
+
+                    if ((value !== '') && (value.indexOf('.') === -1)) {
+
+                        $(this).val(Math.max(Math.min(value, 350), -350));
+                    }
+                });
+
+
             }
         );
+
 
         function getCourses() {
             $.getJSON(URL, {}, showCourses);
@@ -257,7 +285,7 @@
 
         function add_success() {
             //alert("Added carga Successfully");
-            $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+            $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
                 $("#success-alert").slideUp(500);
             });
             $("#buscar_placa").val('');

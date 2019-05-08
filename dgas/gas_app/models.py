@@ -5,7 +5,7 @@ from django.db.models import Sum
 from dgas.users.models import GasUser
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
-CILINDROS_CHOICES = Choices('1', '4', '6', '8')
+CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
 
 
 class Estacion(models.Model):
