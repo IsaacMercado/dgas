@@ -177,7 +177,7 @@ class EstacionEstUpdateView(GroupRequiredMixin, UpdateView):
 
         messages.add_message(self.request, messages.SUCCESS, 'Se ha actualizado la seccion')
 
-        super(EstacionUpdateView, self).form_valid(form)
+        super(EstacionEstUpdateView, self).form_valid(form)
 
         return redirect(self.success_url)
 
