@@ -71,7 +71,7 @@ class CombustibleCreateView(GroupRequiredMixin, CreateView):
     model = Combustible
     template_name = 'gas_app/combustibles/combustible_form.html'
 
-    fields = ['estacion', 'tipo_combustible', 'cantidad', 'fecha_carga']
+    fields = ['estacion', 'tipo_combustible', 'nro_factura', 'cantidad', 'fecha_carga']
 
     page = {
         'title': 'Combustibles',
@@ -102,7 +102,7 @@ class CombustibleUpdateView(GroupRequiredMixin, UpdateView):
     raise_exception = True
 
     model = Combustible
-    fields = ['tipo_combustible', 'cantidad', 'fecha_carga']
+    fields = ['tipo_combustible', 'nro_factura','cantidad', 'fecha_carga']
     success_url = 'gas_app:combustibles_list'
     template_name = 'gas_app/combustibles/combustible_form.html'
 

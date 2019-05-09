@@ -123,6 +123,7 @@ class Estacion(models.Model):
 class Combustible(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES)
+    nro_factura = models.CharField(max_length=50, blank=True, null=True)
     cantidad = models.FloatField(default=0)
     fecha_carga = models.DateField()
 
