@@ -158,7 +158,7 @@ class EstacionEstUpdateView(GroupRequiredMixin, UpdateView):
 
     model = Estacion
     fields = ['operativa']
-    success_url = 'gas_app:estaciones_list'
+    success_url = 'gas_app:estaciones_est_list'
     template_name = 'gas_app/estaciones/estacion_est_form.html'
 
     def get_context_data(self, **kwargs):
