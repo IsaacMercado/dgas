@@ -104,7 +104,7 @@ class Estacion(models.Model):
         else:
             tc = total_cargado['cantidad__sum']
 
-        if total['cantidad__sum']> 0:
+        if total['cantidad__sum']:
             total_publico = total['cantidad__sum'] - self.reserva_gasoil
             total_disponible = total_publico - tc
             porcentaje = (total_disponible / total_publico) * 100
