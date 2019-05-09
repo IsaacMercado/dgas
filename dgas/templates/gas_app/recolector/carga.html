@@ -202,9 +202,12 @@
 
         function getVehiculo() {
             $("#loading").show();
-            //if($("#buscar_placa").length<7){
-            //    alert('Número de placa invalida')
-            //}else{
+
+            var buscar_placa_value = $("#buscar_placa").val();
+
+            if(buscar_placa_value.length<6){
+                alert('Número de placa invalida')
+            }else{
             $.getJSON(URL + $("#buscar_placa").val())
                 .done(showVehiculo)   // on success - 200
                 .fail(function ()    // on failure - 404
@@ -214,9 +217,8 @@
 
                     }
                 );
-            //}
+            }
             $("#loading").hide();
-
 
         }
 
