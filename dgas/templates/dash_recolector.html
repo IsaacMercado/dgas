@@ -22,9 +22,15 @@
                         <td>{{ est.id }}</td>
                         <td>{{ est.nombre }}</td>
                         <td>
-                            <span class="badge bg-primary">91 Octanos: {{ est.disponible91.1|floatformat:2|intcomma }}%</span>
-                            <span class="badge bg-primary">95 Octanos: {{ est.disponible95.1|floatformat:2|intcomma }}%</span>
-                            <span class="badge bg-primary">Gasoil: {{ est.disponibleGasoil.1|floatformat:2|intcomma }}%</span>
+                             <span class="badge
+                            {% if est.disponible91.2 == 1 %}bg-red{% elif  est.disponible91.2 == 2 %}bg-yellow{% elif est.disponible91.2 == 3 %}bg-green{% endif %}">91: {{ est.disponible91.1|floatformat:2|intcomma }}%
+                            </span>
+                            <span class="badge bg-primary
+                            {% if est.disponible95.2 == 1 %}bg-red{% elif  est.disponible95.2 == 2 %}bg-yellow{% elif est.disponible95.2 == 3 %}bg-green{% endif %}">95: {{ est.disponible95.1|floatformat:2|intcomma }}%
+                            </span>
+                            <span class="badge
+                            {% if est.disponibleGasoil.2 == 1 %}bg-red{% elif  est.disponibleGasoil.2 == 2 %}bg-yellow{% elif est.disponibleGasoil.2 == 3 %}bg-green{% endif %}">Gasoil: {{ est.disponibleGasoil.1|floatformat:2|intcomma }}%
+                            </span>
                         </td>
                         <td>
                             <a href="{% url 'gas_app:carga' est.id %}"
@@ -37,15 +43,6 @@
 
             </table>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer clearfix">
-            <ul class="pagination pagination-sm no-margin pull-right">
-                <li><a href="#">&laquo;</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">&raquo;</a></li>
-            </ul>
-        </div>
+       {% include "_pagination.html" %}
     </div>
     <!-- /.box -->

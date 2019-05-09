@@ -7,6 +7,25 @@
 {% block css %}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <style>
+    .iframe-container{
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Ratio 16:9 ( 100%/16*9 = 56.25% ) */
+}
+.iframe-container > *{
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+    </style>
 {% endblock css %}
 
 {% block content-header %}
@@ -50,8 +69,71 @@
     {% endfor %}
 
 
+    <div class="row">
+        <div class="col-lg-3 col-xs-12">
+            <div iframe-container>
+                <div id="map" style="width: 100%; height: 400px;"></div>
+            </div>
+
+        </div>
+    </div>
+
+
 
 {% endblock content %}
 
 {% block js %}
+
+    <!--script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmLPcRTmRXt1OuNsti1PT6_VpttIpSAo">
+</script -->
+
+    <script src="http://maps.google.com/maps/api/js?key=AIzaSyAWmLPcRTmRXt1OuNsti1PT6_VpttIpSAo" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        var icons = {
+          off_line: {
+            icon: '{% static "img/maps/off_line.png" %}'
+          },
+          on_line: {
+            icon: '{% static "img/maps/on_line.png" %}'
+          }
+        };
+        console.log(icons.off_line.icon);
+
+        var locations = [
+            ['Centenario', 8.547719, -71.2310603, 4, 'on_line'],
+            ['Arriba', 8.5498887, -71.2305963, 5, 'off_line'],
+            ['Los guaimaros', 8.5451303,-71.2496198, 3, 'on_line'],
+            ['Manly Beach', -33.80010128657071, 151.28747820854187, 2, 'on_line'],
+            ['Salida', 8.5261304,-71.2728809, 1, 'on_line']
+        ];
+
+
+
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: new google.maps.LatLng(8.54200, -71.24200),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var infowindow = new google.maps.InfoWindow();
+
+        var marker, i;
+
+        for (i = 0; i < locations.length; i++) {
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                map: map, icon: icons[locations[i][4]].icon
+            });
+
+            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                return function () {
+                    infowindow.setContent(locations[i][0]);
+                    infowindow.open(map, marker);
+                }
+            })(marker, i));
+        }
+    </script>
 {% endblock js %}

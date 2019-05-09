@@ -30,16 +30,6 @@
                 <div class="box-header">
                     <h3 class="box-title">Listado de estaciones de servicio</h3>
 
-                    <div class="box-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <div class="input-group-btn">
-                                <a href="{% url 'gas_app:estacion_create' %}"
-                                   title="Agregar usuario"
-                                   class="btn btn-block btn-primary btn-lg"><i class="fa fa-plus"></i> Agregar
-                                    estación</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
@@ -49,8 +39,8 @@
                     <tr>
                         <th style="width: 10px">#</th>
                         <th>Estación</th>
-                        <th>Abierto</th>
                         <th>Usuario</th>
+                        <th>Abierto</th>
                         <th>Disponibilidad</th>
                         <th>Acción</th>
                     </tr>
@@ -60,6 +50,7 @@
                         <tr>
                             <td>{{ est.id }}</td>
                             <td>{{ est.nombre }}</td>
+                            <td>{{ est.usuario }}</td>
                             <td align="center ">
                                 {% if  est.operativa %}
                                       <small class="label pull-center bg-green">Si</small>
@@ -67,7 +58,6 @@
                                       <small class="label pull-center bg-rd">No</small>
                                 {% endif %}
                             </td>
-                            <td>{{ est.usuario }}</td>
                             <td>
                             <span class="badge
                             {% if est.disponible91.2 == 1 %}bg-red{% elif  est.disponible91.2 == 2 %}bg-yellow{% elif est.disponible91.2 == 3 %}bg-green{% endif %}">91: {{ est.disponible91.1|floatformat:2|intcomma }}%
@@ -82,12 +72,8 @@
 
                             <td class="text-nowrap">
                                 <div class="btn-group">
-                                    <a href="{% url 'gas_app:estacion_edit' est.pk %}" class="btn btn-default"><i
+                                    <a href="{% url 'gas_app:estacion_est_edit' est.pk %}" class="btn btn-default"><i
                                             class="fa fa-edit"></i></a>
-                                    <a href="{% url 'gas_app:estacion_detail' est.pk %}" class="btn btn-default"><i
-                                            class="fa fa-eye text-warning"></i></a>
-                                    <a href="{% url 'gas_app:estacion_delete' est.pk %}" class="btn btn-default"><i
-                                            class="fa fa-trash-o text-danger"></i></a>
                                 </div>
                             </td>
 

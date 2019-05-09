@@ -23,9 +23,11 @@ urlpatterns = [
     path('estaciones/', estaciones.EstacionesListView.as_view(), name='estaciones_list'),
     path('estaciones/create', estaciones.EstacionCreateView.as_view(), name='estacion_create'),
     path('estaciones/edit/<int:pk>', estaciones.EstacionUpdateView.as_view(), name='estacion_edit'),
-    path('estaciones/edit_est/<int:pk>', estaciones.EstacionEstadoUpdateView.as_view(), name='estacion_est_edit'),
     path('estaciones/detail/<int:pk>', estaciones.EstacionDetailView.as_view(), name='estacion_detail'),
     path('estaciones/delete/<int:pk>', estaciones.EstacionDelete.as_view(), name='estacion_delete'),
+
+    path('estaciones/edit_est/<int:pk>', estaciones.EstacionEstUpdateView.as_view(), name='estacion_est_edit'),
+    path('estaciones/list_est', estaciones.EstacionesEstListView.as_view(), name='estaciones_est_list'),
 
     # Usuarios
     path('estacion/combustibles/', combustibles.CombustiblesListView.as_view(), name='combustibles_list'),

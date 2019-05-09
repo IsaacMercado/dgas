@@ -17,7 +17,7 @@ class Estacion(models.Model):
     reserva_95 = models.PositiveIntegerField(default=0)
     capacidad_gasoil = models.PositiveIntegerField(default=0)
     reserva_gasoil = models.PositiveIntegerField(default=0)
-    operativa = models.BooleanField(default=True)
+    operativa = models.BooleanField('Abierto', default=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
 
@@ -41,8 +41,8 @@ class Estacion(models.Model):
         total = Combustible.objects.filter(estacion_id=self.id, tipo_combustible='91').aggregate(Sum('cantidad'))
         total_cargado = Carga.objects.filter(estacion_id=self.id, tipo_combustible='91').aggregate(Sum('cantidad'))
 
-        if not total_cargado['cantidad__sum']:
-            tc = 0
+        if total_cargado['cantidad__sum'] is None:
+            tc = float(0.0)
         else:
             tc = total_cargado['cantidad__sum']
 
@@ -70,8 +70,8 @@ class Estacion(models.Model):
         total = Combustible.objects.filter(estacion_id=self.id, tipo_combustible='95').aggregate(Sum('cantidad'))
         total_cargado = Carga.objects.filter(estacion_id=self.id, tipo_combustible='95').aggregate(Sum('cantidad'))
 
-        if not total_cargado['cantidad__sum']:
-            tc = 0
+        if total_cargado['cantidad__sum'] is None:
+            tc = float(0.0)
         else:
             tc = total_cargado['cantidad__sum']
 
@@ -99,12 +99,12 @@ class Estacion(models.Model):
         total = Combustible.objects.filter(estacion_id=self.id, tipo_combustible='Gasoil').aggregate(Sum('cantidad'))
         total_cargado = Carga.objects.filter(estacion_id=self.id, tipo_combustible='Gasoil').aggregate(Sum('cantidad'))
 
-        if not total_cargado['cantidad__sum']:
-            tc = 0
+        if total_cargado['cantidad__sum'] is None:
+            tc = float(0.0)
         else:
             tc = total_cargado['cantidad__sum']
 
-        if total['cantidad__sum']:
+        if total['cantidad__sum']> 0:
             total_publico = total['cantidad__sum'] - self.reserva_gasoil
             total_disponible = total_publico - tc
             porcentaje = (total_disponible / total_publico) * 100

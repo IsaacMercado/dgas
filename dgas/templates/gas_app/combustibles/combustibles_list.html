@@ -29,11 +29,9 @@
                 <div class="box-header">
                     <h3 class="box-title">
                         {% comment %}
-                        Estación de servicio: {{ estacion.nombre }} -
-                        <span class="badge bg-primary">91 Octanos: {{ estacion.disponible91.1|floatformat:2|intcomma }}%</span>
-                        <span class="badge bg-primary">95 Octanos: {{ estacion.disponible95.1|floatformat:2|intcomma }}%</span>
-                        <span class="badge bg-primary">Gasoil: {{ estacion.disponibleGaoil.1|floatformat:2|intcomma }}%</span>
+                        Estación de servicio: {{ estacion.nombre }}
                         {% endcomment %}
+
                     </h3>
 
                     <div class="box-tools">
@@ -43,7 +41,6 @@
                                    title="Agregar combustible"
                                    class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
                                     Combustible</a>
-
                             </div>
                         </div>
                     </div>
@@ -55,6 +52,7 @@
                         <thead>
                         <tr>
                             <th>Tipo combustible</th>
+                            <th>Estación</th>
                             <th>Cantidad</th>
                             <th>Fecha de carga</th>
                             <th>Acciones</th>
@@ -65,6 +63,7 @@
                             <tr>
 
                                 <td><B>{{ ope.tipo_combustible }}</B></td>
+                                 <td><B>{{ ope.estacion }}</B></td>
                                 <td>{{ ope.cantidad }} {{ ope.first_name }}</td>
                                 <td>{{ ope.fecha_carga }}</td>
 

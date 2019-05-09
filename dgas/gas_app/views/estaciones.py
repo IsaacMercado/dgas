@@ -19,7 +19,7 @@ from dgas.gas_app.models import Estacion
 
 class EstacionesListView(GroupRequiredMixin, ListView):
     # required
-    group_required = u"Estacion"
+    group_required = u"Administrador"
     raise_exception = True
     paginate_by = 50
 
@@ -42,9 +42,34 @@ class EstacionesListView(GroupRequiredMixin, ListView):
         return context
 
 
-class EstacionDetailView(GroupRequiredMixin, DetailView):
+class EstacionesEstListView(GroupRequiredMixin, ListView):
     # required
     group_required = u"Estacion"
+    raise_exception = True
+    paginate_by = 50
+
+    model = Estacion
+    context_object_name = 'estaciones'
+    template_name = 'gas_app/estaciones/estaciones_est_list.html'
+
+    page = {
+        'title': 'Estaciones',
+        'subtitle': 'Listado general'
+    }
+
+    def get_queryset(self):
+        return Estacion.objects.filter(usuario_id=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(EstacionesEstListView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+
+        return context
+
+
+class EstacionDetailView(GroupRequiredMixin, DetailView):
+    # required
+    group_required = u"Administrador"
     raise_exception = True
 
     model = Estacion
@@ -63,7 +88,7 @@ class EstacionDetailView(GroupRequiredMixin, DetailView):
 
 class EstacionCreateView(GroupRequiredMixin, CreateView):
     # required
-    group_required = u"Estacion"
+    group_required = u"Administrador"
     raise_exception = True
 
     model = Estacion
@@ -96,7 +121,7 @@ class EstacionCreateView(GroupRequiredMixin, CreateView):
 
 class EstacionUpdateView(GroupRequiredMixin, UpdateView):
     # required
-    group_required = u"Estacion"
+    group_required = u"Administrador"
     raise_exception = True
 
     model = Estacion
@@ -126,9 +151,40 @@ class EstacionUpdateView(GroupRequiredMixin, UpdateView):
         return redirect(self.success_url)
 
 
-class EstacionEstadoUpdateView(GroupRequiredMixin, UpdateView):
+class EstacionEstUpdateView(GroupRequiredMixin, UpdateView):
     # required
     group_required = u"Estacion"
+    raise_exception = True
+
+    model = Estacion
+    fields = ['operativa']
+    success_url = 'gas_app:estaciones_list'
+    template_name = 'gas_app/estaciones/estacion_est_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EstacionEstUpdateView, self).get_context_data(**kwargs)
+        context['page'] = {
+            'name': 'user_update',
+            'title': 'Actualización de estacion de servicio ',
+            'form_action': '',
+        }
+
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        messages.add_message(self.request, messages.SUCCESS, 'Se ha actualizado la seccion')
+
+        super(EstacionUpdateView, self).form_valid(form)
+
+        return redirect(self.success_url)
+
+
+class EstacionEstadoUpdateView(GroupRequiredMixin, UpdateView):
+    # required
+    group_required = u"Administrador"
     raise_exception = True
 
     model = Estacion
@@ -159,7 +215,7 @@ class EstacionEstadoUpdateView(GroupRequiredMixin, UpdateView):
 
 class EstacionDelete(GroupRequiredMixin, DeleteView):
     # required
-    group_required = u"Estacion"
+    group_required = u"Administrador"
     raise_exception = True
 
     model = Estacion
