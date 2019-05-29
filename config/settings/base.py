@@ -274,3 +274,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAdminUser',
     )
 }
+
+# Google Maps
+MAP_KEY = env("MAP_KEY")
+
