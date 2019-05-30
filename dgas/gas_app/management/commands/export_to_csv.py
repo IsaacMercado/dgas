@@ -1,0 +1,45 @@
+# coding=utf-8
+import time
+import datetime
+
+from django.core.management.base import BaseCommand
+from dateutil import relativedelta
+
+from dgas.gas_app.models import Carga
+
+
+class Command(BaseCommand):
+
+    def add_arguments(self, parser):
+
+        # Named (optional) arguments
+        parser.add_argument('--export',
+                            dest='export',
+                            default=False,
+                            help='Export carga to CSV')
+
+        parser.add_argument('fecha')
+
+    def handle(self, *args, **options):
+        # ...
+        if options['export']:
+            """
+            Comando para verificar vacaciones de empleados
+            """
+            from pytz import timezone
+            from django.db.models import Count
+            from django.db.models import Q
+
+            #print('Verificando')
+
+            fecha = options['fecha']
+            fecha_d = fecha + ' 00:00:00'
+            fecha_h = fecha + ' 23:59:59'
+            desde = datetime.datetime.strptime(fecha_d, "%Y-%m-%d %H:%M:%S")
+            hasta = datetime.datetime.strptime(fecha_h, "%Y-%m-%d %H:%M:%S")
+
+            cargas = Carga.objects.filter(created_at__gte=desde, created_at__lte=hasta).order_by('-created_at')
+
+            for carga in cargas:
+                print(str(carga.cantidad)+'|'+str(carga.created_at))
+
