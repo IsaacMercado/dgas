@@ -19,6 +19,7 @@ class Command(BaseCommand):
                             help='Export carga to CSV')
 
         parser.add_argument('fecha')
+        parser.add_argument('estacion')
 
     def handle(self, *args, **options):
         # ...
@@ -32,13 +33,14 @@ class Command(BaseCommand):
 
             #print('Verificando')
 
+            estacion = options['estacion']
             fecha = options['fecha']
             fecha_d = fecha + ' 00:00:00'
             fecha_h = fecha + ' 23:59:59'
             desde = datetime.datetime.strptime(fecha_d, "%Y-%m-%d %H:%M:%S")
             hasta = datetime.datetime.strptime(fecha_h, "%Y-%m-%d %H:%M:%S")
 
-            cargas = Carga.objects.filter(created_at__gte=desde, created_at__lte=hasta).order_by('-created_at')
+            cargas = Carga.objects.filter(estacion_id=estacion, created_at__gte=desde, created_at__lte=hasta).order_by('-created_at')
 
             for carga in cargas:
                 print(str(carga.cantidad)+'|'+str(carga.created_at))
