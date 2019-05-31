@@ -43,6 +43,6 @@ class Command(BaseCommand):
             cargas = Carga.objects.filter(estacion_id=estacion, created_at__gte=desde, created_at__lte=hasta).order_by('-created_at')
 
             for carga in cargas:
-                if carga.cantidad > 40:
+                if carga.cantidad > 42:
                     print(carga.vehiculo_id+'|'+str(carga.cantidad)+'|'+str(carga.created_at))
 
