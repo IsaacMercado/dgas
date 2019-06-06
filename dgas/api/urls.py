@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import VehiculoViewSet, CargaViewSet
+from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList
 
 from dgas.gas_app import views
 
@@ -12,7 +12,8 @@ router.register(r'cargas', CargaViewSet)
 
 urlpatterns = [
 
-    path("", include(router.urls))
+    path("", include(router.urls)),
+    path('ultima_carga/<str:placa>', UltimaCargaList.as_view()),
 
     # Recolector
 

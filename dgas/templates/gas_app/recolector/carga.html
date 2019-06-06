@@ -59,6 +59,8 @@
                                 <li class="pull-left header"><i class="fa fa-th"></i> Datos del Llenado</li>
                             </ul>
                             <br>
+                            <input class="form-control" type="text" placeholder="Default input" id="alerta_vehiculo" readonly>
+                            <br>
                             <label>Placa:</label>
                             <input class="form-control" type="text" placeholder="Default input" id="placa" readonly>
                             <br>
@@ -160,6 +162,7 @@
         var URL = "/api/vehiculos/";
         var URL_CARGAS = "/api/cargas/";
         var URL_VEH = "/api/vehiculos/";
+        var URL_ULTIMA_CARGA = "/api/ultima_carga/";
         var tipo;
         var cil;
 
@@ -223,6 +226,34 @@
         }
 
         function showVehiculo(vehiculo) {
+
+            $.getJSON(URL_ULTIMA_CARGA + $("#buscar_placa").val())
+                .done(function (result)    // on failure - 404
+                    {
+                        console.log(result);
+                        var ultima_carga = jQuery.parseJSON( result );
+
+                        if (ultima_carga.cargar == 'false'){
+                            $("#alerta_vehiculo").css({'background-color' : '#EA0704'});
+                            $("#alerta_vehiculo").css({'color' : '#FFFFFF'});
+                            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                            var created_at =  new Date( ultima_carga.created_at  );
+                            $("#alerta_vehiculo").val("Usuario colocó combistible el: "+ created_at.toLocaleDateString("es-ES",options)+' estacion: '+ ultima_carga.estacion);
+                        }else{
+                            $("#alerta_vehiculo").val('Cargar combustible');
+                            $("#alerta_vehiculo").css({'background-color' : '#07BE3B'});
+                            $("#alerta_vehiculo").css({'color' : '#FFFFFF'});
+                        }
+
+                    }
+
+                )   // on success - 200
+                .fail();
+
+            $("#loading").hide();
+
+
+
             $("#carga").show();
             $("#buqueda").hide();
             $("#placa").val(vehiculo.placa);
