@@ -49,18 +49,24 @@ class UltimaCargaList(APIView):
         hoy = datetime.now()
 
         placa = self.kwargs['placa']
-        ultima_carga = Carga.objects.filter(vehiculo=placa).latest('created_at')
 
-        p = ultima_carga.created_at + timedelta(days=2)
-        print(p, hoy)
+        try:
 
-        hoy = hoy.replace(tzinfo=utc)
-        u = ultima_carga.created_at.replace(tzinfo=utc)
+            ultima_carga = Carga.objects.filter(vehiculo=placa).latest('created_at')
 
-        print(ultima_carga.estacion, ultima_carga.created_at, hoy)
-        if p > hoy:
-            uc = json.dumps({"cargar": "false", "estacion": str(ultima_carga.estacion), "created_at": str(ultima_carga.created_at)})
-        else:
+            p = ultima_carga.created_at + timedelta(days=2)
+            print(p, hoy)
+
+            hoy = hoy.replace(tzinfo=utc)
+            u = ultima_carga.created_at.replace(tzinfo=utc)
+
+            print(ultima_carga.estacion, ultima_carga.created_at, hoy)
+            if p > hoy:
+                uc = json.dumps({"cargar": "false", "estacion": str(ultima_carga.estacion), "created_at": str(ultima_carga.created_at)})
+            else:
+                uc = json.dumps({"cargar": "true"})
+
+        except Carga.DoesNotExist:
             uc = json.dumps({"cargar": "true"})
 
         return Response(uc)
