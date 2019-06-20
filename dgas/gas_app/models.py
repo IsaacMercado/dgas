@@ -6,11 +6,16 @@ from dgas.users.models import GasUser
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando')
+MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina')
+TIPO_VEHICULO_CHOICES = Choices('Particular', 'Transporte Publico', 'Oficial', 'Moto', 'Moto Taxita')
 
 
 class Estacion(models.Model):
-    usuario = models.ForeignKey(GasUser, on_delete=models.CASCADE, blank=True, null=True)
+    #usuario = models.ForeignKey(GasUser, on_delete=models.CASCADE, blank=True, null=True)
     nombre = models.CharField(max_length=100, blank=True, null=True)
+    direccion = models.CharField(max_length=100, blank=True, null=True)
+    municipio = models.CharField(max_length=20, choices=MUNICIPIOS_CHOICES, default='Libertador')
     capacidad_91 = models.PositiveIntegerField(default=0)
     reserva_91 = models.PositiveIntegerField(default=0)
     capacidad_95 = models.PositiveIntegerField(default=0)
@@ -30,7 +35,7 @@ class Estacion(models.Model):
         ordering = ('nombre',)
 
     def __str__(self):
-        return self.nombre
+        return ('%s') % (self.nombre,)
 
     @property
     def disponible91(self):
@@ -123,9 +128,20 @@ class Estacion(models.Model):
 class Combustible(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES)
-    nro_factura = models.CharField(max_length=50, blank=True, null=True)
+    estado = models.CharField(max_length=10, choices=CARGA_ESTADO_CHOICES, default='En plan')
+    # nro_factura = models.CharField(max_length=50, blank=True, null=True)
     cantidad = models.FloatField(default=0)
-    fecha_carga = models.DateField()
+    cantidad_maxima_por_vehiculo = models.PositiveIntegerField(default=0)
+    cantidad_maxima_por_motos = models.PositiveIntegerField(default=0)
+    cantidad_vehiculos = models.PositiveIntegerField(default=0)
+    cantidad_motos = models.PositiveIntegerField(default=0)
+    fecha_planificacion = models.DateField(null=True, blank=True)
+    fecha_salida = models.DateTimeField(null=True, blank=True)
+    fecha_descarga = models.DateTimeField(null=True, blank=True)
+    fecha_surtiendo = models.DateTimeField(null=True, blank=True)
+    activar_cola = models.BooleanField(default=False)
+    cola_manual = models.BooleanField(default=False)
+    completado = models.BooleanField(default=False)
 
     created_by = UserForeignKey(auto_user_add=True, related_name='combustible_created')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -136,11 +152,13 @@ class Combustible(models.Model):
         ordering = ('-created_at',)
 
     def __str__(self):
-        return str(self.tipo_combustible)
+        return str(self.estacion.nombre)
 
 
 class Vehiculo(models.Model):
     placa = models.CharField(max_length=7, primary_key=True)
+    cedula = models.CharField(max_length=20, default='No Registrado')
+    tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')
     cilindros = models.CharField(max_length=10, choices=CILINDROS_CHOICES, default='4')
 
     created_by = UserForeignKey(auto_user_add=True, related_name='vehiculos_created')
@@ -168,6 +186,23 @@ class Carga(models.Model):
 
     class Meta:
         ordering = ('-created_at',)
+
+    def __str__(self):
+        return str(self.vehiculo.placa)
+
+
+class Cola(models.Model):
+    combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='colas')
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    cantidad = models.FloatField(default=0)
+    cargado = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('created_at',)
+        unique_together = ('vehiculo', 'combustible',)
 
     def __str__(self):
         return str(self.vehiculo.placa)

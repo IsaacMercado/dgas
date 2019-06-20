@@ -238,7 +238,7 @@
                             $("#alerta_vehiculo").css({'color' : '#FFFFFF'});
                             var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                             var created_at =  new Date( ultima_carga.created_at  );
-                            $("#alerta_vehiculo").val("Usuario colocó combistible el: "+ created_at.toLocaleDateString("es-ES",options)+' estacion: '+ ultima_carga.estacion);
+                            $("#alerta_vehiculo").val("Usuario colocó combustible el: "+ created_at.toLocaleDateString("es-ES",options)+' estacion: '+ ultima_carga.estacion);
                         }else{
                             $("#alerta_vehiculo").val('Cargar combustible');
                             $("#alerta_vehiculo").css({'background-color' : '#07BE3B'});
@@ -301,7 +301,7 @@
                     url: URL_CARGAS,
                     data: {
                         "estacion": $("#estacion").val(),
-                        "vehiculo": $("#placa").val(),
+                        "placa": $("#placa").val(),
                         "tipo_combustible": $("#tipo_combustible option:selected").text(),
                         "cantidad": $("#cantidad").val(),
                         csrfmiddlewaretoken: '{{ csrf_token }}'

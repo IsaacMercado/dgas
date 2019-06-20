@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Estacion, Combustible, Vehiculo, Carga
+from .models import Estacion, Combustible, Vehiculo, Carga, Cola
 
 
 class CombustibleInline(admin.TabularInline):
@@ -17,7 +17,7 @@ class EstacionAdmin(admin.ModelAdmin):
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad',)
 
 
 @admin.register(Vehiculo)
@@ -28,3 +28,8 @@ class VehiculoAdmin(admin.ModelAdmin):
 @admin.register(Carga)
 class CargaAdmin(admin.ModelAdmin):
     list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')
+
+
+@admin.register(Cola)
+class ColaAdmin(admin.ModelAdmin):
+    list_display = ('vehiculo', 'cargado', 'cantidad', 'created_at', 'last_modified_at')

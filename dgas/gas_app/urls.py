@@ -1,12 +1,14 @@
 from django.urls import path
 
-from dgas.gas_app.views import recolector
+from dgas.gas_app.views import recolector, coordinadores
 from dgas.gas_app.views import usuarios, estaciones, combustibles
 
 app_name = "gas_app"
 
 urlpatterns = [
 
+    # Coordinadores
+    path('coordinadores/', coordinadores.Colas.as_view(), name='coodinadores_list'),
 
     path('recolector/', recolector.CargaDashBoardListView.as_view(), name='recolector_dash'),
     path('recolector/cargar/<int:estacion_id>', recolector.CargaTemplateView.as_view(), name='carga'),

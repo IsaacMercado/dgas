@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Vehiculo, Carga
+from .models import Vehiculo, Carga, Cola, Combustible, Estacion
 
 
 class VehiculoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vehiculo
-        fields = ('placa', 'cilindros')
+        fields = ('placa',)
 
 
 class CargaSerializer(serializers.ModelSerializer):
@@ -14,3 +14,41 @@ class CargaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carga
         fields = ('id', 'cantidad', 'estacion', 'vehiculo', 'tipo_combustible')
+
+
+
+class EstacionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Estacion
+        fields = ('nombre', 'municipio', 'direccion')
+
+
+class CombustibleSerializer(serializers.ModelSerializer):
+
+    estacion = EstacionSerializer()
+    total_cola = serializers.IntegerField()
+
+    class Meta:
+        model = Combustible
+        fields = ('id', 'tipo_combustible', 'estacion',
+                  'cantidad_maxima_por_vehiculo', 'cantidad_vehiculos', 'total_cola')
+
+
+class ColaSerializer(serializers.ModelSerializer):
+
+    #combustible = CombustibleSerializer()
+    vehiculo = VehiculoSerializer()
+    #vehiculo = serializers.PrimaryKeyRelatedField(many=False, source='vehiculo.placa')
+    #vehiculo = serializers.ReadOnlyField(source='vehiculo.placa')
+
+    class Meta:
+        model = Cola
+        fields = ('id', 'vehiculo', 'cargado', 'combustible')
+
+
+class ColaCrudSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cola
+        fields = ('id', 'vehiculo', 'cargado', 'combustible')

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList
+from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList, CombustibleViewSet, ColaViewSet, UltimaColaList, \
+    ContarCola, ColaCrudViewSet
 
 from dgas.gas_app import views
 
@@ -9,11 +10,16 @@ app_name = "api"
 router = DefaultRouter()
 router.register(r'vehiculos', VehiculoViewSet)
 router.register(r'cargas', CargaViewSet)
+router.register(r'combustible', CombustibleViewSet)
+router.register(r'cola/(?P<combustible_id>\d+)', ColaViewSet)
+router.register(r'cola-crud/(?P<combustible_id>\d+)', ColaCrudViewSet)
 
 urlpatterns = [
 
     path("", include(router.urls)),
     path('ultima_carga/<str:placa>', UltimaCargaList.as_view()),
+    path('ultima_cola/<str:placa>', UltimaColaList.as_view()),
+    path('cola/contar_cola/<int:combustible_id>', ContarCola.as_view()),
 
     # Recolector
 

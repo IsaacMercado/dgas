@@ -265,8 +265,16 @@ SOCIALACCOUNT_ADAPTER = "dgas.users.adapters.SocialAccountAdapter"
 # ------------------------------------------------------------------------------
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework_datatables.pagination.DatatablesPageNumberPagination',
+    'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework_datatables.renderers.DatatablesRenderer',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework_datatables.filters.DatatablesFilterBackend',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -277,4 +285,5 @@ REST_FRAMEWORK = {
 
 # Google Maps
 MAP_KEY = env("MAP_KEY")
+
 

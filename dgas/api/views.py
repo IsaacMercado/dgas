@@ -1,13 +1,18 @@
-from rest_framework import viewsets
-from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer
-from rest_framework.permissions import IsAuthenticated
-from dgas.gas_app.models import Vehiculo, Carga
-from rest_framework.decorators import detail_route
-from rest_framework import generics
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.core import serializers
 import json
+from django.core import serializers
+from django.db.models import Count
+from rest_framework import generics
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
+from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible
+from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, CombustibleSerializer, ColaSerializer, \
+    ColaCrudSerializer
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):
@@ -17,7 +22,7 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     """
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
-    #permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
 
 class CargaViewSet(viewsets.ModelViewSet):
@@ -27,7 +32,8 @@ class CargaViewSet(viewsets.ModelViewSet):
     """
     queryset = Carga.objects.all()
     serializer_class = CargaSerializer
-    #permission_classes = (IsAuthenticated,)
+
+    # permission_classes = (IsAuthenticated,)
 
     @detail_route()
     def ultima_carga(self, request, vehiculo=None):
@@ -62,7 +68,8 @@ class UltimaCargaList(APIView):
 
             print(ultima_carga.estacion, ultima_carga.created_at, hoy)
             if p > hoy:
-                uc = json.dumps({"cargar": "false", "estacion": str(ultima_carga.estacion), "created_at": str(ultima_carga.created_at)})
+                uc = json.dumps({"cargar": "false", "estacion": str(ultima_carga.estacion),
+                                 "created_at": str(ultima_carga.created_at)})
             else:
                 uc = json.dumps({"cargar": "true"})
 
@@ -70,3 +77,146 @@ class UltimaCargaList(APIView):
             uc = json.dumps({"cargar": "true"})
 
         return Response(uc)
+
+
+class UltimaColaList(APIView):
+    serializer_class = ColaSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Para el chequeo de cargas a un dia
+        """
+        from datetime import datetime, timedelta
+        import pytz
+        utc = pytz.UTC
+
+        hoy = datetime.now()
+
+        placa = self.kwargs['placa']
+
+        try:
+
+            ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
+
+            p = ultima_cola.created_at + timedelta(days=5)
+            print(p, hoy)
+
+            hoy = hoy.replace(tzinfo=utc)
+            u = ultima_cola.created_at.replace(tzinfo=utc)
+
+            print(ultima_cola.combustible, ultima_cola.created_at, hoy)
+
+            if not ultima_cola.cargado:
+                uc = json.dumps({"cargar": "false",
+                                 "mensaje": " ya esta registrado para surtir gasolina",
+                                 "estacion": str(ultima_cola.combustible),
+                                 "proxima_recarga": "",
+                                 "created_at": str(ultima_cola.created_at)})
+            elif p > hoy:
+                uc = json.dumps({"cargar": "false", "mensaje": " ya esta surtio gasolina",
+                                 "estacion": str(ultima_cola.combustible),
+                                 "proxima_recarga": str(p),
+                                 "created_at": str(ultima_cola.created_at)})
+            else:
+                uc = json.dumps({"cargar": "true"})
+
+        except Cola.DoesNotExist:
+            uc = json.dumps({"cargar": "true"})
+
+        return Response(uc)
+
+
+class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Combustible.objects.all()
+    serializer_class = CombustibleSerializer
+
+    def get_queryset(self):
+        qs = self.queryset.all().exclude(estado='En plan', completado=False).annotate(total_cola=Count('colas'))
+
+        return qs
+
+
+'''
+mixins.CreateModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  viewsets.GenericViewSet
+'''
+
+
+class ColaCrudViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = Cola.objects.all()
+    serializer_class = ColaCrudSerializer
+
+    # permission_classes = (IsAuthenticated,)
+
+
+    def get_queryset(self):
+        combustible_id = self.kwargs['combustible_id']
+        qs = self.queryset.filter(combustible_id=combustible_id, cargado=False)
+        return qs
+
+
+class ColaViewSet(viewsets.ModelViewSet):
+    queryset = Cola.objects.all()
+    serializer_class = ColaSerializer
+
+    # permission_classes = (IsAuthenticated,)
+
+
+    def get_queryset(self):
+        combustible_id = self.kwargs['combustible_id']
+        qs = self.queryset.filter(combustible_id=combustible_id, cargado=False)
+        return qs
+
+    # @action(detail=False, url_path='ver-aja', url_name='ver_aja',)
+    @action(detail=False)
+    def set_aja(self):
+        content = {'total': 0}
+        return Response(content)
+
+    @action(detail=True)
+    def count(self):
+        # combustible_id = self.kwargs['combustible_id']
+        # cargado = self.objects.annotate(total_cargado=Count('cargado'))
+        # print(cargado)
+        # queryset = self.filter_queryset(self.get_queryset())
+        # count = queryset.count()
+
+        # por_cargar = count - cargado[0].total_cargado
+
+        # content = {'total': count, 'cargado': cargado[0].total_cargado, 'por_cargar': por_cargar}
+        content = {'total': 0, 'cargado': 0, 'por_cargar': 0}
+        return Response(content)
+
+    @detail_route()
+    def ultima_cola(self, request, vehiculo=None):
+        cola = self.Cola.objects.filter(vehiculo=vehiculo).latest('created_at')
+        return Response(cola.data)
+
+
+class ContarCola(APIView):
+    queryset = Cola.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        combustible_id = self.kwargs['combustible_id']
+
+        combustible = Combustible.objects.get(pk=combustible_id)
+        print(combustible.estado, combustible.estacion.nombre)
+
+        cargado = Cola.objects.filter(combustible_id=combustible_id, ).annotate(total_cargado=Count('cargado'))
+        print(cargado)
+        total = Cola.objects.filter(combustible_id=combustible_id).count()
+        # scount = queryset.count()
+
+        por_cargar = total - cargado[0].total_cargado
+
+        content = {
+            'total': total,
+            'cargado': cargado[0].total_cargado,
+            'por_cargar': por_cargar,
+            'estado': combustible.estado,
+            'estacion': combustible.estacion.nombre,
+        }
+        # content = {'ok': 'aja'}
+        return Response(content)
