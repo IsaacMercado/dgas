@@ -1,0 +1,14 @@
+<li class="treeview">
+    <a href="#">
+        <i class="fa fa-laptop"></i>
+        <span>Publico</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="{% url 'public_app:estaciones' %}"><i class="fa fa-circle-o"></i> Estaciones</a></li>
+        <li><a href="{% url 'public_app:colas' %}"><i class="fa fa-circle-o"></i> Colas</a></li>
+        <li><a href="{% url 'public_app:colas-historico' %}"><i class="fa fa-circle-o"></i> Colas completadas</a></li>
+    </ul>
+</li>

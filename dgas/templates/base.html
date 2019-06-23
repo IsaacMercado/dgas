@@ -41,7 +41,7 @@
 
     <header class="main-header">
         <!-- Logo -->
-        <a href="{% static '/index2.html' %}" class="logo">
+        <a href="{% url 'dashboard' %}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>DG</b>as</span>
             <!-- logo for regular state and mobile devices -->
@@ -61,16 +61,17 @@
                 <ul class="nav navbar-nav">
                     <!-- User Account: style can be found in dropdown.less -->
                     <li class="dropdown user user-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            {% if user.photo_user == '' %}
-                                <img src="{% static 'img/no_photo100x100.png' %}" class="img-circle" height="20"
-                                     width="20"
-                                     alt="Sin foto">
-                            {% else %}
-                                <img src="{{ user.photo_user.thumbnail.40x40 }}" class="img-circle"
-                                     alt="Foto empleado"/>
-                            {% endif %}
-                            <span class="hidden-xs">
+                        {% if request.user.is_authenticated %}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                {% if user.photo_user == '' %}
+                                    <img src="{% static 'img/no_photo100x100.png' %}" class="img-circle" height="20"
+                                         width="20"
+                                         alt="Sin foto">
+                                {% else %}
+                                    <img src="{{ user.photo_user.thumbnail.40x40 }}" class="img-circle"
+                                         alt="Foto empleado"/>
+                                {% endif %}
+                                <span class="hidden-xs">
                                 {% if user.username %}
 
                                     <span>{{ user.first_name|title|default:"Usuario" }} <i class="caret"></i></span>
@@ -81,47 +82,47 @@
 
                                 {% endif %}
                             </span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <!-- User image -->
-                            <li class="user-header">
-                                {% if user.photo_user == '' %}
-                                    <img src="{% static 'img/no_photo.png' %}" class="img-circle" height="160"
-                                         width="160" alt="Sin foto">
-                                {% else %}
-                                    <img src="{{ user.photo_user.thumbnail.160x160 }}" class="img-circle"
-                                         alt="Foto usuario"/>
-                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    {% if user.photo_user == '' %}
+                                        <img src="{% static 'img/no_photo.png' %}" class="img-circle" height="160"
+                                             width="160" alt="Sin foto">
+                                    {% else %}
+                                        <img src="{{ user.photo_user.thumbnail.160x160 }}" class="img-circle"
+                                             alt="Foto usuario"/>
+                                    {% endif %}
 
-                                <p>
-                                    {{ user.get_full_name|title|default:"Usuario" }}
+                                    <p>
+                                        {{ user.get_full_name|title|default:"Usuario" }}
 
-                                </p>
-                            </li>
-                            <!-- Menu Body -->
-                            <li class="user-body">
-                                <div class="row">
-                                    <div class="col-xs-4 text-center">
-                                        <a href="#">Ventas</a>
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Ventas</a>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- /.row -->
+                                    <!-- /.row -->
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">Perfil</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="/accounts/logout/" class="btn btn-default btn-flat">Cerrar sesión</a>
+                                    </div>
+                                </li>
+                            </ul>
                             </li>
-                            <!-- Menu Footer-->
-                            <li class="user-footer">
-                                <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">Perfil</a>
-                                </div>
-                                <div class="pull-right">
-                                    <a href="/accounts/logout/" class="btn btn-default btn-flat">Cerrar sesión</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Control Sidebar Toggle Button -->
-                    <!--li>
-                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                    </li-->
+                        {% else %}
+                            <li><a href="/accounts/login">Iniciar sesión</a></li>
+                        {% endif %}
+
                 </ul>
             </div>
         </nav>
@@ -134,21 +135,31 @@
         <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
             <!-- Sidebar user panel -->
-            <div class="user-panel">
-                <div class="pull-left image">
-                    {% if user.photo_user == '' %}
-                        <img src="{% static 'img/no_photo.png' %}" class="img-circle" height="160"
-                             width="160" alt="Sin foto">
-                    {% else %}
-                        <img src="{{ user.photo_user.thumbnail.160x160 }}" class="img-circle"
-                             alt="Foto usuario"/>
-                    {% endif %}
+            {% if request.user.is_authenticated %}
+                <div class="user-panel">
+
+
+                    <div class="pull-left image">
+
+                        {% if user.photo_user == '' %}
+                            <img src="{% static 'img/no_photo.png' %}" class="img-circle" height="160"
+                                 width="160" alt="Sin foto">
+                        {% else %}
+                            <img src="{{ user.photo_user.thumbnail.160x160 }}" class="img-circle"
+                                 alt="Foto usuario"/>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="pull-left info">
+                        <p>{{ user.get_full_name|title|default:"Usuario" }}</p>
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
                 </div>
-                <div class="pull-left info">
-                    <p>{{ user.get_full_name|title|default:"Usuario" }}</p>
-                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-                </div>
-            </div>
+
+            {% else %}
+                <div class="user-panel"></div>
+            {% endif %}
             <!-- search form -->
             <form action="#" method="get" class="sidebar-form">
                 <div class="input-group">
@@ -170,6 +181,8 @@
 
                     </a>
                 </li>
+
+                {% include "mnu_publico.html" %}
 
                 <!--Menu administrador-->
                 {% for group in user.groups.all %}
@@ -265,7 +278,7 @@
 
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-            <b>Version</b> 2.4.0
+            <b>Version</b> 0.1.0
         </div>
         <strong>Copyright &copy; 2019 <a href="https://adminlte.io">DGas</a>.</strong> All rights
         reserved.

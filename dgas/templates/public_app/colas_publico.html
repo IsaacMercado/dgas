@@ -6,11 +6,6 @@
 
 {% block css %}
 
-    {% comment %}
-    <link rel="stylesheet" href="{% static 'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'plugins/DataTables/Buttons-1.5.6/css/buttons.dataTables.min.css' %}">
-    {% endcomment %}
-
     <link rel="stylesheet" href="{% static 'plugins/DataTables/DataTables-1.10.18/css/dataTables.bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugins/DataTables/Buttons-1.5.6/css/buttons.dataTables.min.css' %}">
 
@@ -63,6 +58,12 @@
                     </div>
 
                     <div id="cola">
+                        <button type="button"
+                                class="btn btn-reset btn-success btn-flat"
+                                id="cerrar_cola">Regresar
+                        </button>
+                        <br><br>
+                        {% comment %}
                         <div class="row">
                             <div class="col-md-4"><b>Estación:</b>
                                 <div id="data_estacion"></div>
@@ -93,6 +94,7 @@
                         </form>
 
                         <br>
+                        {% endcomment %}
 
 
                         <table id="tabla_colas"
@@ -145,7 +147,6 @@
                             <option value="Oficial">Oficial</option>
                             <option value="Moto">Moto</option>
                             <option value="Moto Taxita">Moto Taxita</option>
-
                         </select>
                     </div>
                     <!-- select -->
@@ -161,7 +162,6 @@
                         </select>
                     </div>
                     <br>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" onclick="addCancelarAdd()">Cancelar</button>
@@ -202,18 +202,10 @@
 
 {% block js %}
 
-    {% comment %}
-    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
-    {% endcomment %}
 
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/dataTables.bootstrap.min.js' %}"></script>
     <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
-
-
-
 
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
@@ -231,7 +223,7 @@
         var combustible_id;
 
         var URL = "/api/vehiculos/";
-        var URL_COLA = "/api/cola/";
+        var URL_COLA = "/api/cola_publica/";
         var URL_COLA_CRUD = "/api/cola-crud/";
         var URL_VEH = "/api/vehiculos/";
         var URL_ULTIMA_COLA = "/api/ultima_cola/";
@@ -328,27 +320,13 @@
                     $('#cola').show();
                     $('#combustible').hide();
 
-                    $.getJSON(URL_CONTAR_COLA + combustible_id)
-                            .done(function (result) {
-                                $("#data_estacion").html(result.data.estacion);
-                                $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
-                                $("#data_en_cola").html(result.data.por_cargar);
-
-                            })   // on success - 200
-                            .fail(function (result)    // on failure - 404
-                                {
-                                    console.log(result);
-                                    alert('Fallo')
-                                }
-                            );
-
 
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
                         "serverSide": true,
                         "scrollY": 200,
                         "scrollX": true,
-                        'ajax': '/api/cola/' + data['id'] + '/?format=datatables',
+                        'ajax': '/api/colas_publico/' + data['id'] + '/?format=datatables',
                         "language": {
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                         },
@@ -363,7 +341,7 @@
                             },
                             */
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
-                            {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
+                            {"title": "Placa", "data": "vehiculo", "responsivePriority": 1,},
                             {
                                 "data": "cargado",
                                 "title": "Cargado",
@@ -371,10 +349,6 @@
                                     return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                                 }
                             },
-                            {
-                                "data": null,
-                                "defaultContent": "<button>Cargar</button>"
-                            }
 
                         ],
 
@@ -384,77 +358,14 @@
                         dom: 'lBfrtip',
                         buttons: [
                             'copyHtml5',
-                            //'excelHtml5',
-                            //'csvHtml5',
-                            //'pdfHtml5',
-
-                           /*
+                            'print',
                             {
-                                extend: 'excelHtml5',
-                                customize: function (xlsx) {
-                                    //xlsx.xl['styles.xml'] = xmlStyle;
-                                    //ecxelCustomize(xlsx);
-                                },
-                                action: function (e, dt, button, config) {
-                                    $('.loading').fadeIn();
-                                    var that = this;
-                                    setTimeout(function () {
-                                        $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
-                                        $('.loading').fadeOut();
-                                    }, 500);
-                                },
-                            },
-                            */
-
-                            'print'
-                        ]
-                    });
-
-                    $('#tabla_colas tbody').on('click', 'button', function () {
-
-                        var data_cola = table_cola.row($(this).parents('tr')).data();
-                        //alert(data_cola['id'] + "'s salary is: " + data_cola['vehiculo']['placa']);
-
-                        // Activar carga a vehículo
-
-                        var data_update = {
-                            "cargado": true,
-                        };
-
-                        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-                        //var ajax_header = {'X-CSRFToken': c};
-                        //console.log(ajax_header, data_update);
-
-                        $.ajax(
-                            {
-                                url: URL_COLA + combustible_id + '/' + data_cola['id'] + '/',
-                                data: data_update,
-                                type: 'patch',
-                                dataType: 'json',
-                                headers: ajax_header,
-                                success: function (data) {
-                                    table_cola.ajax.reload();
-                                },
-                                error: function (request, status, error) {
-                                    alert(request.responseText);
+                                text: 'Recargar',
+                                action: function (e, dt, node, config) {
+                                    dt.ajax.reload();
                                 }
                             }
-                        );
-
-                        $.getJSON(URL_CONTAR_COLA + combustible_id)
-                            .done(function (result) {
-                                $("#data_estacion").html(result.data.estacion);
-                                $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
-                                $("#data_en_cola").html(result.data.por_cargar);
-
-                            })   // on success - 200
-                            .fail(function (result)    // on failure - 404
-                                {
-                                    console.log(result);
-                                    alert('Fallo')
-                                }
-                            );
-
+                        ]
                     });
 
 

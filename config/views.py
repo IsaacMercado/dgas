@@ -8,7 +8,7 @@ from django.db.models import Sum
 from dgas.gas_app.models import Estacion
 
 
-class Dashboard(LoginRequiredMixin, TemplateView):
+class Dashboard(TemplateView):
     template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs):

@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList, CombustibleViewSet, ColaViewSet, UltimaColaList, \
-    ContarCola, ColaCrudViewSet
+    ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
+    ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet
 
 from dgas.gas_app import views
 
@@ -13,6 +14,13 @@ router.register(r'cargas', CargaViewSet)
 router.register(r'combustible', CombustibleViewSet)
 router.register(r'cola/(?P<combustible_id>\d+)', ColaViewSet)
 router.register(r'cola-crud/(?P<combustible_id>\d+)', ColaCrudViewSet)
+#public
+router.register(r'estaciones', EstacionViewSet)
+router.register(r'combustible_historico', CombustibleHistoricoViewSet)
+router.register(r'colas_publico/(?P<combustible_id>\d+)', ColaPublicaViewSet)
+router.register(r'colas_historico/(?P<combustible_id>\d+)', ColaPublicaHistoricaViewSet)
+
+
 
 urlpatterns = [
 

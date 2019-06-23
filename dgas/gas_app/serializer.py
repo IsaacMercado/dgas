@@ -16,12 +16,11 @@ class CargaSerializer(serializers.ModelSerializer):
         fields = ('id', 'cantidad', 'estacion', 'vehiculo', 'tipo_combustible')
 
 
-
 class EstacionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Estacion
-        fields = ('nombre', 'municipio', 'direccion')
+        fields = ('id', 'nombre', 'municipio', 'direccion')
 
 
 class CombustibleSerializer(serializers.ModelSerializer):

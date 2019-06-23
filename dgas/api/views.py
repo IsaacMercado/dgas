@@ -6,13 +6,13 @@ from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.decorators import detail_route
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible
+from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, CombustibleSerializer, ColaSerializer, \
-    ColaCrudSerializer
+    ColaCrudSerializer, EstacionSerializer
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):
@@ -129,9 +129,21 @@ class UltimaColaList(APIView):
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
     serializer_class = CombustibleSerializer
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'))
+
+        return qs
+
+
+class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Combustible.objects.all()
+    serializer_class = CombustibleSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
 
         return qs
 
@@ -144,12 +156,35 @@ mixins.CreateModelMixin,
 '''
 
 
+class ColaPublicaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Cola.objects.all()
+    serializer_class = ColaCrudSerializer
+
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        combustible_id = self.kwargs['combustible_id']
+        qs = self.queryset.filter(combustible_id=combustible_id, cargado=False)
+        return qs
+
+
+class ColaPublicaHistoricaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Cola.objects.all()
+    serializer_class = ColaCrudSerializer
+
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        combustible_id = self.kwargs['combustible_id']
+        qs = self.queryset.filter(combustible_id=combustible_id)
+        return qs
+
+
 class ColaCrudViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Cola.objects.all()
     serializer_class = ColaCrudSerializer
 
     # permission_classes = (IsAuthenticated,)
-
 
     def get_queryset(self):
         combustible_id = self.kwargs['combustible_id']
@@ -229,3 +264,11 @@ class ContarCola(APIView):
                 'estacion': combustible.estacion.nombre,
             }
         return Response(content)
+
+
+class EstacionViewSet(viewsets.ModelViewSet):
+    queryset = Estacion.objects.all()
+    serializer_class = EstacionSerializer
+    permission_classes = (AllowAny,)
+
+    # permission_classes = (IsAuthenticated,)
