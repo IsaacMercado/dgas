@@ -17,12 +17,13 @@ class EstacionAdmin(admin.ModelAdmin):
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad',)
+    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad', 'completado')
 
 
 @admin.register(Vehiculo)
 class VehiculoAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('placa', 'cedula', 'tipo_vehiculo')
+    search_fields = ['placa', 'cedula' ]
 
 
 @admin.register(Carga)
@@ -33,3 +34,4 @@ class CargaAdmin(admin.ModelAdmin):
 @admin.register(Cola)
 class ColaAdmin(admin.ModelAdmin):
     list_display = ('vehiculo', 'cargado', 'cantidad', 'created_at', 'last_modified_at')
+    search_fields = ['vehiculo__placa',]

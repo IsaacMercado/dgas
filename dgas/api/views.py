@@ -199,6 +199,7 @@ class ContarCola(APIView):
     queryset = Cola.objects.all()
 
     def get(self, request, *args, **kwargs):
+
         combustible_id = self.kwargs['combustible_id']
 
         combustible = Combustible.objects.get(pk=combustible_id)
@@ -209,14 +210,22 @@ class ContarCola(APIView):
         total = Cola.objects.filter(combustible_id=combustible_id).count()
         # scount = queryset.count()
 
-        por_cargar = total - cargado[0].total_cargado
+        if total and cargado[0].total_cargado:
+            por_cargar = total - cargado[0].total_cargado
 
-        content = {
-            'total': total,
-            'cargado': cargado[0].total_cargado,
-            'por_cargar': por_cargar,
-            'estado': combustible.estado,
-            'estacion': combustible.estacion.nombre,
-        }
-        # content = {'ok': 'aja'}
+            content = {
+                'total': total,
+                'cargado': cargado[0].total_cargado,
+                'por_cargar': por_cargar,
+                'estado': combustible.estado,
+                'estacion': combustible.estacion.nombre,
+            }
+        else:
+            content = {
+                'total': 0,
+                'cargado': 0,
+                'por_cargar': 0,
+                'estado': combustible.estado,
+                'estacion': combustible.estacion.nombre,
+            }
         return Response(content)
