@@ -131,7 +131,7 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = CombustibleSerializer
 
     def get_queryset(self):
-        qs = self.queryset.all().exclude(estado='En plan', completado=False).annotate(total_cola=Count('colas'))
+        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'))
 
         return qs
 
