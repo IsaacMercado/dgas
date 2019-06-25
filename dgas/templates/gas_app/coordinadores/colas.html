@@ -32,7 +32,7 @@
 
 {% block content %}
 
-    <div class="alert alert-success" id="success-alert">
+    <div class="alert alert-success" id="success-alert" style="display: none">
         <button type="button" class="close" data-dismiss="alert">x</button>
         <strong>Mensaje: </strong>
         Regitro procesado.
@@ -526,7 +526,7 @@
                 "vehiculo": $("#buscar_placa").val(),
                 //"vehiculo": {"placa": $("#buscar_placa").val()},
             };
-            console.log(data_vehiculo);
+            //console.log(data_vehiculo);
 
 
             $.ajax(
@@ -542,6 +542,7 @@
                         });
                         table_cola.ajax.reload();
                         table.ajax.reload();
+                        $("#buscar_placa").val('');
                     },
                     error: function (request, status, error) {
                         console.log('encolarVehiculo');
@@ -552,13 +553,15 @@
                 }
             ); // ajax()
 
+            /*
             $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
                 $("#success-alert").slideUp(500);
             });
             table_cola.ajax.reload();
             table.ajax.reload();
-
+            $("#buscar_placa").val('');
             $("#loading").hide();
+            */
         }
 
         function addVehiculo() {
