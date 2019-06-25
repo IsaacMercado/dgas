@@ -201,7 +201,7 @@ class Cola(models.Model):
     last_modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('last_modified_at',)
+        ordering = ('-last_modified_at',)
         unique_together = ('vehiculo', 'combustible',)
 
     def __str__(self):
