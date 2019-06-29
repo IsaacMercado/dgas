@@ -7,7 +7,7 @@ from .base import env
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 #ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["dgas.sysdigital.web.ve"])
-ALLOWED_HOSTS = ['dgas.sysdigital.web.ve', 'wwww.dgas.org.ve', 'dgas.org.ve']
+ALLOWED_HOSTS = ['dgas.sysdigital.web.ve', 'www.dgas.org.ve', 'dgas.org.ve']
 
 # DATABASES
 # ------------------------------------------------------------------------------
