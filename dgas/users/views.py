@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from .models import Parroquia
+from django.views.generic import View
 
 User = get_user_model()
 
@@ -50,3 +52,14 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class ParroquiasView(View):
+
+    def get(self, context, **response_kwargs):
+        municipio_id = self.kwargs['pk']
+        parroquias_list = Parroquia.objects.filter(municipio=municipio_id).values('id', 'parroquia',).order_by('-parroquia')
+        response = [r for r in parroquias_list]
+
+        return HttpResponse(json.dumps(response))
+

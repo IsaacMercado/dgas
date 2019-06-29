@@ -8,10 +8,34 @@ from versatileimagefield.image_warmer import VersatileImageFieldWarmer
 from model_utils import Choices
 
 
+NAC_CHOICES = Choices('V', 'E')
+
+
+class Municipio (models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Parroquia (models.Model):
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
 class User(AbstractUser):
     # First Name and Last Name do not cover name patterns
     # around the globe.
-    photo_user = VersatileImageField(_('Photo user'), upload_to='images/photo_user', blank=True, null=True)
+    nacionalidad = models.CharField(max_length=2, choices=NAC_CHOICES, default='V')
+    cedula = models.PositiveIntegerField(default=0)
+    direccion_base = models.TextField('Dirección de habitación', blank=True, max_length=128, default='')
+    municipio = models.ForeignKey(Municipio, on_delete=models.SET_NULL, null=True, blank=True)
+    parroquia = models.ForeignKey(Parroquia, on_delete=models.SET_NULL, null=True, blank=True)
+
+    photo_user = VersatileImageField(_('Foto del perfil'), upload_to='images/photo_user', blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
