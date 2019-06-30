@@ -2,7 +2,7 @@ from django.db import models
 from model_utils import Choices
 from django_userforeignkey.models.fields import UserForeignKey
 from django.db.models import Sum
-from dgas.users.models import GasUser
+from dgas.users.models import GasUser, User
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
@@ -156,6 +156,7 @@ class Combustible(models.Model):
 
 
 class Vehiculo(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     placa = models.CharField(max_length=7, primary_key=True)
     cedula = models.CharField(max_length=20, default='No Registrado')
     tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')

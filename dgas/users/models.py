@@ -12,25 +12,26 @@ NAC_CHOICES = Choices('V', 'E')
 
 
 class Municipio (models.Model):
-    nombre = models.CharField(max_length=100)
+    municipio = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.nombre
+        return self.municipio
 
 
 class Parroquia (models.Model):
-    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=100)
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE, null=True, blank=True)
+    parroquia = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.nombre
+        return self.parroquia
 
 
 class User(AbstractUser):
     # First Name and Last Name do not cover name patterns
     # around the globe.
     nacionalidad = models.CharField(max_length=2, choices=NAC_CHOICES, default='V')
-    cedula = models.PositiveIntegerField(default=0)
+    cedula = models.CharField('Cedula de identidad', max_length=16, default='')
+    telefono_celular = models.CharField('Teléfono celular', max_length=16, null=True, blank=True, default='')
     direccion_base = models.TextField('Dirección de habitación', blank=True, max_length=128, default='')
     municipio = models.ForeignKey(Municipio, on_delete=models.SET_NULL, null=True, blank=True)
     parroquia = models.ForeignKey(Parroquia, on_delete=models.SET_NULL, null=True, blank=True)

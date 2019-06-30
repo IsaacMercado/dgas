@@ -1,0 +1,14 @@
+<li class="treeview">
+    <a href="#">
+        <i class="fa fa-laptop"></i>
+        <span>Mis datos</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="{% url 'users:user_perfil_detail' %}"><i class="fa fa-circle-o"></i> Perfil</a></li>
+        <li><a href="{% url 'public_app:vehiculos_list' %}"><i class="fa fa-circle-o"></i> Vehiculos</a></li>
+        <li><a href="{% url 'gas_app:estaciones_est_list' %}"><i class="fa fa-circle-o"></i> Cargas</a></li>
+    </ul>
+</li>
