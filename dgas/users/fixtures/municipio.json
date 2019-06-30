@@ -1,0 +1,163 @@
+[
+{
+    "pk": 1, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Alberto Adriani"
+    }
+},
+{
+    "pk": 2, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Antonio Pinto Salinas"
+    }
+},
+{
+    "pk": 3, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Andr\u00e9s Bello"
+    }
+},
+{
+    "pk": 4, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Aricagua"
+    }
+},
+{
+    "pk": 5, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Arzobispo Chac\u00f3n"
+    }
+},
+{
+    "pk": 6, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Campo El\u00edas"
+    }
+},
+{
+    "pk": 7, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Caracciolo Parra Olmedo"
+    }
+},
+{
+    "pk": 8, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Cardenal Quintero"
+    }
+},
+{
+    "pk": 9, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Guaraque"
+    }
+},
+{
+    "pk": 10, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Julio C\u00e9sar Salas"
+    }
+},
+{
+    "pk": 11, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Justo Brice\u00f1o"
+    }
+},
+{
+    "pk": 12, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Libertador"
+    }
+},
+{
+    "pk": 13, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Miranda"
+    }
+},
+{
+    "pk": 14, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Obispo Ramos de Lora"
+    }
+},
+{
+    "pk": 15, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Padre Noguera"
+    }
+},
+{
+    "pk": 16, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Pueblo Llano"
+    }
+},
+{
+    "pk": 17, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Rangel"
+    }
+},
+{
+    "pk": 18, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Rivas D\u00e1vila"
+    }
+},
+{
+    "pk": 19, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Santos Marquina"
+    }
+},
+{
+    "pk": 20, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Sucre"
+    }
+},
+{
+    "pk": 21, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Tovar"
+    }
+},
+{
+    "pk": 22, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Tulio Febres Cordero"
+    }
+},
+{
+    "pk": 23, 
+    "model": "users.municipio", 
+    "fields": {
+        "municipio": "Zea"
+    }
+}
+]
