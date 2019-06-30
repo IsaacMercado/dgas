@@ -124,8 +124,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'intranet_cida_box'
 EMAIL_HOST_PASSWORD = 'admin2017q'
-DEFAULT_FROM_EMAIL = 'hr@hernanramirez.info'
-SERVER_EMAIL = 'hr@hernanramirez.info'
+DEFAULT_FROM_EMAIL = 'soporte@dgas.org.ve'
+SERVER_EMAIL = 'soporte@dgas.org.ve'
 EMAIL_PORT = 587
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = '[%s] ' % 'DGas'
