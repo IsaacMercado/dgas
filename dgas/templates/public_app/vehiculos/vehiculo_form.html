@@ -37,13 +37,13 @@
                             {% csrf_token %}
                             {{ form|crispy }}
                             <div class="btn-group">
-                                    <button class="btn btn-success" type="submit">
-                                        <i class="fa fa-check"></i> Grabar
-                                    </button>
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fa fa-check"></i> Grabar
+                                </button>
 
-                                    <a href="{% url 'gas_app:combustibles_list' %}"
-                                       class="btn btn-default"><i
-                                            class="fa fa-times"></i> Cancelar</a>
+                                <a href="{% url 'public_app:vehiculos_list' %}"
+                                   class="btn btn-default"><i
+                                        class="fa fa-times"></i> Cancelar</a>
                             </div>
                         </form>
                     </div>
@@ -64,35 +64,43 @@
             $('#id_telefono_celular').mask('(0000) 000-0000');
 
             $("#id_placa").bind('keyup', function (e) {
-                    if (e.which >= 97 && e.which <= 122) {
-                        var newKey = e.which - 32;
-                        // I have tried setting those
-                        e.keyCode = newKey;
-                        e.charCode = newKey;
-                    }
-                    $("#id_placa").val(($("#id_placa").val()).toUpperCase());
-                });
+                if (e.which >= 97 && e.which <= 122) {
+                    var newKey = e.which - 32;
+                    // I have tried setting those
+                    e.keyCode = newKey;
+                    e.charCode = newKey;
+                }
+                $("#id_placa").val(($("#id_placa").val()).toUpperCase());
+            });
+
+            $('#id_placa').mask('AAAAAAA', {
+                'translation': {
+                    A: {pattern: /[A-Za-z0-9]/},
+                    S: {pattern: /[A-Za-z]/},
+                    Y: {pattern: /[0-9]/}
+                }
+            });
 
             var options = {
-                    translation: {
-                        '0': {pattern: /\d/},
-                        '1': {pattern: /[1-9]/},
-                        '9': {pattern: /\d/, optional: true},
-                        '#': {pattern: /\d/, recursive: true},
-                        'C': {pattern: /V|v|E|e/, fallback: 'V'}
-                    }
-                };
-                $('#id_cedula').mask('C-19999999', options);
+                translation: {
+                    '0': {pattern: /\d/},
+                    '1': {pattern: /[1-9]/},
+                    '9': {pattern: /\d/, optional: true},
+                    '#': {pattern: /\d/, recursive: true},
+                    'C': {pattern: /V|v|E|e/, fallback: 'V'}
+                }
+            };
+            $('#id_cedula').mask('C-19999999', options);
 
-                $('#id_cedula').on('input', function (e) {
-                    var cedula = $(this).val();
-                    if (cedula.length > 9) {
-                        var cedula = cedula.substring(2);
-                        if (cedula > 80000000) {
-                            $(this).val('E-' + cedula);
-                        }
+            $('#id_cedula').on('input', function (e) {
+                var cedula = $(this).val();
+                if (cedula.length > 9) {
+                    var cedula = cedula.substring(2);
+                    if (cedula > 80000000) {
+                        $(this).val('E-' + cedula);
                     }
-                });
+                }
+            });
         });
     </script>
 
