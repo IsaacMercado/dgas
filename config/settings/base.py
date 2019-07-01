@@ -260,6 +260,7 @@ ACCOUNT_ADAPTER = "dgas.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "dgas.users.adapters.SocialAccountAdapter"
 
+ACCOUNT_USERNAME_REQUIRED = False
 
 # Your stuff...
 # ------------------------------------------------------------------------------
