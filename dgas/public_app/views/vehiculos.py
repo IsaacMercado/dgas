@@ -46,7 +46,7 @@ class VehiculoCreateView(LoginRequiredMixin, CreateView):
     model = Vehiculo
     template_name = 'public_app/vehiculos/vehiculo_form.html'
 
-    fields = ['placa', 'tipo_vehiculo', 'cilindros']
+    fields = ['placa', 'cedula', 'tipo_vehiculo', 'cilindros']
 
     page = {
         'title': 'Vehículos',
@@ -69,8 +69,8 @@ class VehiculoCreateView(LoginRequiredMixin, CreateView):
 class VehiculoUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Vehiculo
-    fields = ['placa', 'tipo_vehiculo', 'cilindros']
-    template_name = 'gas_app/combustibles/combustible_form.html'
+    fields = ['placa', 'cedula', 'tipo_vehiculo', 'cilindros']
+    template_name = 'public_app/vehiculos/vehiculo_form.html'
     pk_url_kwarg = 'placa'
 
     def get_success_url(self):

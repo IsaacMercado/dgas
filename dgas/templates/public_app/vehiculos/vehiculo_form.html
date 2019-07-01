@@ -57,4 +57,44 @@
 
 {% block js %}
 
+    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#id_telefono_celular').mask('(0000) 000-0000');
+
+            $("#id_placa").bind('keyup', function (e) {
+                    if (e.which >= 97 && e.which <= 122) {
+                        var newKey = e.which - 32;
+                        // I have tried setting those
+                        e.keyCode = newKey;
+                        e.charCode = newKey;
+                    }
+                    $("#id_placa").val(($("#id_placa").val()).toUpperCase());
+                });
+
+            var options = {
+                    translation: {
+                        '0': {pattern: /\d/},
+                        '1': {pattern: /[1-9]/},
+                        '9': {pattern: /\d/, optional: true},
+                        '#': {pattern: /\d/, recursive: true},
+                        'C': {pattern: /V|v|E|e/, fallback: 'V'}
+                    }
+                };
+                $('#id_cedula').mask('C-19999999', options);
+
+                $('#id_cedula').on('input', function (e) {
+                    var cedula = $(this).val();
+                    if (cedula.length > 9) {
+                        var cedula = cedula.substring(2);
+                        if (cedula > 80000000) {
+                            $(this).val('E-' + cedula);
+                        }
+                    }
+                });
+        });
+    </script>
+
+
 {% endblock js %}
