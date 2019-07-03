@@ -57,48 +57,15 @@
                         </div>
                     </div>
 
-                    <div id="cola">
+                    <div id="cola" style="display: none">
                         <button type="button"
                                 class="btn btn-reset btn-success btn-flat"
                                 id="cerrar_cola">Regresar
                         </button>
                         <br><br>
-                        {% comment %}
-                        <div class="row">
-                            <div class="col-md-4"><b>Estación:</b>
-                                <div id="data_estacion"></div>
-                            </div>
-                            <div class="col-md-4"><b>Atendiendo:</b>
-                                <div id="data_atencion"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><b>Total en cola:</b>
-                                <div id="data_en_cola"></div>
-                            </div>
-                        </div>
-                        <br><br>
-
-                        <form class="form-inline" action="">
-                            <div class="form-group">
-                                <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
-                            </div>
-
-                            <button onclick="registarEnCola()" type="button" class="btn btn-primary">Registrar en
-                                cola
-                            </button>
-                            <button type="button"
-                                    class="btn btn-reset btn-success btn-flat"
-                                    id="cerrar_cola">Regresar
-                            </button>
-                        </form>
-
-                        <br>
-                        {% endcomment %}
-
 
                         <table id="tabla_colas"
-                               style="display: none"
+                               style="width:100%"
                                class="table table-bordered table-striped">
                             <div class="loading-table-data">
                                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
@@ -274,8 +241,8 @@
 
                 table = $('#tabla_combustible').DataTable({
                     'serverSide': true,
-                    "scrollY": 200,
-                    "scrollX": true,
+                    //"scrollY": 200,
+                    //"scrollX": true,
                     'ajax': '/api/combustible/?format=datatables',
 
                     "language": {
@@ -324,8 +291,8 @@
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
                         "serverSide": true,
-                        "scrollY": 200,
-                        "scrollX": true,
+                        //"scrollY": 200,
+                        //"scrollX": true,
                         'ajax': '/api/colas_publico/' + data['id'] + '/?format=datatables',
                         "language": {
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
@@ -503,16 +470,6 @@
             $("#buscar_placa").val("");
             $("#username").val("");
             $('#modal-add-vehiculo').modal('hide');
-
-        }
-
-        function add_success() {
-            //alert("Added carga Successfully");
-            $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
-                $("#success-alert").slideUp(500);
-            });
-            table_cola.ajax.reload();
-            table.ajax.reload();
 
         }
 

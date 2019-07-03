@@ -57,46 +57,13 @@
                         </div>
                     </div>
 
-                    <div id="cola">
+                    <div id="cola"  style="display: none">
                         <button type="button"
                                 class="btn btn-reset btn-success btn-flat"
                                 id="cerrar_cola">Regresar
                         </button>
                         <br><br>
-                        {% comment %}
-                        <div class="row">
-                            <div class="col-md-4"><b>Estación:</b>
-                                <div id="data_estacion"></div>
-                            </div>
-                            <div class="col-md-4"><b>Atendiendo:</b>
-                                <div id="data_atencion"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><b>Total en cola:</b>
-                                <div id="data_en_cola"></div>
-                            </div>
-                        </div>
-                        <br><br>
-
-                        <form class="form-inline" action="">
-                            <div class="form-group">
-                                <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
-                            </div>
-
-                            <button onclick="registarEnCola()" type="button" class="btn btn-primary">Registrar en
-                                cola
-                            </button>
-                            <button type="button"
-                                    class="btn btn-reset btn-success btn-flat"
-                                    id="cerrar_cola">Regresar
-                            </button>
-                        </form>
-
-                        <br>
-                        {% endcomment %}
-
-
+                       
                         <table id="tabla_colas"
                                style="width:100%"
                                class="table table-bordered table-striped">
