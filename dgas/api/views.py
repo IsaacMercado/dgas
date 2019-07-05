@@ -169,6 +169,7 @@ class ColaPublicaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class ColaPublicaHistoricaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+
     queryset = Cola.objects.all()
     serializer_class = ColaCrudSerializer
 
