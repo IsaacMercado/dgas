@@ -48,6 +48,15 @@ class ColaSerializer(serializers.ModelSerializer):
 
 class ColaCrudSerializer(serializers.ModelSerializer):
 
+    #vehiculo = VehiculoSerializer()
+
+    class Meta:
+        model = Cola
+        fields = ('id', 'vehiculo', 'cargado')
+
+
+class ColaPublicoSerializer(serializers.ModelSerializer):
+
     vehiculo = VehiculoSerializer()
 
     class Meta:

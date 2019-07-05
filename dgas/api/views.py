@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, CombustibleSerializer, ColaSerializer, \
-    ColaCrudSerializer, EstacionSerializer
+    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):
@@ -158,7 +158,7 @@ mixins.CreateModelMixin,
 
 class ColaPublicaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Cola.objects.all()
-    serializer_class = ColaCrudSerializer
+    serializer_class = ColaPublicoSerializer
 
     permission_classes = (AllowAny,)
 
@@ -171,7 +171,7 @@ class ColaPublicaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class ColaPublicaHistoricaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     queryset = Cola.objects.all()
-    serializer_class = ColaCrudSerializer
+    serializer_class = ColaPublicoSerializer
 
     permission_classes = (AllowAny,)
 
