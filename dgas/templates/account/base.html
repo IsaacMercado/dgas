@@ -18,6 +18,10 @@
     <link rel="stylesheet" href="{% static 'css/AdminLTE.min.css' %}">
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
+    <!-- Theme style custom -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -31,11 +35,13 @@
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <a href="../../index2.html"><b>DG</b>as</a>
-    </div>
+<body class="hold-transition login-page bcg-login">
+<div class="login-box login-box-border">
+    <!-- <div class="login-logo">
+        <a href="../../index2.html">
+            <img src="{% static '/images/logo_login.png' %}">
+        </a>
+    </div> -->
 
     {% if messages %}
             <div class="row">
@@ -57,6 +63,11 @@
 
     <!-- /.login-logo -->
     <div class="login-box-body">
+            <div class="login-logo">
+                    <a href="#">
+                        <img src="{% static '/images/logo_login.png' %}">
+                    </a>
+                </div>
         <p class="login-box-msg">{% trans "Sign In" %}</p>
 
         {% block content %}
