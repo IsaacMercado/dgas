@@ -60,14 +60,14 @@ class UltimaCargaList(APIView):
 
             ultima_carga = Carga.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_carga.created_at + timedelta(days=2)
+            p = ultima_carga.created_at + timedelta(days=4)
             print(p, hoy)
 
             hoy = hoy.replace(tzinfo=utc)
             u = ultima_carga.created_at.replace(tzinfo=utc)
 
             print(ultima_carga.estacion, ultima_carga.created_at, hoy)
-            if p > hoy:
+            if p.date() > hoy.date():
                 uc = json.dumps({"cargar": "false", "estacion": str(ultima_carga.estacion),
                                  "created_at": str(ultima_carga.created_at)})
             else:
@@ -98,7 +98,7 @@ class UltimaColaList(APIView):
 
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_cola.created_at + timedelta(days=5)
+            p = ultima_cola.created_at + timedelta(days=4)
             print(p, hoy)
 
             hoy = hoy.replace(tzinfo=utc)
@@ -112,10 +112,10 @@ class UltimaColaList(APIView):
                                  "estacion": str(ultima_cola.combustible),
                                  "proxima_recarga": "",
                                  "created_at": str(ultima_cola.created_at)})
-            elif p > hoy:
-                uc = json.dumps({"cargar": "false", "mensaje": " ya esta surtio gasolina",
+            elif p.date() > hoy.date():
+                uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
                                  "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": str(p),
+                                 "proxima_recarga": str(p.date()),
                                  "created_at": str(ultima_cola.created_at)})
             else:
                 uc = json.dumps({"cargar": "true"})

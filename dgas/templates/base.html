@@ -129,7 +129,14 @@
                             </ul>
                             </li>
                         {% else %}
-                            <li><a href="/accounts/login">Iniciar sesión</a></li>
+                            <li>
+                                <a href="/accounts/login">
+                                    <img src="{% static 'img/no_photo100x100.png' %}" class="img-circle" height="20"
+                                         width="20"
+                                         alt="Sin foto">
+                                    Iniciar sesión / Registrarse
+                                </a>
+                            </li>
                         {% endif %}
 
                 </ul>
@@ -172,7 +179,7 @@
             <!-- search form -->
             <form action="#" method="get" class="sidebar-form">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar placa...">
                     <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -182,11 +189,11 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">MAIN NAVIGATION</li>
+                <li class="header">MENÚ DE NAVEGACIÓN</li>
 
                 <li>
                     <a href="{% url 'dashboard' %}">
-                        <i class="fa fa-th"></i> <span>Dashboard</span>
+                        <i class="fa fa-th"></i> <span>Inicio</span>
 
                     </a>
                 </li>
@@ -224,6 +231,8 @@
                         {% include "mnu_coordinador.html" %}
                     {% endif %}
                 {% endfor %}
+
+                {% include "mnu_ayuda.html" %}
 
 
             </ul>

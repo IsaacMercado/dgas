@@ -96,7 +96,7 @@
 
 
                         <table id="tabla_colas"
-                               style="width:100%"
+                               style="width:100%; visibility: hidden"
                                class="table table-bordered table-striped">
                             <div class="loading-table-data">
                                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
@@ -146,6 +146,7 @@
                         <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
                             <option value="Particular">Particular</option>
                             <option value="Transporte Publico">Transporte Publico</option>
+                            <option value="Transporte Publico">Taxi</option>
                             <option value="Oficial">Oficial</option>
                             <option value="Moto">Moto</option>
                             <option value="Moto Taxita">Moto Taxita</option>
@@ -194,6 +195,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Cancelar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Rebotar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -206,16 +208,10 @@
 
 {% block js %}
 
-    {% comment %}
-    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
-    {% endcomment %}
-
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/dataTables.bootstrap.min.js' %}"></script>
     <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
-    
+
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
     <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
@@ -230,6 +226,7 @@
         var table_cola;
         var table;
         var combustible_id;
+        var control_registrados = 0;
 
         var URL = "/api/vehiculos/";
         var URL_COLA = "/api/cola/";
@@ -251,7 +248,7 @@
                         '1': {pattern: /[1-9]/},
                         '9': {pattern: /\d/, optional: true},
                         '#': {pattern: /\d/, recursive: true},
-                        'C': {pattern: /V|v|E|e/, fallback: 'V'}
+                        'C': {pattern: /V|v|E|e|J|j|G|g/, fallback: 'V'}
                     }
                 };
                 $('#username').mask('C-19999999', options);
@@ -290,6 +287,7 @@
                     "language": {
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
+                    "order": [[0, "desc"]],
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
@@ -297,8 +295,8 @@
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
                         {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
-                        {"title": "Nro. Cupos", "data": "cantidad_vehiculos", "responsivePriority": 1,},
-                        {"title": "Lt/Veh", "data": "cantidad_maxima_por_vehiculo", "responsivePriority": 1,},
+                        {"title": "Nro/Cupos/Aprox", "data": "cantidad_vehiculos", "responsivePriority": 1,},
+                        {"title": "Lt/Veh/Aprox", "data": "cantidad_maxima_por_vehiculo", "responsivePriority": 1,},
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
                         {
                             "data": null,
@@ -321,18 +319,18 @@
                     $('#combustible').hide();
 
                     $.getJSON(URL_CONTAR_COLA + combustible_id)
-                            .done(function (result) {
-                                $("#data_estacion").html(result.data.estacion);
-                                $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
-                                $("#data_en_cola").html(result.data.por_cargar);
+                        .done(function (result) {
+                            $("#data_estacion").html(result.data.estacion);
+                            $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
+                            $("#data_en_cola").html(result.data.por_cargar);
 
-                            })   // on success - 200
-                            .fail(function (result)    // on failure - 404
-                                {
-                                    console.log(result);
-                                    alert('Fallo')
-                                }
-                            );
+                        })   // on success - 200
+                        .fail(function (result)    // on failure - 404
+                            {
+                                console.log(result);
+                                alert('Fallo')
+                            }
+                        );
 
 
                     table_cola = $('#tabla_colas').DataTable({
@@ -345,15 +343,10 @@
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                         },
 
+                        "order": [[1, "desc"]],
+
                         'columns': [
-                            /*
-                            {
-                                "className": 'details-control',
-                                "orderable": false,
-                                "data": null,
-                                "defaultContent": ''
-                            },
-                            */
+
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
                             {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
                             {
@@ -380,23 +373,23 @@
                             //'csvHtml5',
                             //'pdfHtml5',
 
-                           /*
-                            {
-                                extend: 'excelHtml5',
-                                customize: function (xlsx) {
-                                    //xlsx.xl['styles.xml'] = xmlStyle;
-                                    //ecxelCustomize(xlsx);
-                                },
-                                action: function (e, dt, button, config) {
-                                    $('.loading').fadeIn();
-                                    var that = this;
-                                    setTimeout(function () {
-                                        $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
-                                        $('.loading').fadeOut();
-                                    }, 500);
-                                },
-                            },
-                            */
+                            /*
+                             {
+                                 extend: 'excelHtml5',
+                                 customize: function (xlsx) {
+                                     //xlsx.xl['styles.xml'] = xmlStyle;
+                                     //ecxelCustomize(xlsx);
+                                 },
+                                 action: function (e, dt, button, config) {
+                                     $('.loading').fadeIn();
+                                     var that = this;
+                                     setTimeout(function () {
+                                         $.fn.dataTable.ext.buttons.excelHtml5.action.call(that, e, dt, button, config);
+                                         $('.loading').fadeOut();
+                                     }, 500);
+                                 },
+                             },
+                             */
 
                             'print'
                         ]
@@ -405,17 +398,12 @@
                     $('#tabla_colas tbody').on('click', 'button', function () {
 
                         var data_cola = table_cola.row($(this).parents('tr')).data();
-                        //alert(data_cola['id'] + "'s salary is: " + data_cola['vehiculo']['placa']);
-
-                        // Activar carga a vehículo
 
                         var data_update = {
                             "cargado": true,
                         };
 
                         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-                        //var ajax_header = {'X-CSRFToken': c};
-                        //console.log(ajax_header, data_update);
 
                         $.ajax(
                             {
@@ -432,20 +420,6 @@
                                 }
                             }
                         );
-
-                        $.getJSON(URL_CONTAR_COLA + combustible_id)
-                            .done(function (result) {
-                                $("#data_estacion").html(result.data.estacion);
-                                $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
-                                $("#data_en_cola").html(result.data.por_cargar);
-
-                            })   // on success - 200
-                            .fail(function (result)    // on failure - 404
-                                {
-                                    console.log(result);
-                                    alert('Fallo')
-                                }
-                            );
 
                     });
 
@@ -480,7 +454,6 @@
                         }
                     );
             }
-            $("#loading").hide();
 
         }
 
@@ -511,15 +484,11 @@
         }
 
         function encolarVehiculo() {
-            $("#loading").show();
 
             var data_vehiculo = {
                 "combustible": combustible_id,
                 "vehiculo": $("#buscar_placa").val(),
-                //"vehiculo": {"placa": $("#buscar_placa").val()},
             };
-            //console.log(data_vehiculo);
-
 
             $.ajax(
                 {
@@ -532,8 +501,15 @@
                         $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
                             $("#success-alert").slideUp(500);
                         });
-                        table_cola.ajax.reload();
-                        table.ajax.reload();
+
+                        if (control_registrados > 10) {
+                            table_cola.ajax.reload();
+                            table.ajax.reload();
+                            contarCola(combustible_id);
+                        } else {
+                            control_registrados = 0;
+                        }
+
                         $("#buscar_placa").val('');
                     },
                     error: function (request, status, error) {
@@ -547,19 +523,9 @@
 
             $("#loading").hide();
 
-            /*
-            $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
-                $("#success-alert").slideUp(500);
-            });
-            table_cola.ajax.reload();
-            table.ajax.reload();
-            $("#buscar_placa").val('');
-            $("#loading").hide();
-            */
         }
 
         function addVehiculo() {
-            $("#loading").show();
 
             $.ajax(
                 {
@@ -584,7 +550,7 @@
         }
 
         function veh_add_success() {
-            //salert("Added carga Successfully");
+            $("#loading").show();
             encolarVehiculo();
             $("#buscar_placa").val("");
             $("#username").val("");
@@ -611,6 +577,26 @@
         function cancelarAlerta() {
             $('#modal-alerta').modal('hide');
         }
+
+        function contarCola(combustible_id) {
+
+            $.getJSON(URL_CONTAR_COLA + combustible_id)
+                .done(function (result) {
+                    $("#data_estacion").html(result.data.estacion);
+                    $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
+                    $("#data_en_cola").html(result.data.por_cargar);
+
+                })   // on success - 200
+                .fail(function (result)    // on failure - 404
+                    {
+                        console.log(result);
+                        alert('Fallo')
+                    }
+                );
+
+        }
+
+
     </script>
 
 {% endblock js %}

@@ -27,12 +27,6 @@
 
 {% block content %}
 
-    <div class="alert alert-success" id="success-alert">
-        <button type="button" class="close" data-dismiss="alert">x</button>
-        <strong>Mensaje: </strong>
-        Regitro procesado.
-    </div>
-
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -57,7 +51,7 @@
                         </div>
                     </div>
 
-                    <div id="cola"  style="display: none">
+                    <div id="cola" style="display: none">
                         <button type="button"
                                 class="btn btn-reset btn-success btn-flat"
                                 id="cerrar_cola">Regresar
@@ -182,6 +176,9 @@
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
 
+    <script src="{% static 'bower_components/moment/moment.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs/plugins/datetime.js' %}"></script>
+
 
     <script type="text/javascript">
 
@@ -249,22 +246,19 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
 
+                    "order": [[3, "desc"]],
+
+                    columnDefs: [
+                        {targets: 3, render: $.fn.dataTable.render.moment( 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ', 'DD/MMM/YYYY HH:MM', 'es' )}
+                    ],
+
                     'columns': [
-                        /*
-                        {
-                            "className": 'details-control',
-                            "orderable": false,
-                            "data": null,
-                            "defaultContent": ''
-                        },
-                        */
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
-                        {"title": "Tipo Combustible", "data": "tipo_combustible", "responsivePriority": 1,},
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
                         {"title": "Fecha cierre", "data": "last_modified_at", "responsivePriority": 1,},
-                        {"title": "Nro. Cupos", "data": "cantidad_vehiculos", "responsivePriority": 1,},
-                        {"title": "Lt/Veh", "data": "cantidad_maxima_por_vehiculo", "responsivePriority": 1,},
+                        {"title": "Nro. Cupos/Aprox", "data": "cantidad_vehiculos", "responsivePriority": 1,},
+                        {"title": "Lt/Veh/Aprox", "data": "cantidad_maxima_por_vehiculo", "responsivePriority": 1,},
                         {"title": "Total Veh", "data": "total_cola", "responsivePriority": 1,},
                         {
                             "data": null,
@@ -342,140 +336,6 @@
 
             });
 
-        function registarEnCola() {
-            $("#loading").show();
-
-            var buscar_placa_value = $("#buscar_placa").val();
-
-            if (buscar_placa_value.length < 6) {
-                alert('Número de placa invalida')
-            } else {
-                $.getJSON(URL + $("#buscar_placa").val())
-                    .done(ultimaCola)   // on success - 200
-                    .fail(function ()    // on failure - 404
-                        {
-                            $("#add_placa").val($("#buscar_placa").val());
-                            $('#modal-add-vehiculo').modal('show');
-
-                        }
-                    );
-            }
-            $("#loading").hide();
-
-        }
-
-        function ultimaCola() {
-            $.getJSON(URL_ULTIMA_COLA + $("#buscar_placa").val())
-                .done(function (result)    // on failure - 404
-                    {
-                        console.log('verifico ultimaCola()')
-                        var ultima_carga = jQuery.parseJSON(result.data);
-
-                        if (ultima_carga.cargar == 'false') {
-
-                            var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-                            var created_at = new Date(ultima_carga.created_at);
-
-                            $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
-                            if (ultima_carga.proxima_recarga != '') {
-                                var pr = new Date(ultima_carga.proxima_recarga);
-                                $("#alerta-mensaje").append("<br><br><b>Proxima recarga el: </b>" + pr)
-                            }
-                            $('#modal-alerta').modal('show');
-                        } else {
-                            encolarVehiculo()
-                        }
-                    }
-                )   // on success - 200
-                .fail();
-        }
-
-        function encolarVehiculo() {
-            $("#loading").show();
-
-            var data_vehiculo = {
-                "combustible": combustible_id,
-                "vehiculo": $("#buscar_placa").val(),
-                //"vehiculo": {"placa": $("#buscar_placa").val()},
-            };
-            console.log(data_vehiculo);
-
-
-            $.ajax(
-                {
-                    url: URL_COLA_CRUD + combustible_id + '/',
-                    data: data_vehiculo,
-                    dataType: "json",
-                    type: "post",
-                    headers: ajax_header,
-                    success: function (request) {
-                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
-                            $("#success-alert").slideUp(500);
-                        });
-                        table_cola.ajax.reload();
-                        table.ajax.reload();
-                    },
-                    error: function (request, status, error) {
-                        console.log('encolarVehiculo');
-                        console.log(request);
-                        alert(request.responseText);
-                    }
-                    //error: add_error
-                }
-            ); // ajax()
-
-            $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
-                $("#success-alert").slideUp(500);
-            });
-            table_cola.ajax.reload();
-            table.ajax.reload();
-
-            $("#loading").hide();
-        }
-
-        function addVehiculo() {
-            $("#loading").show();
-
-            $.ajax(
-                {
-                    url: URL_VEH,
-                    data: {
-                        "placa": $("#add_placa").val(),
-                        "cedula": $("#username").val(),
-                        "tipo_vehiculo": $("#tipo_vehiculo option:selected").text(),
-                        "cilindros": $("#add_cilindros option:selected").text(),
-                    },
-                    headers: ajax_header,
-                    dataType: "json",
-                    type: "post",
-                    success: veh_add_success,
-                    error: function (request, status, error) {
-                        alert(request.responseText);
-                    }
-                    //error: add_error
-                }
-            ); // ajax()
-            $("#loading").hide();
-        }
-
-        function veh_add_success() {
-            //salert("Added carga Successfully");
-            encolarVehiculo();
-            $("#buscar_placa").val("");
-            $("#username").val("");
-            $('#modal-add-vehiculo').modal('hide');
-
-        }
-
-        function add_success() {
-            //alert("Added carga Successfully");
-            $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
-                $("#success-alert").slideUp(500);
-            });
-            table_cola.ajax.reload();
-            table.ajax.reload();
-
-        }
 
         function addCancelarAdd() {
             $("#buscar_placa").val('');

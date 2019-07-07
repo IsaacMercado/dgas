@@ -7,7 +7,7 @@ from .base import env
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 #ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["dgas.sysdigital.web.ve"])
-ALLOWED_HOSTS = ['dgas.sysdigital.web.ve', 'www.dgas.org.ve', 'dgas.org.ve', 'combustiblemerida.com', 'www.combustiblemerida.com']
+ALLOWED_HOSTS = ['combustiblemerida.com', 'www.combustiblemerida.com']
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -103,13 +103,13 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="Visual Fincas Net <noreply@sysdigital.web.net>"
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Combustible Merida <noreply@combustiblemerida.com>"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = env(
-    "DJANGO_EMAIL_SUBJECT_PREFIX", default="[DGas]"
+    "DJANGO_EMAIL_SUBJECT_PREFIX", default="[Combustible Merida]"
 )
 
 # ADMIN
@@ -121,17 +121,27 @@ ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+'''
 EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'intranet_cida_box'
 EMAIL_HOST_PASSWORD = 'admin2017q'
 DEFAULT_FROM_EMAIL = 'soporte@dgas.org.ve'
 SERVER_EMAIL = 'soporte@dgas.org.ve'
 EMAIL_PORT = 587
+'''
+
+EMAIL_HOST = env.db("EMAIL_HOST")
+EMAIL_HOST_USER = env.db("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.db("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env.db("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = env.db("SERVER_EMAIL")
+EMAIL_PORT = 587
+
+
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
-EMAIL_SUBJECT_PREFIX = '[%s] ' % 'DGas'
+EMAIL_SUBJECT_PREFIX = '[%s] ' % 'Combustible Merida'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-#SERVER_EMAIL = EMAIL_HOST_USER
 ########## END EMAIL CONFIGURATION
 
 # Gunicorn
