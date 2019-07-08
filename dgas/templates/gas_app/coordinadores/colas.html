@@ -265,6 +265,7 @@
 
                 $("#loading").hide();
                 $("#success-alert").hide();
+                $('#cola').hide();
 
                 $("#buscar_placa").bind('keyup', function (e) {
                     if (e.which >= 97 && e.which <= 122) {
@@ -313,7 +314,7 @@
                     var data = table.row($(this).parents('tr')).data();
                     combustible_id = data['id'];
 
-                    $('#tabla_colas').show();
+                    $('#cola').show();
                     $('#combustible').hide();
 
                     $.getJSON(URL_CONTAR_COLA + combustible_id)
@@ -426,7 +427,7 @@
 
                 $('#cerrar_cola').on('click', function () {
 
-                    $('#tabla_colas').hide();
+                    $('#cola').hide();
                     table.ajax.reload();
                     $('#combustible').show();
                     table_cola.destroy();
