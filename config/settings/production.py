@@ -119,8 +119,7 @@ ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 ########## EMAIL CONFIGURATION
 
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 '''
 EMAIL_HOST = 'smtp.webfaction.com'
@@ -136,8 +135,7 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = env("SERVER_EMAIL")
-#EMAIL_PORT = 587
-EMAIL_PORT = 465
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
