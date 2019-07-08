@@ -96,7 +96,7 @@
 
 
                         <table id="tabla_colas"
-                               style="width:100%; visibility: hidden"
+                               style="width:100%;"
                                class="table table-bordered table-striped">
                             <div class="loading-table-data">
                                 <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
@@ -276,8 +276,6 @@
                     $("#buscar_placa").val(($("#buscar_placa").val()).toUpperCase());
                 });
 
-                $('#cola').hide();
-
                 table = $('#tabla_combustible').DataTable({
                     'serverSide': true,
                     "scrollY": 200,
@@ -315,7 +313,7 @@
                     var data = table.row($(this).parents('tr')).data();
                     combustible_id = data['id'];
 
-                    $('#cola').show();
+                    $('#tabla_colas').show();
                     $('#combustible').hide();
 
                     $.getJSON(URL_CONTAR_COLA + combustible_id)
@@ -428,7 +426,8 @@
 
                 $('#cerrar_cola').on('click', function () {
 
-                    $('#cola').hide();
+                    $('#tabla_colas').hide();
+                    table.ajax.reload();
                     $('#combustible').show();
                     table_cola.destroy();
 
@@ -450,7 +449,6 @@
                         {
                             $("#add_placa").val($("#buscar_placa").val());
                             $('#modal-add-vehiculo').modal('show');
-
                         }
                     );
             }
@@ -501,6 +499,8 @@
                         $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
                             $("#success-alert").slideUp(500);
                         });
+
+                        table_cola.ajax.reload();
 
                         if (control_registrados > 10) {
                             table_cola.ajax.reload();
@@ -569,6 +569,7 @@
         }
 
         function addCancelarAdd() {
+            $("#loading").hide();
             $("#buscar_placa").val('');
             $('#modal-add-vehiculo').modal('hide');
 
@@ -576,6 +577,7 @@
 
         function cancelarAlerta() {
             $('#modal-alerta').modal('hide');
+            $("#loading").hide();
         }
 
         function contarCola(combustible_id) {

@@ -87,7 +87,7 @@
                     '1': {pattern: /[1-9]/},
                     '9': {pattern: /\d/, optional: true},
                     '#': {pattern: /\d/, recursive: true},
-                    'C': {pattern: /V|v|E|e/, fallback: 'V'}
+                    'C': {pattern: /V|v|E|e|G|g|J|j/, fallback: 'V'}
                 }
             };
             $('#id_cedula').mask('C-19999999', options);

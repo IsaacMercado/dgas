@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList, CombustibleViewSet, ColaViewSet, UltimaColaList, \
     ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
-    ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet
+    ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico
 
 from dgas.gas_app import views
 
@@ -30,6 +30,7 @@ urlpatterns = [
     path('cola/contar_cola/<int:combustible_id>', ContarCola.as_view()),
 
     # Recolector
+    path('buscar_placa_publico/<str:placa>', BuscarPlacaPubico.as_view()),
 
     #path('c/clientes/detail/<int:pk>', clientesa.ClienteDetailView.as_view(), name='cliente_detail'),
     #path('c/clientes/delete/<int:pk>', clientesa.ClienteDeleteView.as_view(), name='cliente_delete'),
