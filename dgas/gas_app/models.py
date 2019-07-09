@@ -207,3 +207,8 @@ class Cola(models.Model):
 
     def __str__(self):
         return str(self.vehiculo.placa)
+
+
+class Rebotado(models.Model):
+    combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='rebotados')
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
