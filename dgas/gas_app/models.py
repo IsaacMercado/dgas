@@ -8,7 +8,7 @@ COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
 CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina')
-TIPO_VEHICULO_CHOICES = Choices('Particular', 'Transporte Publico', 'Oficial', 'Moto', 'Moto Taxita', 'Taxi')
+TIPO_VEHICULO_CHOICES = Choices('Particular', 'Transporte Publico', 'Oficial', 'Moto', 'Moto Taxita', 'Taxi', 'Carga')
 
 
 class Estacion(models.Model):
@@ -130,6 +130,7 @@ class Combustible(models.Model):
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES)
     estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='En plan')
     # nro_factura = models.CharField(max_length=50, blank=True, null=True)
+    nota = models.CharField(max_length=100, blank=True, null=True)
     cantidad = models.FloatField(default=0)
     cantidad_maxima_por_vehiculo = models.PositiveIntegerField(default=0)
     cantidad_maxima_por_motos = models.PositiveIntegerField(default=0)

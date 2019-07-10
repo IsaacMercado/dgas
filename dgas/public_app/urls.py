@@ -9,6 +9,7 @@ urlpatterns = [
 
     path('', public_base.Publico.as_view(), name='estaciones'),
     path('estaciones/', public_base.Estaciones.as_view(), name='estaciones'),
+    path('estaciones_mapa/', public_base.EstacionesMapa.as_view(), name='estaciones_mapa'),
     path('colas/', public_base.ColasTemplateView.as_view(), name='colas'),
     path('colas-historico/', public_base.ColasHistorioTemplateView.as_view(), name='colas-historico'),
 

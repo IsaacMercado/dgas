@@ -29,6 +29,15 @@ class Estaciones(TemplateView):
         return context
 
 
+class EstacionesMapa(TemplateView):
+    template_name = "public_app/estaciones_mapa.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EstacionesMapa, self).get_context_data(**kwargs)
+        context['key'] = settings.MAP_KEY # env.db("MAP_KEY")
+        return context
+
+
 class ColasTemplateView(TemplateView):
     template_name = "public_app/colas_publico.html"
 

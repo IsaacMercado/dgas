@@ -1,4 +1,4 @@
-{% extends "base_public.html" %}
+{% extends "base.html" %}
 {% load static i18n %}
 {% load humanize %}
 {% block title %}Inicio - Usuarios{% endblock %}
@@ -33,7 +33,7 @@
     <section class="content-header">
         <h1>
             Estaciones
-            <small>con viajes para el Lunes 10/06/2019</small>
+            <small>con viajes para el Miércoles 10/07/2019</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i>Verdes activas / Amarillo en camino/ Azul cargando/ Rojo cerrada</a></li>
@@ -83,21 +83,21 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmLPcRTmRXt1OuNsti1PT6_V
         var locations = [
 
             ['La Portuguesa <b>Campo Elias</b>', 8.5469133,-71.246199, 4, 'off_line'],
-            ['Centenario <b>Campo Elias</b>', 8.547719, -71.2310603, 4, 'r_line'],
+            ['Centenario <b>Campo Elias</b>', 8.547719, -71.2310603, 4, 'off_line'],
             ['Campo Elias - Boticario <b>Campo Elias</b>', 8.5498887, -71.2305963, 5, 'off_line'],
             ['Los guaimaros <b>Campo Elias</b>', 8.5451303,-71.2496198, 3, 'off_line'],
-            ['Higuerones <b>Campo Elias</b>', 8.5261304, -71.2728809, 1, 'r_line'],
+            ['Higuerones <b>Campo Elias</b>', 8.5261304, -71.2728809, 1, 'off_line'],
             ['Trapiche <b>Campo Elias</b>', 8.5433447, -71.2426116, 1, 'off_line'],
 
 
-            ['MILLA <b>LIBERTADOR</b> Hollada de Milla', 8.6134125,-71.1360684, 1, 'off_line'],
-            ['LA BECERRA <b>LIBERTADOR<b> Hollada de Milla', 8.6132454,-71.1364547, 1, 'r_line'],
-            ['BELLA VISTA MÉRIDA C.A <b>LIBERTADOR</b>	La vuelta de Lola', 8.6199017, -71.1316857, 1, 'on_line'],
-            ['EL RETORNO <b>LIBERTADOR</b>	Santa Ana', 8.6118638,-71.1457566, 1, 'on_line'],
+            ['LA BECERRA <b>LIBERTADOR<b> Hollada de Milla', 8.6132454,-71.1364547, 1, 'off_line'],
+            ['MILLA <b>LIBERTADOR</b> Hollada de Milla', 8.6134125,-71.1360684, 1, 'r_line'],
+            ['BELLA VISTA MÉRIDA C.A <b>LIBERTADOR</b>	La vuelta de Lola', 8.6199017, -71.1316857, 1, 'r_line'],
+            ['EL RETORNO <b>LIBERTADOR</b>	Santa Ana', 8.6118638,-71.1457566, 1, 'r_line'],
 
             ['CHAMA	<b>LIBERTADOR</b> Av 16 de Septimbre', 8.5824523,-71.1589705, 1, 'off_line'],
             ['AEROPUERTO MÉRIDA	<b>LIBERTADOR</b> Av. Urdaneta Entrada Aeropuerto', 8.5839759, -71.1622146, 1, 'off_line'],
-            ['INVER - AVENIDA URDANETA C.A	</b>LIBERTADOR<b> Glorias patrias', 8.5886291, -71.1567637, 1, 'off_line'],
+            ['INVER - AVENIDA URDANETA C.A	</b>LIBERTADOR<b> Glorias patrias', 8.5886291, -71.1567637, 1, 'r_line'],
 
 
             ['LAGO AMERICA 24 HORAS - Arriba del terminal <b>LIBERTADOR</b>', 8.588448, -71.1649173, 1, 'r_line'],
@@ -105,10 +105,10 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmLPcRTmRXt1OuNsti1PT6_V
 
             ['LAS TAPIAS	<b>LIBERTADOR</b> Av. Andres Bello', 8.56287, -71.1916053, 1,'off_line'],
 
-            ['URDANETA	<b>LIBERTADOR</b> Pie del Llano Mario Charal', 8.5782644,-71.1720718, 1, 'off_line'],
+            ['URDANETA	<b>LIBERTADOR</b> Pie del Llano Mario Charal', 8.5782644,-71.1720718, 1, 'r_line'],
 
             ['LIBERTADOR <b>LIBERTADOR</b> Frente cementerio la inmaculada', 8.5745453,	-71.1918065, 1, 'off_line'],
-            ['LA PEDREGOSA <b>LIBERTADOR</b> paso abajo de materiales los andes', 8.5761897,	-71.1882043, 1, 'off_line'],
+            ['LA PEDREGOSA <b>LIBERTADOR</b> paso abajo de materiales los andes', 8.5761897, -71.1882043, 1, 'r_line'],
 
             //['Los proceres con Alberto carnevali <b>LIBERTADOR<b>', 8.5588278, -71.198917, 1, 'off_line'],
             ['DIBA C.A	Colegio de abogados <b>LIBERTADOR</b>', 8.5582929,-71.2100894, 1, 'off_line'],
@@ -117,14 +117,10 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmLPcRTmRXt1OuNsti1PT6_V
 
             ['LOS PROCERES 	<b>LIBERTADOR</b> Palo palito', 8.5848623,	-71.1775935, 1, 'off_line'],
             ['LAS BUGAM´S VILLES <b>LIBERTADOR</b>', 8.588687,-71.17206, 1, 'r_line'],
-            ['LA MATA <b>LIBERTADOR</b>', 8.5612972, -71.2014437, 1, 'off_line'],
-            ['Alto Chama <b>LIBERTADOR</b>', 8,5588278	-71,198917, 1, 'off_line'],
-
+            ['LA MATA <b>LIBERTADOR</b>', 8.5612972, -71.2014437, 1, 'r_line'],
+            ['Alto Chama <b>LIBERTADOR</b>', 8.5588278,	-71.198917, 1, 'r_line'],
 
         ];
-
-
-
 
         //8.584794, -71.160393
         //8.54200, -71.24200

@@ -30,7 +30,7 @@ class CombustibleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Combustible
-        fields = ('id', 'tipo_combustible', 'estacion',
+        fields = ('id', 'tipo_combustible', 'estacion', 'nota',
                   'cantidad_maxima_por_vehiculo', 'cantidad_vehiculos', 'created_at', 'last_modified_at', 'total_cola')
 
 
