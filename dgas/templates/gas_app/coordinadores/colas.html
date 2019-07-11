@@ -68,10 +68,13 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6"><b>Total en cola:</b>
+                            <div class="col-md-4"><b>Total por cargar:</b>
                                 <div id="data_en_cola"></div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4"><b>Total general:</b>
+                                <div id="total"></div>
+                            </div>
+                            <div class="col-md-4">
                                 <button onclick="contarCola()"
                                         type="button"
                                         class="btn btn-default">
@@ -592,6 +595,8 @@
                     $("#data_estacion").html(result.data.estacion);
                     $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
                     $("#data_en_cola").html(result.data.por_cargar);
+                    $("#total").html(result.data.total);
+
 
                 })   // on success - 200
                 .fail(function (result)    // on failure - 404
