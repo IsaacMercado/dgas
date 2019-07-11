@@ -57,6 +57,7 @@
                     </div>
 
                     <div id="cola" style="display: none">
+
                         <div class="row">
                             <div class="col-md-4"><b>Estación:</b>
                                 <div id="data_estacion"></div>
@@ -65,6 +66,7 @@
                                 <div id="data_atencion"></div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6"><b>Total en cola:</b>
                                 <div id="data_en_cola"></div>
@@ -76,8 +78,8 @@
                                     Refrescar datos
                                 </button>
                             </div>
-                            </div>
                         </div>
+
                         <br><br>
 
                         <form class="form-inline" action="">
@@ -105,17 +107,18 @@
                             </div>
                         </table>
                     </div>
+                </div>
 
-                </div>
-                <!-- /.box-body -->
-                <div class="overlay" id="loading">
-                    <i class="fa fa-refresh fa-spin"></i>
-                </div>
             </div>
-            <!-- /.box -->
-
+            <!-- /.box-body -->
+            <div class="overlay" id="loading" style="display: none">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
         </div>
-        <!-- /.col -->
+        <!-- /.box -->
+
+    </div>
+    <!-- /.col -->
     </div>
     <!-- /.row -->
 
@@ -301,8 +304,8 @@
                         }
                     ],
                     buttons: [
-                            'copyHtml5',
-                            'print'
+                        'copyHtml5',
+                        'print'
                     ],
 
                     "initComplete": function (settings, json) {
