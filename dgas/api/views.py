@@ -60,7 +60,7 @@ class UltimaCargaList(APIView):
 
             ultima_carga = Carga.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_carga.created_at + timedelta(days=4)
+            p = ultima_carga.created_at + timedelta(days=5)
             print(p, hoy)
 
             hoy = hoy.replace(tzinfo=utc)
@@ -98,7 +98,7 @@ class UltimaColaList(APIView):
 
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_cola.created_at + timedelta(days=3)
+            p = ultima_cola.created_at + timedelta(days=4)
             pr = ultima_cola.created_at + timedelta(days=4)
             print(p.date(), hoy)
 
