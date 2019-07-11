@@ -69,6 +69,14 @@
                             <div class="col-md-6"><b>Total en cola:</b>
                                 <div id="data_en_cola"></div>
                             </div>
+                            <div class="col-md-6">
+                                <button onclick="contarCola()"
+                                        type="button"
+                                        class="btn btn-default">
+                                    Refrescar datos
+                                </button>
+                            </div>
+                            </div>
                         </div>
                         <br><br>
 
@@ -97,7 +105,6 @@
                             </div>
                         </table>
                     </div>
-
 
                 </div>
                 <!-- /.box-body -->
@@ -421,12 +428,10 @@
                 });
 
                 $('#cerrar_cola').on('click', function () {
-
                     $('#cola').hide();
                     table.ajax.reload();
                     $('#combustible').show();
                     table_cola.destroy();
-
                 });
 
             });
@@ -501,7 +506,7 @@
                         if (control_registrados > 10) {
                             table_cola.ajax.reload();
                             table.ajax.reload();
-                            contarCola(combustible_id);
+                            contarCola();
                         } else {
                             control_registrados = 0;
                         }
@@ -576,7 +581,7 @@
             $("#loading").hide();
         }
 
-        function contarCola(combustible_id) {
+        function contarCola() {
 
             $.getJSON(URL_CONTAR_COLA + combustible_id)
                 .done(function (result) {
