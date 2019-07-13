@@ -119,8 +119,7 @@
             </div>
         </div>
         <!-- /.box -->
-
-    </div>
+        
     <!-- /.col -->
     </div>
     <!-- /.row -->
@@ -285,7 +284,7 @@
                 table = $('#tabla_combustible').DataTable({
                     'serverSide': true,
                     //"scrollY": 200,
-                    //"scrollX": true,
+                    "scrollX": true,
                     'ajax': '/api/combustible/?format=datatables',
 
                     "language": {
@@ -345,7 +344,7 @@
                         "processing": true,
                         "serverSide": true,
                         //"scrollY": 200,
-                        //"scrollX": true,
+                        "scrollX": true,
                         'ajax': '/api/cola/' + data['id'] + '/?format=datatables',
                         "language": {
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"

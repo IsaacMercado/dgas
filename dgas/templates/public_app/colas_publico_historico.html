@@ -238,7 +238,7 @@
 
                 table = $('#tabla_combustible').DataTable({
                     'serverSide': true,
-                    "scrollY": 200,
+                    //"scrollY": 200,
                     "scrollX": true,
                     'ajax': '/api/combustible_historico/?format=datatables',
 
@@ -285,7 +285,7 @@
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
                         "serverSide": true,
-                        "scrollY": 200,
+                        //"scrollY": 200,
                         "scrollX": true,
                         'ajax': '/api/colas_historico/' + data['id'] + '/?format=datatables',
                         "language": {
