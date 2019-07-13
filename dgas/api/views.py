@@ -99,7 +99,7 @@ class UltimaColaList(APIView):
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
             p = ultima_cola.created_at + timedelta(days=4)
-            pr = ultima_cola.created_at + timedelta(days=4)
+            pr = ultima_cola.created_at + timedelta(days=5)
             print(p.date(), hoy)
 
             u = ultima_cola.created_at.replace(tzinfo=utc)
@@ -300,7 +300,7 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
             p = ultima_cola.created_at + timedelta(days=4)
-            #pr = ultima_cola.created_at + timedelta(days=4)
+            pr = ultima_cola.created_at + timedelta(days=5)
             print(p.date(), hoy)
 
             u = ultima_cola.created_at.replace(tzinfo=utc)
@@ -317,7 +317,7 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
                 print('ultimo', u.date(), 'aumentado:', p.date(), 'hoy', hoy)
                 uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
                                  "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": str(p.date()),
+                                 "proxima_recarga": str(pr.date()),
                                  "created_at": str(ultima_cola.created_at)})
             else:
                 uc = json.dumps({"cargar": "true",
