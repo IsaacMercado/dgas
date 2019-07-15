@@ -476,8 +476,8 @@
 
                             $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
                             if (ultima_carga.proxima_recarga != '') {
-                                var pr = new Date(ultima_carga.proxima_recarga);
-                                $("#alerta-mensaje").append("<br><br><b>Proxima recarga el: </b>" + pr)
+                                //var pr = new Date(ultima_carga.proxima_recarga);
+                                $("#alerta-mensaje").append("<br><br><b>Proxima recarga el: </b>" + ultima_carga.proxima_recarga)
                             }
                             $('#modal-alerta').modal('show');
                         } else {

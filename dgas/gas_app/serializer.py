@@ -9,6 +9,13 @@ class VehiculoSerializer(serializers.ModelSerializer):
         fields = ('placa',)
 
 
+class VehiculoUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vehiculo
+        fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'cilindros')
+
+
 class CargaSerializer(serializers.ModelSerializer):
 
     class Meta:

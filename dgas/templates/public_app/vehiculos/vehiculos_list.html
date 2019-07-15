@@ -35,23 +35,34 @@
                     </h3>
 
                     <div class="box-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <div class="input-group-btn">
-                                <a href="{% url 'public_app:vehiculo_create' %}"
-                                   title="Agregar vehículo"
-                                   class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
-                                    Vehículo</a>
-                            </div>
+                        <div class="input-group input-group-sm" style="width: 250px;">
+
                         </div>
                     </div>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body table-responsive no-padding">
+                <div class="table-responsive table-striped">
 
-                    <p>
-                        Si se encuentra con un número de placa ya registrado por favor reportarlo a
-                        soporte@combustiblemerida.com indicando cedula, numero de placa.
-                    </p>
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label">Placa</label>
+
+                                <div class="col-sm-5">
+                                    <input type="text" maxlength="7" class="form-control" id="placa"
+                                           placeholder="Placa">
+                                </div>
+                                <div class="col-sm-4">
+                                    <button
+                                            title="Agregar vehículo" onclick="agregarVehiculo()"
+                                            class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
+                                        Vehículo
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
 
                     <table class="table">
                         <thead>
@@ -74,14 +85,15 @@
 
                                 <td class="text-nowrap">
                                     <div class="btn-group">
-                                        <a href="{% url 'public_app:vehiculo_update' vehiculo.pk %}" class="btn btn-default"><i
+                                        <a href="{% url 'public_app:vehiculo_update' vehiculo.pk %}"
+                                           class="btn btn-default"><i
                                                 class="fa fa-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
-                         {% empty %}
+                        {% empty %}
                             <tr>
-                            <td colspan="3"> No hay registros de vehículo</td>
+                                <td colspan="3"> No hay registros de vehículo</td>
                             </tr>
 
                         {% endfor %}
@@ -95,7 +107,195 @@
     </div>
 
 
+    <div class="modal fade" id="modal-add-vehiculo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Agregar vehículo</h4>
+                </div>
+                <div class="modal-body">
+
+                    <br>
+                    <label>Placa:</label>
+                    <input class="form-control" type="text" placeholder="Default input" id="add_placa" readonly>
+                    <br>
+                    <label>Cédula:</label>
+                    <input class="form-control" type="text" placeholder="Cedula empieza con V o E" id="id_cedula">
+                    <br>
+                    <br>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Tipo de vehiculo</label>
+                        <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
+                            <option value="Particular">Particular</option>
+                            <option value="Transporte Publico">Transporte Publico</option>
+                            <option value="Transporte Publico">Taxi</option>
+                            <option value="Moto">Moto</option>
+                            <option value="Moto Taxita">Moto Taxita</option>
+                        </select>
+                    </div>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Cilindros</label>
+                        <select class="form-control" name="add_cilindros" id="add_cilindros">
+                            <option value="1">1</option>
+                            <option value="4">2</option>
+                            <option value="4">3</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <br>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="addCancelarAdd()">Cancelar</button>
+                    <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
 {% endblock content %}
 
 {% block js %}
+
+    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
+
+    <script>
+
+        var URL = "/api/vehiculos_user/";
+
+        var c = '{{ csrf_token }}';
+        var ajax_header = {'X-CSRFToken': c};
+
+        $(document).ready(
+            function () {
+
+                $("#placa").bind('keyup', function (e) {
+                    if (e.which >= 97 && e.which <= 122) {
+                        var newKey = e.which - 32;
+                        // I have tried setting those
+                        e.keyCode = newKey;
+                        e.charCode = newKey;
+                    }
+                    $("#placa").val(($("#placa").val()).toUpperCase());
+                });
+
+
+                var options = {
+                    translation: {
+                        '0': {pattern: /\d/},
+                        '1': {pattern: /[1-9]/},
+                        '9': {pattern: /\d/, optional: true},
+                        '#': {pattern: /\d/, recursive: true},
+                        'C': {pattern: /V|v|E|e|G|g|J|j/, fallback: 'V'}
+                    }
+                };
+                $('#id_cedula').mask('C-19999999', options);
+
+                $('#id_cedula').on('input', function (e) {
+                    var cedula = $(this).val();
+                    if (cedula.length > 9) {
+                        var cedula = cedula.substring(2);
+                        if (cedula > 80000000) {
+                            $(this).val('E-' + cedula);
+                        }
+                    }
+                });
+
+
+            });
+
+
+        function agregarVehiculo() {
+            //$("#loading").show();
+
+            var placa_value = $("#placa").val();
+
+            if (placa_value.length < 6) {
+                alert('Número de placa invalida')
+            } else {
+                $.getJSON(URL + $("#id_placa").val())
+                    .done(
+                        function (response)    // on failure - 404
+                        {
+                            //var json_obj = $.parseJSON(response);//parse JSON
+
+                            if (response.data.usuario == '1') {
+                                alert('Vehiculo ha esta registrado en su listado')
+                            } else if (response.data.usuario === null) {
+                                vehiculoForm()
+                            } else {
+                                alert('Nro de placa ya esta asignado a otro usuario, para reclamar este vhiculo como suusyu')
+                            }
+
+                            console.log(response.data.usuario)
+                        }
+                    )   // on success - 200
+                    .fail(function ()    // on failure - 404
+                        {
+                            $("#add_placa").val($("#placa").val());
+                            $('#modal-add-vehiculo').modal('show');
+                        }
+                    );
+            }
+
+        }
+
+        function vehiculoForm() {
+            $("#add_placa").val($("#placa").val());
+            $('#modal-add-vehiculo').modal('show');
+        }
+
+        function addVehiculo() {
+
+            $.ajax(
+                {
+                    url: URL + $("#placa").val() +'/',
+                    data: {
+                        "usuario": 1,
+                        "cedula": $("#username").val(),
+                        "tipo_vehiculo": $("#tipo_vehiculo option:selected").text(),
+                        "cilindros": $("#add_cilindros option:selected").text(),
+                    },
+                    headers: ajax_header,
+                    dataType: "json",
+                    type: "PATCH",
+                    success: function (request) {
+                        console.log(request)
+                        veh_add_success();
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+            $("#loading").hide();
+        }
+
+        function addCancelarAdd() {
+            $("#placa").val('');
+            $('#modal-add-vehiculo').modal('hide');
+
+        }
+
+         function veh_add_success() {
+            $("#loading").show();
+            $("#placa").val("");
+            $("#id_cedula").val("");
+            $('#modal-add-vehiculo').modal('hide');
+
+        }
+
+    </script>
+
+
 {% endblock js %}

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import VehiculoViewSet, CargaViewSet, UltimaCargaList, CombustibleViewSet, ColaViewSet, UltimaColaList, \
+from .views import VehiculoViewSet, VehiculoUserViewSet, CargaViewSet, UltimaCargaList, \
+    CombustibleViewSet, ColaViewSet, UltimaColaList, \
     ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
     ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico
 
@@ -10,6 +11,8 @@ app_name = "api"
 
 router = DefaultRouter()
 router.register(r'vehiculos', VehiculoViewSet)
+router.register(r'vehiculos_user', VehiculoUserViewSet)
+
 router.register(r'cargas', CargaViewSet)
 router.register(r'combustible', CombustibleViewSet)
 router.register(r'cola/(?P<combustible_id>\d+)', ColaViewSet)

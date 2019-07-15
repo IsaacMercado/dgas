@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion
-from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, CombustibleSerializer, ColaSerializer, \
+from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
+    CombustibleSerializer, ColaSerializer, \
     ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer
 
 
@@ -23,6 +24,18 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
     # permission_classes = (IsAuthenticated,)
+
+
+class VehiculoUserViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions for Vehiculos
+    """
+    queryset = Vehiculo.objects.all()
+    serializer_class = VehiculoUserSerializer
+
+    def post_save(self, obj):
+        obj.usuario = self.request.user
 
 
 class CargaViewSet(viewsets.ModelViewSet):
@@ -95,16 +108,27 @@ class UltimaColaList(APIView):
         placa = self.kwargs['placa']
 
         try:
+            from datetime import timezone
 
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_cola.created_at + timedelta(days=4)
-            pr = ultima_cola.created_at + timedelta(days=5)
-            print(p.date(), hoy)
+            h4 = timedelta(hours=4)
 
-            u = ultima_cola.created_at.replace(tzinfo=utc)
+            ''' 
+            ultima_carga = ultima_cola.created_at.replace() - h4
+            ultima_carga_cero = ultima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
+            proxima_carga = ultima_carga_cero + timedelta(days=4)
+            p = ultima_cola.created_at
+            '''
 
-            print(ultima_cola.combustible, ultima_cola.created_at, hoy)
+            ultima_carga = ultima_cola.created_at
+            ultima_carga_h4 = ultima_carga - timedelta(hours=4)
+            proxima_carga = ultima_carga_h4 + timedelta(days=4)
+            proxima_carga = proxima_carga.date()
+            #p = proxima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
+            p = proxima_carga
+
+            print('##### ultima carga', ultima_carga_h4.date(), p, hoy)
 
             if not ultima_cola.cargado:
                 uc = json.dumps({"cargar": "false",
@@ -112,11 +136,10 @@ class UltimaColaList(APIView):
                                  "estacion": str(ultima_cola.combustible),
                                  "proxima_recarga": "",
                                  "created_at": str(ultima_cola.created_at)})
-            elif p.date() > hoy:
-                print('ultimo', u.date(), 'aumentado:', p.date(), 'hoy', hoy)
+            elif p > hoy:
                 uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
                                  "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": str(pr.date()),
+                                 "proxima_recarga": str(p),
                                  "created_at": str(ultima_cola.created_at)})
             else:
                 uc = json.dumps({"cargar": "true"})
@@ -299,13 +322,15 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
-            p = ultima_cola.created_at + timedelta(days=4)
-            pr = ultima_cola.created_at + timedelta(days=5)
-            print(p.date(), hoy)
+            p_cero = ultima_cola.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
+            p = p_cero.created_at + timedelta(days=4)
+            pr = p_cero.created_at + timedelta(days=4)
+            print('#####', p_cero, p.date(), hoy)
 
             u = ultima_cola.created_at.replace(tzinfo=utc)
 
             print(ultima_cola.combustible, ultima_cola.created_at, hoy)
+            print(p.date(), hoy)
 
             if not ultima_cola.cargado:
                 uc = json.dumps({"cargar": "false",
@@ -313,7 +338,7 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
                                  "estacion": str(ultima_cola.combustible),
                                  "proxima_recarga": "",
                                  "created_at": str(ultima_cola.created_at)})
-            elif p.date() > hoy:
+            elif p.date() >= hoy:
                 print('ultimo', u.date(), 'aumentado:', p.date(), 'hoy', hoy)
                 uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
                                  "estacion": str(ultima_cola.combustible),
@@ -325,7 +350,6 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
                                  "estacion": str(ultima_cola.combustible),
                                  "proxima_recarga": "",
                                  "created_at": str(ultima_cola.created_at)})
-
 
         except Cola.DoesNotExist:
             uc = json.dumps({"cargar": "true",
