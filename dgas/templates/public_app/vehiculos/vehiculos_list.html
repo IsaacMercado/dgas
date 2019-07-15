@@ -305,7 +305,7 @@
                 }
             ); // ajax()
             $("#loading").hide();
-            location.reload();
+            window.location.replace('{% url 'public_app:vehiculos_list' %}');
 
         }
 
