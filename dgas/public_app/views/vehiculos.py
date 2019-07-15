@@ -70,7 +70,7 @@ class VehiculoUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Vehiculo
     fields = ['placa', 'cedula', 'tipo_vehiculo', 'cilindros']
-    template_name = 'public_app/vehiculos/vehiculo_form.html'
+    template_name = 'public_app/vehiculos/vehiculo_form_edit.html'
     pk_url_kwarg = 'placa'
 
     def get_success_url(self):

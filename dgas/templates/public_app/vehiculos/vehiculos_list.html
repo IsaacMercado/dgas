@@ -85,9 +85,20 @@
 
                                 <td class="text-nowrap">
                                     <div class="btn-group">
+
                                         <a href="{% url 'public_app:vehiculo_update' vehiculo.pk %}"
                                            class="btn btn-default"><i
-                                                class="fa fa-edit"></i></a>
+                                                class="fa fa-edit"></i> Editar</a>
+
+                                        <a class="btn btn-danger" onclick="deleteVehiculo('{{ vehiculo.placa }}')">
+                                            <i class="fa fa-trash-o"></i> Eliminar</a>
+
+                                        {% comment %}
+                                        <button type="button" class="btn btn-block btn-default"
+                                                onclick="deleteVehiculo('{{ vehiculo.placa }}')">Default
+                                        </button>
+                                        {% endcomment %}
+
                                     </div>
                                 </td>
                             </tr>
@@ -162,6 +173,27 @@
     </div>
     <!-- /.modal -->
 
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Alerta del sistema
+                </div>
+                <div class="modal-body">
+                    ¿ Seguro de eliminar el vehículo?<br>
+                    <b>
+                        <div id="placa_delete"></div>
+                    </b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok" onclick="confirmDeleteVehiculo()">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock content %}
 
 {% block js %}
@@ -222,27 +254,22 @@
             if (placa_value.length < 6) {
                 alert('Número de placa invalida')
             } else {
-                $.getJSON(URL + $("#id_placa").val())
+                $.getJSON(URL + placa_value + '/')
                     .done(
                         function (response)    // on failure - 404
                         {
-                            //var json_obj = $.parseJSON(response);//parse JSON
 
                             if (response.data.usuario == '1') {
-                                alert('Vehiculo ha esta registrado en su listado')
+                                alert('Vehiculo ya esta registrado en su listado')
                             } else if (response.data.usuario === null) {
                                 vehiculoForm()
-                            } else {
-                                alert('Nro de placa ya esta asignado a otro usuario, para reclamar este vhiculo como suusyu')
                             }
 
-                            console.log(response.data.usuario)
                         }
                     )   // on success - 200
                     .fail(function ()    // on failure - 404
                         {
-                            $("#add_placa").val($("#placa").val());
-                            $('#modal-add-vehiculo').modal('show');
+                            window.location.replace('{% url 'public_app:vehiculo_create' %}');
                         }
                     );
             }
@@ -258,10 +285,10 @@
 
             $.ajax(
                 {
-                    url: URL + $("#placa").val() +'/',
+                    url: URL + $("#placa").val() + '/',
                     data: {
-                        "usuario": 1,
-                        "cedula": $("#username").val(),
+                        "usuario": {{ user.id }},
+                        "cedula": $("#id_cedula").val(),
                         "tipo_vehiculo": $("#tipo_vehiculo option:selected").text(),
                         "cilindros": $("#add_cilindros option:selected").text(),
                     },
@@ -269,31 +296,72 @@
                     dataType: "json",
                     type: "PATCH",
                     success: function (request) {
-                        console.log(request)
+                        console.log(request);
                         veh_add_success();
                     },
                     error: function (request, status, error) {
                         alert(request.responseText);
                     }
-                    //error: add_error
                 }
             ); // ajax()
             $("#loading").hide();
+            location.reload();
+
         }
 
         function addCancelarAdd() {
             $("#placa").val('');
             $('#modal-add-vehiculo').modal('hide');
 
+
         }
 
-         function veh_add_success() {
+        function veh_add_success() {
             $("#loading").show();
             $("#placa").val("");
             $("#id_cedula").val("");
             $('#modal-add-vehiculo').modal('hide');
 
         }
+
+
+        function deleteVehiculo(placa) {
+
+            $("#placa_delete").append(placa);
+
+            $('#confirm-delete').modal('show');
+
+        }
+
+        function confirmDeleteVehiculo() {
+
+            var placa = $("#placa_delete").text();
+
+            $.ajax(
+                {
+                    url: URL + placa + '/',
+                    data: {
+                        "usuario": null,
+                        "cedula": "",
+                    },
+                    headers: ajax_header,
+                    dataType: "json",
+                    type: "PATCH",
+                    success: function (request) {
+                        console.log(request);
+                        veh_add_success();
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                }
+            ); // ajax()
+
+            $('#confirm-delete').modal('hide');
+            location.reload();
+
+        }
+
 
     </script>
 
