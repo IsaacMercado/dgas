@@ -65,6 +65,9 @@
                             <div class="col-md-4"><b>Atendiendo:</b>
                                 <div id="data_atencion"></div>
                             </div>
+                            <div class="col-md-4"><b>Rebotados:</b>
+                                <div id="data_rebotados"></div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -199,7 +202,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Cancelar</button>
-                    <button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Rebotar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="rebotarVehiculo()">Rebotar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -233,9 +236,11 @@
         var control_registrados = 0;
 
         var URL = "/api/vehiculos/";
+        var URL_VEH = "/api/vehiculos/";
+        var URL_VEH_REB = "/api/vehiculos_rebotados/";
+
         var URL_COLA = "/api/cola/";
         var URL_COLA_CRUD = "/api/cola-crud/";
-        var URL_VEH = "/api/vehiculos/";
         var URL_ULTIMA_COLA = "/api/ultima_cola/";
         var URL_CONTAR_COLA = "/api/cola/contar_cola/";
 
@@ -565,6 +570,39 @@
 
         }
 
+        function rebotarVehiculo() {
+
+            var data_vehiculo = {
+                "combustible": combustible_id,
+                "vehiculo": $("#buscar_placa").val(),
+            };
+
+            $.ajax(
+                {
+                    url: URL_VEH_REB ,
+                    data: data_vehiculo,
+                    dataType: "json",
+                    type: "post",
+                    headers: ajax_header,
+                    success: function (request) {
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+
+                        $('#modal-alerta').modal('hide');
+                        $("#loading").hide();
+                        $("#buscar_placa").val('');
+                    },
+                    error: function (request, status, error) {
+                        alert('Error rebotando vehículo');
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+
+
+        }
+
         function add_success() {
             //alert("Added carga Successfully");
             $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
@@ -594,6 +632,7 @@
                     $("#data_estacion").html(result.data.estacion);
                     $("#data_atencion").html(result.data.por_cargar + '/' + result.data.total);
                     $("#data_en_cola").html(result.data.por_cargar);
+                    $("#data_rebotados").html(result.data.total_rebotados);
                     $("#total").html(result.data.total);
 
 

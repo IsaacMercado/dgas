@@ -8,7 +8,16 @@ COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
 CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina')
-TIPO_VEHICULO_CHOICES = Choices('Particular', 'Transporte Publico', 'Oficial', 'Moto', 'Moto Taxita', 'Taxi', 'Carga')
+TIPO_VEHICULO_CHOICES = Choices(
+    'Particular',
+    'Transporte Publico',
+    'Oficial Diario',
+    'Oficial Interdiario',
+    'Moto',
+    'Moto Taxita',
+    'Taxi',
+    'Carga'
+)
 
 
 class Estacion(models.Model):

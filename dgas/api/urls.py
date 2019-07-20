@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import VehiculoViewSet, VehiculoUserViewSet, CargaViewSet, UltimaCargaList, \
     CombustibleViewSet, ColaViewSet, UltimaColaList, \
     ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
-    ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico
+    ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico, \
+    RebotadoViewSet
 
 from dgas.gas_app import views
 
@@ -12,6 +13,7 @@ app_name = "api"
 router = DefaultRouter()
 router.register(r'vehiculos', VehiculoViewSet)
 router.register(r'vehiculos_user', VehiculoUserViewSet)
+router.register(r'vehiculos_rebotados', RebotadoViewSet)
 
 router.register(r'cargas', CargaViewSet)
 router.register(r'combustible', CombustibleViewSet)

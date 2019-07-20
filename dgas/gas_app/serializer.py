@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vehiculo, Carga, Cola, Combustible, Estacion
+from .models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
 
 
 class VehiculoSerializer(serializers.ModelSerializer):
@@ -69,3 +69,10 @@ class ColaPublicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cola
         fields = ('id', 'vehiculo', 'cargado')
+
+
+class RebotadoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rebotado
+        fields = ('id', 'combustible', 'vehiculo')

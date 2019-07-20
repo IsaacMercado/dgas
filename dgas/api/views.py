@@ -10,10 +10,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion
+from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
     CombustibleSerializer, ColaSerializer, \
-    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer
+    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):
@@ -36,6 +36,16 @@ class VehiculoUserViewSet(viewsets.ModelViewSet):
 
     def post_save(self, obj):
         obj.usuario = self.request.user
+
+
+class RebotadoViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions for Rebotado
+    """
+    queryset = Rebotado.objects.all()
+    serializer_class = RebotadoSerializer
+
 
 
 class CargaViewSet(viewsets.ModelViewSet):
@@ -267,6 +277,7 @@ class ContarCola(APIView):
         cargado = Cola.objects.filter(combustible_id=combustible_id, cargado=True).count()
         print(cargado)
         total = Cola.objects.filter(combustible_id=combustible_id).count()
+        total_rebotados = Rebotado.objects.filter(combustible_id=combustible_id).count()
         # scount = queryset.count()
 
         if total and cargado:
@@ -278,6 +289,7 @@ class ContarCola(APIView):
                 'por_cargar': por_cargar,
                 'estado': combustible.estado,
                 'estacion': combustible.estacion.nombre,
+                'total_rebotados': total_rebotados,
             }
 
             print(content)
@@ -289,6 +301,7 @@ class ContarCola(APIView):
                 'por_cargar': 0,
                 'estado': combustible.estado,
                 'estacion': combustible.estacion.nombre,
+                'total_rebotados': total_rebotados,
             }
         return Response(content)
 
