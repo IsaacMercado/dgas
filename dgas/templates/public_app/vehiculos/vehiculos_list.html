@@ -141,10 +141,8 @@
                         <label>Tipo de vehiculo</label>
                         <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
                             <option value="Particular">Particular</option>
-                            <option value="Transporte Publico">Transporte Publico</option>
                             <option value="Transporte Publico">Taxi</option>
                             <option value="Moto">Moto</option>
-                            <option value="Moto Taxita">Moto Taxita</option>
                         </select>
                     </div>
                     <!-- select -->
@@ -259,10 +257,16 @@
                         function (response)    // on failure - 404
                         {
 
-                            if (response.data.usuario == '1') {
+                            if (response.data.usuario == {{ user.id }}) {
                                 alert('Vehiculo ya esta registrado en su listado')
                             } else if (response.data.usuario === null) {
-                                vehiculoForm()
+                                //vehiculoForm()
+                                {% comment %}
+                                window.location.replace('{% url 'public_app:vehiculo_update'  %}');
+                                {% endcomment %}
+                                window.location.replace('/publico/vehiculos/update/'+placa_value);
+                            }else{
+                                alert('Vehiculo ya esta registrado por otro usuario. \n Si usted es el propietario envia una foto del carnet de circulacion a soporte@combustiblemerida.com indicando el registro indecido de su vehículo')
                             }
 
                         }
@@ -342,7 +346,7 @@
                     url: URL + placa + '/',
                     data: {
                         "usuario": null,
-                        "cedula": "",
+                        "cedula": "V-",
                     },
                     headers: ajax_header,
                     dataType: "json",

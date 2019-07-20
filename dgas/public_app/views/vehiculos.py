@@ -79,5 +79,6 @@ class VehiculoUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.usuario_id = self.request.user.id
         self.object.save()
         return super(VehiculoUpdateView, self).form_valid(form)
