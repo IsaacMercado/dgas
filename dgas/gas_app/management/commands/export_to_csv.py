@@ -47,9 +47,9 @@ class Command(BaseCommand):
                     print(carga.vehiculo_id+'|'+str(carga.cantidad)+'|'+str(carga.created_at))
             """
 
-            estacion = (50, 57, 69, 83, 99, 114, 129, 147, 165, 185, 212, 230, 247)
+            estacion = [50, 57, 69, 83, 99, 114, 129, 147, 165, 185, 212, 230, 247]
 
             cola = Cola.objects.filter(combustible_id__in=estacion)
 
             for c in cola:
-                print(c.vehiculo, c.estacion)
+                print(c.vehiculo, c.combustible)
