@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
             estacion = [50, 57, 69, 83, 99, 114, 129, 147, 165, 185, 212, 230, 247]
 
-            cola = Cola.objects.filter(estacion_id__in=estacion)
+            cola = Cola.objects.filter(combustible_id__in=estacion)
 
             for c in cola:
                 print(c.vehiculo, c.estacion)
