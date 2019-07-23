@@ -5,7 +5,7 @@ import datetime
 from django.core.management.base import BaseCommand
 from dateutil import relativedelta
 
-from dgas.gas_app.models import Carga
+from dgas.gas_app.models import Carga, Cola
 
 
 class Command(BaseCommand):
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         if options['export']:
             """
             Comando para verificar vacaciones de empleados
-            """
+            
             from pytz import timezone
             from django.db.models import Count
             from django.db.models import Q
@@ -45,4 +45,11 @@ class Command(BaseCommand):
             for carga in cargas:
                 if carga.cantidad > 42:
                     print(carga.vehiculo_id+'|'+str(carga.cantidad)+'|'+str(carga.created_at))
+            """
 
+            estacion = [50, 57, 69, 83, 99, 114, 129, 147, 165, 185, 212, 230, 247]
+
+            cola = Colas.objects.filter(estacion_id__in=estacion)
+
+            for c in cola:
+                print(c.vehiculo, c.estacion)
