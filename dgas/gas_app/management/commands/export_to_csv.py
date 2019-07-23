@@ -18,8 +18,8 @@ class Command(BaseCommand):
                             default=False,
                             help='Export carga to CSV')
 
-        parser.add_argument('fecha')
-        parser.add_argument('estacion')
+        #parser.add_argument('fecha')
+        #parser.add_argument('estacion')
 
     def handle(self, *args, **options):
         # ...
