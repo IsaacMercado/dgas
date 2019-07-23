@@ -52,4 +52,4 @@ class Command(BaseCommand):
             cola = Cola.objects.filter(combustible_id__in=estacion)
 
             for c in cola:
-                print(c.vehiculo, c.combustible)
+                print(c.vehiculo+'|'+c.combustible)
