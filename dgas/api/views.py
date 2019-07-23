@@ -337,6 +337,8 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
             vehiculo = Vehiculo.objects.get(placa=placa)
 
+            frecuencia_de_carga = 0
+
             if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
                 frecuencia_de_carga = 2
 
@@ -349,7 +351,7 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
             ultima_carga = ultima_cola.created_at
             ultima_carga_h4 = ultima_carga - timedelta(hours=4)
-            proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_cargas)
+            proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_carga)
             proxima_carga = proxima_carga.date()
             # p = proxima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
             p = proxima_carga
