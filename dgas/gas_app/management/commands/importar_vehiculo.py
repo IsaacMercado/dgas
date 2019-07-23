@@ -112,7 +112,6 @@ class Command(BaseCommand):
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
                     ta.tipo_vehiculo="Transporte Publico"
-                    ta.cedula=cedula
                     ta.save()
                 except:
                     print("Placa: " + placa +"Ya no esta registrada")
