@@ -333,11 +333,11 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
         placa = self.kwargs['placa']
 
+        frecuencia_de_carga = 0
+
         try:
 
             vehiculo = Vehiculo.objects.get(placa=placa)
-
-            frecuencia_de_carga = 0
 
             if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
                 frecuencia_de_carga = 2
@@ -345,7 +345,12 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
             elif vehiculo.tipo_vehiculo == "Oficial Diario":
                 frecuencia_de_carga = 1
             else:
-                frecuencia_de_carga = 4
+                    frecuencia_de_carga = 4
+
+        except Vehiculo.DoesNotExist:
+            frecuencia_de_carga = 4
+
+        try:
 
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
