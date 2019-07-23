@@ -335,11 +335,21 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
         try:
 
+            vehiculo = Vehiculo.objects.get(placa=placa)
+
+            if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
+                frecuencia_de_carga = 2
+
+            elif vehiculo.tipo_vehiculo == "Oficial Diario":
+                frecuencia_de_carga = 1
+            else:
+                frecuencia_de_carga = 4
+
             ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
             ultima_carga = ultima_cola.created_at
             ultima_carga_h4 = ultima_carga - timedelta(hours=4)
-            proxima_carga = ultima_carga_h4 + timedelta(days=4)
+            proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_cargas)
             proxima_carga = proxima_carga.date()
             # p = proxima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
             p = proxima_carga

@@ -79,6 +79,6 @@ class Command(BaseCommand):
                     ta.save()
                 except:
                     print("Placa: " + placa +"Ya no esta registrada")
-                    mt_insert = Vehiculo(placa=placa,cedula=cedula, tipo_vehiculo='Moto Taxita', cilindros=1)
+                    mt_insert = Vehiculo(placa=placa, cedula=cedula, tipo_vehiculo='Moto Taxita', cilindros=1)
                     mt_insert.save()
 
