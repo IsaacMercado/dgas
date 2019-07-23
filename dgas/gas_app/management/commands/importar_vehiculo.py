@@ -19,6 +19,15 @@ class Command(BaseCommand):
             help='Carga los vehiculos'
         )
 
+        # Named (optional) arguments
+        parser.add_argument(
+            '--cargar_moto_taxi',
+            action='store_true',
+            dest='cargar_moto_taxi',
+            default=False,
+            help='Carga moto taxita'
+        )
+
         parser.add_argument('archivo')
 
     def handle(self, *args, **options):
@@ -38,11 +47,38 @@ class Command(BaseCommand):
                 except:
                    pass
 
-
                 try:
                     ta = Vehiculo(placa=placa,cedula=cedula, tipo_vehiculo='Moto', cilindros=cilindros)
                     ta.save()
                 except:
                     print("Placa: " + placa +"Ya esta rgistrada")
 
+        if options['cargar_moto_taxi']:
+
+            archivo = options['archivo']
+            file_handle = open(archivo)
+            file_list = file_handle.readlines()
+
+            nro_linea = 0
+
+            for file_line in file_list:
+                nro_linea += 1
+                try:
+                    [placa, cedula] = file_line.split(",")
+                    cedula = cedula.strip(' \t\n\r')
+                    print(placa, cedula)
+                except:
+                   print('Error leyendo Linea nro: '+str(nro_linea))
+                   print(file_line)
+                   exit(0)
+
+                try:
+                    ta = Vehiculo.objects.get(placa=placa)
+                    ta.tipo_vehiculo="Moto Taxita"
+                    ta.cedula=cedula
+                    ta.save()
+                except:
+                    print("Placa: " + placa +"Ya no esta registrada")
+                    mt_insert = Vehiculo(placa=placa,cedula=cedula, tipo_vehiculo='Moto Taxita', cilindros=1)
+                    mt_insert.save()
 

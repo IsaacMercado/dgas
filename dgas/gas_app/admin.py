@@ -22,8 +22,8 @@ class CombustibleAdmin(admin.ModelAdmin):
 
 @admin.register(Vehiculo)
 class VehiculoAdmin(admin.ModelAdmin):
-    list_display = ('placa', 'cedula', 'tipo_vehiculo')
-    search_fields = ['placa', 'cedula' ]
+    list_display = ('placa', 'cedula', 'usuario', 'tipo_vehiculo')
+    search_fields = ['placa', 'cedula']
 
 
 @admin.register(Carga)
