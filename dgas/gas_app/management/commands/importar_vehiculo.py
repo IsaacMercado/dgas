@@ -36,6 +36,14 @@ class Command(BaseCommand):
             help='Carga transporte publico'
         )
 
+        parser.add_argument(
+            '--cargar_oficial_diario',
+            action='store_true',
+            dest='cargar_oficial_diario',
+            default=False,
+            help='Cargar oficial diario'
+        )
+
         parser.add_argument('archivo')
 
     def handle(self, *args, **options):
@@ -115,5 +123,40 @@ class Command(BaseCommand):
                     ta.save()
                 except:
                     print("Placa: " + placa +"Ya no esta registrada")
+
+        if options['cargar_oficial_diario']:
+
+            archivo = options['archivo']
+            file_handle = open(archivo)
+            file_list = file_handle.readlines()
+
+            nro_linea = 0
+            tv = ''
+
+            for file_line in file_list:
+                nro_linea += 1
+                try:
+                    [placa, diario, inter_diario] = file_line.split(",")
+                    inter_diario = inter_diario.strip(' \t\n\r')
+                    print(placa)
+                except:
+                   print('Error leyendo Linea nro: '+str(nro_linea))
+                   print(file_line)
+                   exit(0)
+
+                try:
+
+                    if diario == 'X':
+                        tv = "Oficial Diario"
+                    elif inter_diario == "Oficial Interdiario":
+                        tv = "Oficial Interdiario"
+
+                    ta = Vehiculo.objects.get(placa=placa)
+                    ta.tipo_vehiculo=tv
+                    ta.save()
+                except:
+                    print("Placa: " + placa +"Ya no esta registrada")
+                    mt_insert = Vehiculo(placa=placa, cedula='No regisrada', tipo_vehiculo=tv, cilindros=4)
+                    mt_insert.save()
 
 
