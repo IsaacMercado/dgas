@@ -184,6 +184,13 @@ class Vehiculo(models.Model):
         return self.placa
 
 
+class VehiculoResumen(Vehiculo):
+    class Meta:
+        proxy = True
+        verbose_name = "Vehiculo Resumen"
+        verbose_name_plural = "Vehiculo Resumen"
+
+
 class Carga(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)

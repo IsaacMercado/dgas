@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Estacion, Combustible, Vehiculo, Carga, Cola
+from .models import Estacion, Combustible, Vehiculo, Carga, Cola, VehiculoResumen, \
+    Rebotado
 
 
 class CombustibleInline(admin.TabularInline):
@@ -26,6 +27,41 @@ class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('placa', 'cedula', 'usuario', 'tipo_vehiculo')
     search_fields = ['placa', 'cedula']
     list_filter = ('tipo_vehiculo',)
+
+
+@admin.register(Rebotado)
+class VehiculoAdmin(admin.ModelAdmin):
+    list_display = ('combustible', 'vehiculo',)
+    search_fields = ['vehiculo']
+    #list_filter = ('tipo_vehiculo',)
+
+@admin.register(VehiculoResumen)
+class SaleSummaryAdmin(admin.ModelAdmin):
+    change_list_template = 'gas_app/admin/vehiculo_resumen_change_list.html'
+    #date_hierarchy = 'created'
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(
+            request,
+            extra_context=extra_context,
+        )
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        metrics = {
+        'total': Count('id'),
+        'total_sales': Sum('price'),
+        }
+        response.context_data['resumen'] = list(
+            qs
+            .values('sale__category__name')
+            .annotate(**metrics)
+            .order_by('-total_sales')
+        )
+
+        return response
 
 
 @admin.register(Carga)
