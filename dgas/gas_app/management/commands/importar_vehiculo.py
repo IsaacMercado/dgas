@@ -3,7 +3,8 @@ import string
 import traceback
 
 from django.core.management.base import BaseCommand
-from dgas.gas_app.models import Vehiculo
+from dgas.gas_app.models import Vehiculo, Cola
+import datetime
 
 
 class Command(BaseCommand):
@@ -42,6 +43,22 @@ class Command(BaseCommand):
             dest='cargar_oficial_diario',
             default=False,
             help='Cargar oficial diario'
+        )
+
+        parser.add_argument(
+            '--cola_verifica',
+            action='store_true',
+            dest='cola_verifica',
+            default=False,
+            help='Verificar archivo de cola'
+        )
+
+        parser.add_argument(
+            '--cola_carga',
+            action='store_true',
+            dest='cola_carga',
+            default=False,
+            help='Carga archivo de cola'
         )
 
         parser.add_argument('archivo')
@@ -159,4 +176,73 @@ class Command(BaseCommand):
                     mt_insert = Vehiculo(placa=placa, cedula='No regisrada', tipo_vehiculo=tv, cilindros=4)
                     mt_insert.save()
 
+        if options['cola_verifica']:
+
+            archivo = options['archivo']
+            file_handle = open(archivo)
+            file_list = file_handle.readlines()
+
+            nro_linea = 0
+            tv = ''
+
+
+            # verifica carga
+            for file_line in file_list:
+                nro_linea += 1
+                try:
+                    [vehiculo, combustible, created_at] = file_line.split(",")
+                    created_at = created_at.strip(' \t\n\r')
+                    if len(vehiculo) > 7 or len(vehiculo) < 6:
+                        print("Placa invalida", vehiculo)
+                except Exception as e:
+                   print('Error leyendo Linea nro: '+str(nro_linea))
+                   print(e)
+                   print(file_line)
+                   exit(0)
+
+        if options['cola_carga']:
+            archivo = options['archivo']
+            file_handle = open(archivo)
+            file_list = file_handle.readlines()
+
+            nro_linea = 0
+            tv = ''
+            fecha = ""
+
+            for file_line in file_list:
+                try:
+                    [vehiculo, combustible, created_at] = file_line.split(",")
+                    created_at = created_at.strip(' \t\n\r')
+                    ta = Vehiculo.objects.get(placa=vehiculo)
+
+                    fecha = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M')
+
+                    try:
+                        c = Cola(combustible_id=combustible,
+                                 vehiculo_id=vehiculo,
+                                 cargado=True,
+                                 created_at=fecha,
+                                 last_modified_at=fecha
+                        )
+                        c.save()
+                    except:
+                        print('Error insertando en cola: ' + vehiculo)
+
+                except:
+                    print("Placa: " + vehiculo + " Vehiculo no esta registrada")
+                    mt_insert = Vehiculo(
+                        placa=vehiculo,
+                        cedula='No regisrada',
+                        tipo_vehiculo="Particular",
+                        created_at=fecha,
+                        cilindros=4)
+                    mt_insert.save()
+
+                    c = Cola(combustible_id=combustible,
+                             vehiculo_id=vehiculo,
+                             cargado=True,
+                             created_at=fecha,
+                             last_modified_at=fecha
+                             )
+                    c.save()
 
