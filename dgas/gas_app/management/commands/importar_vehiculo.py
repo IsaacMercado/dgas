@@ -216,6 +216,7 @@ class Command(BaseCommand):
                     ta = Vehiculo.objects.get(placa=vehiculo)
 
                     fecha = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M')
+                    fecha= pytz.utc.localize(fecha)
 
                     try:
                         c = Cola(combustible_id=combustible,
