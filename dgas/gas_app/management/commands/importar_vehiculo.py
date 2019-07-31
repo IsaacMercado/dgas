@@ -215,15 +215,10 @@ class Command(BaseCommand):
                     created_at = created_at.strip(' \t\n\r')
                     ta = Vehiculo.objects.get(placa=vehiculo)
 
-                    fecha = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M')
-                    fecha= pytz.utc.localize(fecha)
-
                     try:
                         c = Cola(combustible_id=combustible,
                                  vehiculo_id=vehiculo,
                                  cargado=True,
-                                 created_at=fecha,
-                                 last_modified_at=fecha
                         )
                         c.save()
                     except:
@@ -235,15 +230,11 @@ class Command(BaseCommand):
                         placa=vehiculo,
                         cedula='No regisrada',
                         tipo_vehiculo="Particular",
-                        created_at=fecha,
                         cilindros=4)
                     mt_insert.save()
 
                     c = Cola(combustible_id=combustible,
                              vehiculo_id=vehiculo,
                              cargado=True,
-                             created_at=fecha,
-                             last_modified_at=fecha
                              )
                     c.save()
-
