@@ -31,7 +31,7 @@ class VehiculoAdmin(admin.ModelAdmin):
 
 @admin.register(Rebotado)
 class VehiculoAdmin(admin.ModelAdmin):
-    list_display = ('combustible', 'vehiculo',)
+    list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
     #list_filter = ('tipo_vehiculo',)
 
