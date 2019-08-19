@@ -20,6 +20,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     path("gas/", include("dgas.gas_app.urls")),
     path("publico/", include("dgas.public_app.urls")),
+    path("usuarios/", include("dgas.users_app.urls")),
     path("api/", include("dgas.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

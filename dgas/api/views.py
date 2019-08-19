@@ -9,6 +9,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime, timedelta, date
+import pytz
 
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
@@ -45,7 +47,6 @@ class RebotadoViewSet(viewsets.ModelViewSet):
     """
     queryset = Rebotado.objects.all()
     serializer_class = RebotadoSerializer
-
 
 
 class CargaViewSet(viewsets.ModelViewSet):
@@ -107,10 +108,8 @@ class UltimaColaList(APIView):
 
     def get(self, request, *args, **kwargs):
         """
-        Para el chequeo de cargas a un dia
+        Para el chequeo de cargas
         """
-        from datetime import datetime, timedelta, date
-        import pytz
         utc = pytz.UTC
 
         hoy = date.today()
@@ -118,46 +117,60 @@ class UltimaColaList(APIView):
         placa = self.kwargs['placa']
 
         try:
-            from datetime import timezone
-
             vehiculo = Vehiculo.objects.get(placa=placa)
 
-            if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
-                frecuencia_de_carga = 2
+            if not vehiculo.bloqueado:
 
-            elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "Transporte Publico":
-                frecuencia_de_carga = 1
+                if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
+                    frecuencia_de_carga = 2
+
+                elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "Transporte Publico":
+                    frecuencia_de_carga = 1
+                else:
+                    frecuencia_de_carga = 4
+
+                try:
+
+                    ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
+
+                    # h4 = timedelta(hours=4)
+
+                    ultima_carga = ultima_cola.created_at
+                    ultima_carga_h4 = ultima_carga - timedelta(hours=4)
+                    proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_carga)
+                    proxima_carga = proxima_carga.date()
+                    p = proxima_carga
+
+                    print('##### ultima carga', ultima_carga_h4.date(), p, hoy)
+
+                    if not ultima_cola.cargado:
+                        uc = json.dumps({"cargar": "false",
+                                         "mensaje": " ya esta registrado para surtir gasolina",
+                                         "estacion": str(ultima_cola.combustible),
+                                         "proxima_recarga": "",
+                                         "created_at": str(ultima_cola.created_at)})
+                    elif p > hoy:
+                        uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
+                                         "estacion": str(ultima_cola.combustible),
+                                         "proxima_recarga": str(p),
+                                         "created_at": str(ultima_cola.created_at)})
+                    else:
+                        uc = json.dumps({"cargar": "true"})
+
+                except Cola.DoesNotExist:
+                    uc = json.dumps({"cargar": "true"})
             else:
-                frecuencia_de_carga = 4
+                uc = json.dumps(
+                    {
+                        "bloqueado": "true",
+                        "bloqueado_fecha": str(vehiculo.bloqueado_fecha),
+                        "bloqueado_hasta": str(vehiculo.bloqueado_hasta),
+                        "bloqueado_motivo": vehiculo.bloqueado_motivo
+                    }
+                )
 
-            ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
-
-            # h4 = timedelta(hours=4)
-
-            ultima_carga = ultima_cola.created_at
-            ultima_carga_h4 = ultima_carga - timedelta(hours=4)
-            proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_carga)
-            proxima_carga = proxima_carga.date()
-            p = proxima_carga
-
-            print('##### ultima carga', ultima_carga_h4.date(), p, hoy)
-
-            if not ultima_cola.cargado:
-                uc = json.dumps({"cargar": "false",
-                                 "mensaje": " ya esta registrado para surtir gasolina",
-                                 "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": "",
-                                 "created_at": str(ultima_cola.created_at)})
-            elif p > hoy:
-                uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
-                                 "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": str(p),
-                                 "created_at": str(ultima_cola.created_at)})
-            else:
-                uc = json.dumps({"cargar": "true"})
-
-        except Cola.DoesNotExist:
-            uc = json.dumps({"cargar": "true"})
+        except Vehiculo.DoesNotExist:
+            uc = json.dumps({"error": "true", "msg": "Ocurrio un error, por favor intente de nuevo"})
 
         return Response(uc)
 
@@ -165,7 +178,13 @@ class UltimaColaList(APIView):
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
     serializer_class = CombustibleSerializer
-    permission_classes = (AllowAny,)
+    #permission_classes = (AllowAny,)
+
+
+class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Combustible.objects.all()
+    serializer_class = CombustibleSerializer
+    #permission_classes = (AllowAny,)
 
     def get_queryset(self):
         qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'))
@@ -186,9 +205,9 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
 
 '''
 mixins.CreateModelMixin,
-                  mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  viewsets.GenericViewSet
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
 '''
 
 
@@ -274,13 +293,11 @@ class ContarCola(APIView):
         combustible_id = self.kwargs['combustible_id']
 
         combustible = Combustible.objects.get(pk=combustible_id)
-        #print(combustible.estado, combustible.estacion.nombre)
 
         cargado = Cola.objects.filter(combustible_id=combustible_id, cargado=True).count()
         print(cargado)
         total = Cola.objects.filter(combustible_id=combustible_id).count()
         total_rebotados = Rebotado.objects.filter(combustible_id=combustible_id).count()
-        # scount = queryset.count()
 
         if total and cargado:
             por_cargar = total - cargado
@@ -311,9 +328,6 @@ class ContarCola(APIView):
 class EstacionViewSet(viewsets.ModelViewSet):
     queryset = Estacion.objects.all()
     serializer_class = EstacionSerializer
-    permission_classes = (AllowAny,)
-
-    # permission_classes = (IsAuthenticated,)
 
 
 class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):

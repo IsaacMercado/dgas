@@ -7,7 +7,7 @@ from dgas.users.models import GasUser, User
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
 CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
-MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina')
+MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
     'Transporte Publico',
@@ -136,7 +136,7 @@ class Estacion(models.Model):
 
 class Combustible(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
-    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES)
+    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, null=True, blank=True)
     estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='En plan')
     # nro_factura = models.CharField(max_length=50, blank=True, null=True)
     nota = models.CharField(max_length=100, blank=True, null=True)
@@ -172,6 +172,11 @@ class Vehiculo(models.Model):
     tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')
     cilindros = models.CharField(max_length=10, choices=CILINDROS_CHOICES, default='4')
 
+    bloqueado = models.BooleanField(default=False)
+    bloqueado_motivo = models.TextField(blank=True, null=True)
+    bloqueado_fecha = models.DateTimeField(blank=True, null=True)
+    bloqueado_hasta = models.DateField(blank=True, null=True)
+
     created_by = UserForeignKey(auto_user_add=True, related_name='vehiculos_created')
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='vehiculos_updated')
@@ -189,6 +194,9 @@ class VehiculoResumen(Vehiculo):
         proxy = True
         verbose_name = "Vehiculo Resumen"
         verbose_name_plural = "Vehiculo Resumen"
+
+    def __str__(self):
+        return self.placa
 
 
 class Carga(models.Model):
@@ -212,10 +220,13 @@ class Carga(models.Model):
 class Cola(models.Model):
     combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='colas')
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default=95, null=True, blank=True)
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
 
+    created_by = UserForeignKey(auto_user_add=True, related_name='cola_created')
     created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='cola_updated')
     last_modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:

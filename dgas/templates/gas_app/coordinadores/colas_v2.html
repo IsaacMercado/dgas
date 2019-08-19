@@ -199,40 +199,7 @@
                 </div>
                 <div class="modal-footer">
                     <!--button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Cancelar</button -->
-                    <button type="button" class="btn btn-default pull-left" onclick="rebotarVehiculo()">Continuar
-                    </button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-
-     <div class="modal fade" id="modal-alerta-bloqueado">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Alerta del sistema</h4>
-                </div>
-                <div class="modal-body">
-
-                     <div class="row">
-                            <div class="col-md-2">
-                                 <img src="{% static 'images/blocked_icon.png' %}" class="img-circle" height="80"
-                                             width="80" alt="Bloqueado">
-                            </div>
-                            <div class="col-md-10">
-                                <div id="alerta-mensaje-bloqueado"></div>
-                            </div>
-                     </div>
-                    <div id="alerta-mensaje"></div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" id="btnclose" data-dismiss="modal">Continuar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="rebotarVehiculo()">Continuar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -256,7 +223,7 @@
     <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+
 
     <script type="text/javascript">
 
@@ -324,6 +291,7 @@
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
                     '       <i class="fa fa-power-off"></i> </a>' +
                     '       <a href="#" id="verDetalles" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-eye"></i> </a>' +
+                    '       <a href="#" onClick="verHacerReporte();" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-info"> <i class="fa fa-file-text-o"></i> </a>' +
                     '    </center>' +
                     '</td>';
 
@@ -521,6 +489,7 @@
                         );
                     });
 
+
                 });
 
 
@@ -560,49 +529,20 @@
                         console.log('verifico ultimaCola()');
                         var ultima_carga = jQuery.parseJSON(result.data);
 
-                        if (ultima_carga.bloqueado == 'true') {
+                        if (ultima_carga.cargar == 'false') {
 
-                            var bloqueado_fecha = new Date(ultima_carga.bloqueado_fecha);
-                            var bloqueado_hasta = new Date(ultima_carga.bloqueado_hasta);
+                            var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+                            var created_at = new Date(ultima_carga.created_at);
 
-                            bloqueado_fecha = moment(bloqueado_fecha).format('DD/MM/YYYY h:mm a');
-                            bloqueado_hasta = bloqueado_hasta.toLocaleDateString("es-Ve");
-
-                            $("#alerta-mensaje-bloqueado").html(
-                                "<b>Atención: </b><br>Vehículo placas: <b>" + $("#buscar_placa").val() +
-                                "</b> <br> Ha sido <b>bloqueado</b> el " + bloqueado_fecha +
-                                "<br> Hasta el: " + bloqueado_hasta +
-                                "<p> <b><br>Causa:</b><br>  " +
-                                ultima_carga.bloqueado_motivo
-                            );
-                            $('#modal-alerta-bloqueado').modal('show');
-
-                        } else {
-
-
-                            if (ultima_carga.cargar == 'false') {
-
-                                var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-                                var created_at = new Date(ultima_carga.created_at);
-
-                                created_at = moment(created_at).format('DD/MM/YYYY h:mm a');
-
-                                $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
-
-                                if (ultima_carga.proxima_recarga != '') {
-                                    //var pr = new Date(ultima_carga.proxima_recarga);
-                                    $("#alerta-mensaje").append("<br><br><b>Próxima recarga el: </b>" + ultima_carga.proxima_recarga)
-                                }
-                                $('#modal-alerta').modal('show');
-                            } else if (ultima_carga.error == 'true') {
-                                $("#alerta-mensaje").append("<br><br><b>Error: </b>" + ultima_carga.msg)
-                            } else {
-                                encolarVehiculo()
+                            $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
+                            if (ultima_carga.proxima_recarga != '') {
+                                //var pr = new Date(ultima_carga.proxima_recarga);
+                                $("#alerta-mensaje").append("<br><br><b>Próxima recarga el: </b>" + ultima_carga.proxima_recarga)
                             }
-
+                            $('#modal-alerta').modal('show');
+                        } else {
+                            encolarVehiculo()
                         }
-
-
                     }
                 )   // on success - 200
                 .fail();
@@ -640,8 +580,6 @@
                         $("#buscar_placa").val('');
                     },
                     error: function (request, status, error) {
-                        console.log(status);
-                        console.log(error);
                         console.log('encolarVehiculo');
                         console.log(request);
                         alert(request.responseText);
