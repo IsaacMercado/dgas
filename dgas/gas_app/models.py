@@ -2,7 +2,7 @@ from django.db import models
 from model_utils import Choices
 from django_userforeignkey.models.fields import UserForeignKey
 from django.db.models import Sum
-from dgas.users.models import GasUser, User
+from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
@@ -10,7 +10,8 @@ CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachan
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
-    'Transporte Publico',
+    'TP Gasolina',
+    'TP Gasoil',
     'Oficial Diario',
     'Oficial Interdiario',
     'Moto',
@@ -24,6 +25,7 @@ class Estacion(models.Model):
     #usuario = models.ForeignKey(GasUser, on_delete=models.CASCADE, blank=True, null=True)
     nombre = models.CharField(max_length=100, blank=True, null=True)
     direccion = models.CharField(max_length=100, blank=True, null=True)
+    municipio_estacion = models.ForeignKey(Municipio, on_delete=models.CASCADE, default=15, null=True, blank=True)
     municipio = models.CharField(max_length=20, choices=MUNICIPIOS_CHOICES, default='Libertador')
     capacidad_91 = models.PositiveIntegerField(default=0)
     reserva_91 = models.PositiveIntegerField(default=0)
@@ -132,6 +134,16 @@ class Estacion(models.Model):
             return [0, 0, 0]
 
         return [total_disponible, porcentaje, bar_color]
+
+
+class Pico(models.Model):
+    estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE, related_name='estaciones_islas', default=1)
+    nombre = models.CharField(max_length=20, default='')
+    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, null=True, blank=True)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return ('%s, %s') % (self.nombre, self.tipo_combustible,)
 
 
 class Combustible(models.Model):

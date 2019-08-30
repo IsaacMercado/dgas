@@ -124,7 +124,7 @@ class UltimaColaList(APIView):
                 if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
                     frecuencia_de_carga = 2
 
-                elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "Transporte Publico":
+                elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "TP Gasolina" or vehiculo.tipo_vehiculo == "TP Gasoil":
                     frecuencia_de_carga = 1
                 else:
                     frecuencia_de_carga = 4
@@ -356,7 +356,7 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
             if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
                 frecuencia_de_carga = 2
 
-            elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "Transporte Publico":
+            elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "TP Gasolina" or vehiculo.tipo_vehiculo == "TPGasoil":
                 frecuencia_de_carga = 1
             else:
                     frecuencia_de_carga = 4

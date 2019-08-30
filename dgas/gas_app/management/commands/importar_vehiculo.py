@@ -38,6 +38,14 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '--cargar_transporte_publico_gasoil',
+            action='store_true',
+            dest='cargar_transporte_publico_gasoil',
+            default=False,
+            help='Carga transporte publico gasoil'
+        )
+
+        parser.add_argument(
             '--cargar_oficial_diario',
             action='store_true',
             dest='cargar_oficial_diario',
@@ -136,10 +144,40 @@ class Command(BaseCommand):
 
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo="Transporte Publico"
+                    ta.tipo_vehiculo="TP Gasolina"
                     ta.save()
                 except:
-                    print("Placa: " + placa +"Ya no esta registrada")
+                    nv = Vehiculo(placa=placa, tipo_vehiculo="TP Gasolina", created_at=datetime.datetime.now())
+                    nv.save()
+                    print("Placa: " + placa + "Nuevo registro")
+
+        if options['cargar_transporte_publico_gasoil']:
+
+            archivo = options['archivo']
+            file_handle = open(archivo)
+            file_list = file_handle.readlines()
+
+            nro_linea = 0
+
+            for file_line in file_list:
+                nro_linea += 1
+                try:
+                    [placa] = file_line.split(",")
+                    placa = placa.strip(' \t\n\r')
+                    print(placa)
+                except:
+                   print('Error leyendo Linea nro: '+str(nro_linea))
+                   print(file_line)
+                   exit(0)
+
+                try:
+                    ta = Vehiculo.objects.get(placa=placa)
+                    ta.tipo_vehiculo="Transporte Publico Gasoil"
+                    ta.save()
+                except:
+                    nv = Vehiculo(placa=placa, tipo_vehiculo="TP Gasoil", created_at=datetime.datetime.now())
+                    nv.save()
+                    print("Placa: " + placa + "Nuevo registro")
 
         if options['cargar_oficial_diario']:
 
