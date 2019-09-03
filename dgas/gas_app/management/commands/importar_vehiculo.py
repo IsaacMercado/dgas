@@ -172,7 +172,7 @@ class Command(BaseCommand):
 
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo="Transporte Publico Gasoil"
+                    ta.tipo_vehiculo="TP Gasoil"
                     ta.save()
                 except:
                     nv = Vehiculo(placa=placa, tipo_vehiculo="TP Gasoil", created_at=datetime.datetime.now())
