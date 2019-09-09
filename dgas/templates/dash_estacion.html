@@ -1,0 +1,73 @@
+{% load static i18n %}
+{% load humanize %}
+
+ {% for estacion in estaciones %}
+
+<div class="row">
+     <section class="content-header">
+    <h2>Estación: {{ estacion.nombre }}</h2>
+     </section>
+    <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">91 Octanos</span>
+                <span class="info-box-number">{{ estacion.disponible91.0|floatformat:2|intcomma }} Litros</span>
+
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ estacion.disponible91.1|floatformat:0 }}%"></div>
+                </div>
+                <span class="progress-description">
+                    {{ estacion.disponible91.1|floatformat:2 }}% Disponible
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="info-box bg-green">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">95 Octanos</span>
+                <span class="info-box-number">{{ estacion.disponible95.0|floatformat:2|intcomma }} Litros</span>
+
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ estacion.disponible95.1|floatformat:0 }}%"></div>
+                </div>
+                <span class="progress-description">
+                    {{ estacion.disponible95.1|floatformat:2 }}% Disponible
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="info-box bg-yellow">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Gasoil</span>
+                <span class="info-box-number">{{ estacion.disponibleGasoil.0|floatformat:2|intcomma }} Litros</span>
+
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ estacion.disponibleGasoil.1|floatformat:0 }}%"></div>
+                </div>
+                <span class="progress-description">
+                    {{ estacion.disponibleGasoil.1|floatformat:2 }}% disponible
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+
+</div>
+<!-- /.row -->
+{% endfor %}

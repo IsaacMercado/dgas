@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load humanize %}
+{% block title %}Estaciones - Reporte{% endblock %}
+
+
+{% block css %}
+
+    <link rel="stylesheet" href="{% static 'plugins/DataTables/DataTables-1.10.18/css/dataTables.bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/DataTables/Buttons-1.5.6/css/buttons.dataTables.min.css' %}">
+
+{% endblock css %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            Estaciones
+            <small>municipio</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Inicio</a></li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Estaciones registradas</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                     <div class="row">
+                        <div class="container col-md-12">
+                            <table id="tabla_estaciones"
+                                   style="width:100%"
+                                   class="table table-bordered table-striped">
+                                <div class="loading-table-data">
+                                    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                                    <span class="sr-only">Loading...</span>
+                                    <p>Loading data...</p>
+                                </div>
+
+                            </table>
+                        </div>
+                     </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <div class="modal fade" id="modal-alerta">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Alerta del sistema</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div id="alerta-mensaje"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Cancelar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+{% endblock content %}
+
+{% block js %}
+
+    <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
+
+    <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
+    <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
+    <script src="{% static 'bower_components/pdfmake/build/pdfmake.min.js' %}"></script>
+    <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
+
+    <script type="text/javascript">
+
+        var table;
+        var URL = "/api/estaciones/";
+
+        $(document).ready(
+            function () {
+
+                table = $('#tabla_estaciones').DataTable({
+                    'serverSide': true,
+                    "scrollY": 200,
+                    "scrollX": true,
+                    'ajax': URL,
+
+                    "language": {
+                        "url": "{% static 'plugins/DataTables/Spanish.json' %}"
+                    },
+
+                    'columns': [
+                        /*
+                        {
+                            "className": 'details-control',
+                            "orderable": false,
+                            "data": null,
+                            "defaultContent": ''
+                        },
+                        */
+                        {"title": "Id", "data": "id", "responsivePriority": 1,},
+                        {"title": "Nombre", "data": "nombre", "responsivePriority": 1,},
+                        {"title": "Municipio", "data": "municipio", "responsivePriority": 1,},
+                        {"title": "Direccion", "data": "direccion", "responsivePriority": 1,},
+
+
+                    ],
+
+                    "initComplete": function (settings, json) {
+                        $('div.loading-table-data').hide()
+                    },
+
+                });
+
+
+            });
+
+    </script>
+
+{% endblock js %}
+

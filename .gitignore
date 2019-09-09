@@ -9,13 +9,13 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+#build/
 develop-eggs/
-dist/
+#dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/
 lib64/
 parts/
 sdist/
@@ -104,13 +104,13 @@ coverage
 .nyc_output
 
 # Bower dependency directory (https://bower.io/)
-bower_components
+#bower_components
 
 # node-waf configuration
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+#build/Release
 
 # Dependency directories
 node_modules/
@@ -332,3 +332,5 @@ dgas/media/
 .env
 .envs/*
 !.envs/.local/
+
+dgas/*/migrations/

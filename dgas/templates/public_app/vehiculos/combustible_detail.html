@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+            <li class="active">Inicio</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <b>Nombre: </b> {{ object.last_name }} {{ object.first_name }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Imagen: </b><br>
+                            <img src="{{ object.foto_usuario.crop.400x400 }}"/>
+                        </li>
+                    </ul>
+
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nro. {{ aja }}</th>
+                            <th>Resumen</th>
+                            <th>Solucionado</th>
+                            <th>F. Reg</th>
+                            <th>F. Act</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for p in prq %}
+                            <tr>
+                               <td>{{ p.pk }}</td>
+                                <td>{{ p.resumen }}</td>
+                                <td>{{ p.solucionado }}</td>
+                                <td>{{ p.fecha_act }}</td>
+                                <td>{{ p.fecha_reg }}</td>
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">No hay registros</td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                    <a href="{% url 'gas_app:usuarios_list' %}"
+                       class="btn btn-primary"><i
+                            class="fa fa-reply"></i> Regresar al listado</a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+
+    </div>
+{% endblock content %}
+

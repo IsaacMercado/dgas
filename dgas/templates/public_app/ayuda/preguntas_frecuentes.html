@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load static i18n %}
+{% load humanize %}
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Inicio</a></li>
+            <li class="active">Preguntas frecuentes</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        Listado de preguntas frecuentes
+                    </h3>
+
+                    <hr>
+
+                    <p><b>¿Es nesesario registrarme en el sistema?</b></p>
+                    <p>
+                        Recomendamos hacer el registro personal para tener mejores opciones de usuarios tales como:
+                        personalizaciones de su perfil, notificaciones vía correo electrónico y otros módulos
+                        que estamos implementado.
+                    </p>
+
+                    <p><b>¿Puedo registrar otros vehiculos en mi cuenta de usuario?</b></p>
+
+                    <p>Se pueden registrar varios vehículos en su perfil. Lo importante es que en el registros
+                        de vehiculos incluya el número de cédula o rif del propietario </p>
+
+                    <p><b>¿Cómo funcionan las colas coordinadas?</b></p>
+                    <p>
+                        Los funcionarios le solicitarán a el usuario el número de placa y cédula de identidad para
+                        revisarlo en el sistema; los usuario podrán surtir combustible cada 4 días
+                    </p>
+
+
+                    <p><b>¿ Podré solicitar mi cita por el sistema ?</b></p>
+                    <p>
+                        Esperamos que la mayoría de usuarios esten registrados en el sistema para que solicite sus
+                        cupo en cola desde esta página. Por los momentos usaremos colas coordinadas.
+                    </p>
+
+                    <p><b>¿ Cada cuanto puedo surtir gasolina ?</b></p>
+                    <p>
+                        Si usted cargó gasolina puede volver a colocar luego del cuatro dia.
+                    </p>
+
+
+                    <p><b>¿ ?</b></p>
+                    <p></p>
+
+
+                </div>
+                <!-- /.box-header -->
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+            <li class="active">Inicio</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+
+    <div class="white-box">
+
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="box box-primary">
+                    <!-- form start -->
+
+                    <div class="box-body">
+                        <form role="form" method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="btn-group">
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fa fa-check"></i> Grabar
+                                </button>
+
+                                <a href="{% url 'public_app:vehiculos_list' %}"
+                                   class="btn btn-default"><i
+                                        class="fa fa-times"></i> Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#id_telefono_celular').mask('(0000) 000-0000');
+
+            $("#id_placa").bind('keyup', function (e) {
+                if (e.which >= 97 && e.which <= 122) {
+                    var newKey = e.which - 32;
+                    // I have tried setting those
+                    e.keyCode = newKey;
+                    e.charCode = newKey;
+                }
+                $("#id_placa").val(($("#id_placa").val()).toUpperCase());
+            });
+
+            $('#id_placa').mask('AAAAAAA', {
+                'translation': {
+                    A: {pattern: /[A-Za-z0-9]/},
+                    S: {pattern: /[A-Za-z]/},
+                    Y: {pattern: /[0-9]/}
+                }
+            });
+
+            var options = {
+                translation: {
+                    '0': {pattern: /\d/},
+                    '1': {pattern: /[1-9]/},
+                    '9': {pattern: /\d/, optional: true},
+                    '#': {pattern: /\d/, recursive: true},
+                    'C': {pattern: /V|v|E|e|G|g|J|j/, fallback: 'V'}
+                }
+            };
+            $('#id_cedula').mask('C-19999999', options);
+
+            $('#id_cedula').on('input', function (e) {
+                var cedula = $(this).val();
+                if (cedula.length > 9) {
+                    var cedula = cedula.substring(2);
+                    if (cedula > 80000000) {
+                        $(this).val('E-' + cedula);
+                    }
+                }
+            });
+        });
+    </script>
+
+
+{% endblock js %}

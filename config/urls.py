@@ -5,8 +5,10 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
+from .views import Dashboard
+
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("", Dashboard.as_view(), name="dashboard"),
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
@@ -16,6 +18,11 @@ urlpatterns = [
     path("users/", include("dgas.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("gas/", include("dgas.gas_app.urls")),
+    path("publico/", include("dgas.public_app.urls")),
+    path("usuarios/", include("dgas.users_app.urls")),
+    path("supervisor/", include("dgas.supervisor_app.urls")),
+    path("api/", include("dgas.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
