@@ -76,9 +76,11 @@ LOCAL_APPS = [
     "dgas.users.apps.UsersAppConfig",
     # Your stuff: custom apps go here
     "dgas.gas_app.apps.GasAppConfig",
+    "dgas.supervisor_app.apps.SupervisorAppConfig",
     "dgas.public_app.apps.PublicAppConfig",
     "dgas.api.apps.ApiConfig",
     "dgas.users_app.apps.UsersAppConfig",
+
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

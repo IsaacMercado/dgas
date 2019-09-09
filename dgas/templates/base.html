@@ -212,6 +212,13 @@
                     {% endif %}
                 {% endfor %}
 
+                <!--Menu supervisor-->
+                {% for group in user.groups.all %}
+                    {% if group.name == 'Supervisor' %}
+                        {% include "mnu_supervisor.html" %}
+                    {% endif %}
+                {% endfor %}
+
                 <!--Menu Estaciones-->
                 {% for group in user.groups.all %}
                     {% if group.name == 'Estacion' %}

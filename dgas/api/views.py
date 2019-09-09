@@ -14,7 +14,7 @@ import pytz
 
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
-    CombustibleSerializer, ColaSerializer, \
+    CombustibleSerializer, ColaSerializer, VehiculoSupervisorSerializer, \
     ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer
 
 
@@ -25,6 +25,16 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     """
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
+    # permission_classes = (IsAuthenticated,)
+
+
+class VehiculoSupervisorViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions for Vehiculos
+    """
+    queryset = Vehiculo.objects.all()
+    serializer_class = VehiculoSupervisorSerializer
     # permission_classes = (IsAuthenticated,)
 
 

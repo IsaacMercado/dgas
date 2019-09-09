@@ -16,6 +16,12 @@ class VehiculoUserSerializer(serializers.ModelSerializer):
         fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'cilindros')
 
 
+class VehiculoSupervisorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vehiculo
+        fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'cilindros','created_at', 'bloqueado')
+
 class CargaSerializer(serializers.ModelSerializer):
 
     class Meta:
