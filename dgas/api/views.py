@@ -197,7 +197,7 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     #permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'))
+        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'), total_rebotados=Count('rebotados') )
 
         return qs
 
