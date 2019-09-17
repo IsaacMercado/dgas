@@ -278,8 +278,12 @@
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
     <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
+
+    {% comment %}
     <script src="{% static 'bower_components/pdfmake/build/pdfmake.min.js' %}"></script>
     <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
+    {% endcomment %}
+
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
     <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
@@ -383,7 +387,7 @@
                             }
                         },
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
-                        //{"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
+                        {"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
                         {
                             "data": null,
                             "defaultContent": bnt
