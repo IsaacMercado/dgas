@@ -249,6 +249,21 @@ class Cola(models.Model):
         return str(self.vehiculo.placa)
 
 
+class ColaConsulta(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    created_by = UserForeignKey(auto_user_add=True, related_name='cola_consulta_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='cola_consula_updated')
+    last_modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-last_modified_at',)
+
+    def __str__(self):
+        return str(self.vehiculo.placa)
+
+
 class Rebotado(models.Model):
     combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='rebotados')
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
