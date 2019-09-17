@@ -77,7 +77,7 @@
                                          alt="Sin foto">
                                 {% else %}
                                     <img src="{{ user.photo_user.thumbnail.20x20 }}" class="img-circle"
-                                         alt="Foto empleado"/>
+                                         alt="Foto Usuario"/>
                                 {% endif %}
                                 <span class="hidden-xs">
                                 {% if user.username %}
@@ -385,17 +385,27 @@
                             $("#alerta-mensaje-publico").html("<b>Atención: </b> vehículo placas: <b>" + $("#placa_publico").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
                             if (ultima_carga.proxima_recarga != '') {
                                 //var pr = new Date(ultima_carga.proxima_recarga);
-                                $("#alerta-mensaje-publico").append("<br><br><b>Proxima recarga el: </b>" + ultima_carga.proxima_recarga)
+                                $("#alerta-mensaje-publico").append("<br><br><b>Próxima recarga el: </b>" + ultima_carga.proxima_recarga)
                             }
                             $('#modal-alerta-publico').modal('show');
                         } else {
-                            $('#modal-alerta-publico').modal('show');
-                            $("#alerta-mensaje-publico").html("<b>Atención: </b> vehículo placas: <b>" + $("#placa_publico").val() + " </b>" + ultima_carga.mensaje);
+
+                            if (ultima_carga.mensaje == "no_perfil"){
+                                $('#modal-alerta-publico').modal('show');
+                                $("#alerta-mensaje-publico").html("<b>Atención:</b> Usted solo puede consultar vehiculos registrados en su cuenta" );
+
+                            }else{
+                                $('#modal-alerta-publico').modal('show');
+                                $("#alerta-mensaje-publico").html("<b>Atención: </b> vehículo placas: <b>" + $("#placa_publico").val() + " </b>" + ultima_carga.mensaje);
+                            }
 
                         }
                     }
                 )   // on success - 200
-                .fail();
+                .fail(function (result) {
+                       alert('Para realizar consultas debe  estar registrado y haber iniciado sesión en el sistema. \n\nDe lo contrario, por favor, registrese y agregue sus vehiculos')
+                    }
+                );
 
         });
 

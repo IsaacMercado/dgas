@@ -12,10 +12,11 @@ from rest_framework.views import APIView
 from datetime import datetime, timedelta, date
 import pytz
 
-from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
+from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, ColaConsulta
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
     CombustibleSerializer, ColaSerializer, VehiculoSupervisorSerializer, \
     ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer
+from dgas.users.models import User
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):
@@ -197,7 +198,7 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     #permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'))
+        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas'), total_rebotados=Count('rebotados') )
 
         return qs
 
@@ -343,7 +344,7 @@ class EstacionViewSet(viewsets.ModelViewSet):
 class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
 
     serializer_class = ColaSerializer
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
         """
@@ -358,15 +359,25 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
         placa = self.kwargs['placa']
 
         frecuencia_de_carga = 0
+        en_peril = False
 
         try:
 
             vehiculo = Vehiculo.objects.get(placa=placa)
 
+            if vehiculo.usuario is None:
+                en_peril = False
+            else:
+                u = User.objects.get(pk=vehiculo.usuario.id)
+                if u.id == request.user.id:
+                    en_peril = True
+                    vc = ColaConsulta(usuario_id=u.id, vehiculo_id=vehiculo.placa)
+                    vc.save()
+
             if vehiculo.tipo_vehiculo == "Moto Taxita" or vehiculo.tipo_vehiculo == "Oficial Interdiario":
                 frecuencia_de_carga = 2
 
-            elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "TP Gasolina" or vehiculo.tipo_vehiculo == "TPGasoil":
+            elif vehiculo.tipo_vehiculo == "Oficial Diario" or vehiculo.tipo_vehiculo == "TP Gasolina" or vehiculo.tipo_vehiculo == "TP Gasoil":
                 frecuencia_de_carga = 1
             else:
                     frecuencia_de_carga = 4
@@ -374,40 +385,50 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
         except Vehiculo.DoesNotExist:
             frecuencia_de_carga = 4
 
-        try:
+        if en_peril:
 
-            ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
+            try:
 
-            ultima_carga = ultima_cola.created_at
-            ultima_carga_h4 = ultima_carga - timedelta(hours=4)
-            proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_carga)
-            proxima_carga = proxima_carga.date()
-            # p = proxima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
-            p = proxima_carga
+                ultima_cola = Cola.objects.filter(vehiculo=placa).latest('created_at')
 
-            if not ultima_cola.cargado:
-                uc = json.dumps({"cargar": "false",
-                                 "mensaje": " ya esta registrado para surtir gasolina",
-                                 "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": "",
-                                 "created_at": str(ultima_cola.created_at)})
-            elif p >= hoy:
-                uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
-                                 "estacion": str(ultima_cola.combustible),
-                                 "proxima_recarga": str(p),
-                                 "created_at": str(ultima_cola.created_at)})
-            else:
+                ultima_carga = ultima_cola.created_at
+                ultima_carga_h4 = ultima_carga - timedelta(hours=4)
+                proxima_carga = ultima_carga_h4 + timedelta(days=frecuencia_de_carga)
+                proxima_carga = proxima_carga.date()
+                # p = proxima_carga.replace(hour=0, minute=0, second=0, microsecond=0)
+                p = proxima_carga
+
+                if not ultima_cola.cargado:
+                    uc = json.dumps({"cargar": "false",
+                                     "mensaje": " ya esta registrado para surtir gasolina",
+                                     "estacion": str(ultima_cola.combustible),
+                                     "proxima_recarga": "",
+                                     "created_at": str(ultima_cola.created_at)})
+                elif p >= hoy:
+                    uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
+                                     "estacion": str(ultima_cola.combustible),
+                                     "proxima_recarga": str(p),
+                                     "created_at": str(ultima_cola.created_at)})
+                else:
+                    uc = json.dumps({"cargar": "true",
+                                     "mensaje": " vehiculo puede surtir gasolina",
+                                     "estacion": str(ultima_cola.combustible),
+                                     "proxima_recarga": "",
+                                     "created_at": str(ultima_cola.created_at)})
+
+            except Cola.DoesNotExist:
                 uc = json.dumps({"cargar": "true",
-                                 "mensaje": " vehiculo puede surtir gasolina",
-                                 "estacion": str(ultima_cola.combustible),
+                                 "mensaje": " puede surtir gasolina",
+                                 "estacion": "",
                                  "proxima_recarga": "",
-                                 "created_at": str(ultima_cola.created_at)})
+                                 "created_at": ''})
+        else:
 
-        except Cola.DoesNotExist:
             uc = json.dumps({"cargar": "true",
-                             "mensaje": " pude surtir gasolina",
+                             "mensaje": "no_perfil",
                              "estacion": "",
                              "proxima_recarga": "",
                              "created_at": ''})
+
 
         return Response(uc)

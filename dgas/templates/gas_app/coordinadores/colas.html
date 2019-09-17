@@ -209,7 +209,33 @@
     </div>
     <!-- /.modal -->
 
-     <div class="modal fade" id="modal-alerta-bloqueado">
+
+    <div class="modal fade" id="modal-confirmar">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button -->
+                    <h4 class="modal-title">Alerta del sistema</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div id="mensaje-confirmacions"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarEliminar()">Cancelar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="eliminarVehiculoDeCola()">Eliminar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div class="modal fade" id="modal-alerta-bloqueado">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -219,15 +245,15 @@
                 </div>
                 <div class="modal-body">
 
-                     <div class="row">
-                            <div class="col-md-2">
-                                 <img src="{% static 'images/blocked_icon.png' %}" class="img-circle" height="80"
-                                             width="80" alt="Bloqueado">
-                            </div>
-                            <div class="col-md-10">
-                                <div id="alerta-mensaje-bloqueado"></div>
-                            </div>
-                     </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{% static 'images/blocked_icon.png' %}" class="img-circle" height="80"
+                                 width="80" alt="Bloqueado">
+                        </div>
+                        <div class="col-md-10">
+                            <div id="alerta-mensaje-bloqueado"></div>
+                        </div>
+                    </div>
                     <div id="alerta-mensaje"></div>
 
                 </div>
@@ -319,11 +345,16 @@
                 });
 
 
+                // '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
+
+
                 var bnt = '<td>' +
                     '    <center>' +
+                    '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
                     '       <i class="fa fa-power-off"></i> </a>' +
                     '       <a href="#" id="verDetalles" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-eye"></i> </a>' +
+                    '    </div>' +
                     '    </center>' +
                     '</td>';
 
@@ -352,6 +383,7 @@
                             }
                         },
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
+                        {"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
                         {
                             "data": null,
                             "defaultContent": bnt
@@ -412,6 +444,11 @@
                 });
 
 
+                $('#tabla_combustible tbody').on('click', '#hacerReporte', function () {
+                    console.log('aja')
+                });
+
+
                 $('#tabla_combustible tbody').on('click', '#verDetalles', function () {
 
                     var data = table.row($(this).parents('tr')).data();
@@ -434,6 +471,17 @@
                             }
                         );
 
+                    // '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
+
+
+                    var bntCola = '<td>' +
+                        '    <center>' +
+                        '    <div class="btn-group">' +
+                        '       <a id="cargarCola" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> </a>' +
+                        '    </div>' +
+                        '    </center>' +
+                        '</td>';
+
 
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
@@ -451,6 +499,7 @@
 
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
                             {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
+                            /*
                             {
                                 "data": "cargado",
                                 "title": "Cargado",
@@ -458,9 +507,25 @@
                                     return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                                 }
                             },
+                            */
+                            {
+                                orderable: false,
+                                "data": "cantidad",
+                                "title": "Cantidad",
+                                render: function (data, type, row) {
+                                    return '<input class="form-control form-control-sm" type="number" min="0" max="5" name="cantidad[' + row.id + ']" value="' + data + '">';
+                                }
+                            },
+                            /*
                             {
                                 "data": null,
                                 "defaultContent": "<button>Cargar</button>"
+                            },
+                            */
+                            {
+                                "title": "Acciones",
+                                "data": null,
+                                "defaultContent": bntCola
                             }
 
                         ],
@@ -501,6 +566,44 @@
                         var data_cola = table_cola.row($(this).parents('tr')).data();
                         var data_update = {
                             "cargado": true,
+                        };
+                        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                        $.ajax(
+                            {
+                                url: URL_COLA + combustible_id + '/' + data_cola['id'] + '/',
+                                data: data_update,
+                                type: 'patch',
+                                dataType: 'json',
+                                headers: ajax_header,
+                                success: function (data) {
+                                    table_cola.ajax.reload();
+                                },
+                                error: function (request, status, error) {
+                                    console.log(request)
+                                    //alert(request.responseText);
+                                }
+                            }
+                        );
+                    });
+
+                    $('#tabla_colas tbody').on('click', '#borrarDeCola', function () {
+
+                        $('#modal-confirmar').modal('show');
+
+                    });
+
+                    $('#tabla_colas tbody').on('click', '#cargarCola', function () {
+
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+                        var cantidad = $('input[name="cantidad['+data_cola.id+']"]');
+
+                        if (cantidad=='') cantidad=0;
+
+
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+                        var data_update = {
+                            "cargado": true,
+                            "cantidad": cantidad.val()
                         };
                         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                         $.ajax(
@@ -761,6 +864,10 @@
                     }
                 );
 
+        }
+
+        function cancelarEliminar() {
+            $('#modal-confirmar').modal('hide');
         }
 
     </script>
