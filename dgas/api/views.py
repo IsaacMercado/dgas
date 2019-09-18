@@ -221,7 +221,7 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
             .annotate(
             total_cola=Count('colas', distinct=True),
             total_rebotados=Count('rebotados', distinct=True),
-            total_surtidos=Sum('colas__cantidad', distinct=True)
+            total_surtidos=Count('colas__cantidad', distinct=True)
         )
 
         return qs
