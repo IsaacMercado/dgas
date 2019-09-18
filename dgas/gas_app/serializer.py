@@ -41,7 +41,7 @@ class CombustibleSerializer(serializers.ModelSerializer):
     estacion = EstacionSerializer()
     total_cola = serializers.IntegerField()
     total_rebotados = serializers.IntegerField()
-    total_surtidos = serializers.FloatField()
+    total_surtidos = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         model = Combustible
