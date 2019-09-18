@@ -1,6 +1,6 @@
 import json
 from django.core import serializers
-from django.db.models import Count
+from django.db.models import Count, Sum
 from rest_framework import generics
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -198,7 +198,13 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     #permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        qs = self.queryset.filter(completado=False).exclude(estado='En plan',).annotate(total_cola=Count('colas', distinct=True), total_rebotados=Count('rebotados', distinct=True) )
+        qs = self.queryset.filter(completado=False)\
+            .exclude(estado='En plan',)\
+            .annotate(
+            total_cola=Count('colas', distinct=True),
+            total_rebotados=Count('rebotados', distinct=True),
+            total_surtidos=Sum('colas__cantidad', distinct=True)
+        )
 
         return qs
 
@@ -209,7 +215,14 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
+        #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
+
+        qs = self.queryset.filter(completado=True) \
+            .annotate(
+            total_cola=Count('colas', distinct=True),
+            total_rebotados=Count('rebotados', distinct=True),
+            total_surtidos=Sum('colas__cantidad', distinct=True)
+        )
 
         return qs
 
