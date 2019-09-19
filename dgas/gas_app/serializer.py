@@ -38,15 +38,16 @@ class EstacionSerializer(serializers.ModelSerializer):
 
 class CombustibleSerializer(serializers.ModelSerializer):
 
-    estacion = EstacionSerializer()
-    total_cola = serializers.IntegerField()
-    total_rebotados = serializers.IntegerField()
-    total_surtidos = serializers.DecimalField(max_digits=10, decimal_places=2)
+    estacion = EstacionSerializer(read_only=True)
+    total_cola = serializers.IntegerField(read_only=True)
+    total_rebotados = serializers.IntegerField(read_only=True)
+    total_colas_cantidad = serializers.IntegerField(read_only=True)
+    total_surtidos = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = Combustible
         fields = ('id', 'tipo_combustible', 'estacion', 'nota', 'activar_cola',
-                  'cantidad_maxima_por_vehiculo', 'cantidad_vehiculos', 'created_at', 'last_modified_at', 'total_cola', 'total_rebotados', 'total_surtidos')
+                  'cantidad_maxima_por_vehiculo', 'cantidad_vehiculos', 'created_at', 'last_modified_at', 'total_cola', 'total_rebotados', 'total_surtidos', 'total_colas_cantidad')
 
 
 class ColaSerializer(serializers.ModelSerializer):

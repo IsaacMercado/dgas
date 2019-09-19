@@ -202,8 +202,8 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             .exclude(estado='En plan',)\
             .annotate(
             total_cola=Count('colas', distinct=True),
-            total_rebotados=Count('rebotados', distinct=True),
-            total_surtidos=Sum('colas__cantidad')
+            #total_rebotados=Count('rebotados', distinct=True),
+            total_surtidos=Sum('colas__cantidad', distinct=True)
         )
 
         return qs
