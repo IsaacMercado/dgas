@@ -39,6 +39,7 @@ class VehiculoAdmin(admin.ModelAdmin):
 class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
+    list_filter = ('combustible',)
     #list_filter = ('tipo_vehiculo',)
 
 
