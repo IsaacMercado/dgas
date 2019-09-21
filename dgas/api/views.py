@@ -1,6 +1,6 @@
 import json
 from django.core import serializers
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Subquery, IntegerField
 from rest_framework import generics
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -217,11 +217,13 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
     def get_queryset(self):
         #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
 
+        total_surtidos = self.queryset.annotate(total_surtidos=Sum('colas__cantidad'))
+
         qs = self.queryset.filter(completado=True) \
             .annotate(
             total_cola=Count('colas', distinct=True),
             total_rebotados=Count('rebotados', distinct=True),
-            total_surtidos=Sum('colas__cantidad', distinct=True)
+            total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField())
         )
 
         return qs
