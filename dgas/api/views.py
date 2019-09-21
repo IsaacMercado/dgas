@@ -218,12 +218,14 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
         #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
 
         total_surtidos = self.queryset.annotate(total_surtidos=Sum('colas__cantidad'))
+        total_cola = self.queryset.annotate(Count('colas', distinct=True))
+        total_rebotados = self.queryset.annotate(Count('rebotados', distinct=True))
 
         qs = self.queryset.filter(completado=True) \
             .annotate(
-            total_cola=Count('colas', distinct=True),
-            total_rebotados=Count('rebotados', distinct=True),
-            total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField())
+            total_cola=Subquery(total_cola.values('total_cola'), output_field=IntegerField(),
+            total_rebotados=Subquery(total_rebotados.values('total_rebotados'), output_field=IntegerField(),
+            total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField()
         )
 
         return qs
