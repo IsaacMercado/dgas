@@ -197,13 +197,29 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = CombustibleSerializer
     #permission_classes = (AllowAny,)
 
+    '''
+    total_surtidos = self.queryset.annotate(total_surtidos=Sum('colas__cantidad'))
+    total_cola = self.queryset.annotate(Count('colas', distinct=True))
+    total_rebotados = self.queryset.annotate(Count('rebotados', distinct=True))
+
+    qs = self.queryset.filter(completado=True) \
+        .annotate(
+        total_cola=Subquery(total_cola.values('cola'), output_field=IntegerField()),
+        total_rebotados=Subquery(total_rebotados.values('rebotados'), output_field=IntegerField()),
+        total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField())
+    )
+    '''
+
     def get_queryset(self):
+
+        total_surtidos = self.queryset.annotate(total_surtidos=Sum('colas__cantidad'))
+
         qs = self.queryset.filter(completado=False)\
             .exclude(estado='En plan',)\
             .annotate(
             total_cola=Count('colas', distinct=True),
             total_rebotados=Count('rebotados', distinct=True),
-            total_surtidos=Sum('colas__cantidad', distinct=True)
+            total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField())
         )
 
         return qs
@@ -217,15 +233,13 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
     def get_queryset(self):
         #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
 
-        total_surtidos = self.queryset.annotate(total_surtidos=Sum('colas__cantidad'))
-        total_cola = self.queryset.annotate(Count('colas', distinct=True))
-        total_rebotados = self.queryset.annotate(Count('rebotados', distinct=True))
+
 
         qs = self.queryset.filter(completado=True) \
             .annotate(
-            total_cola=Subquery(total_cola.values('cola'), output_field=IntegerField()),
-            total_rebotados=Subquery(total_rebotados.values('rebotados'), output_field=IntegerField()),
-            total_surtidos=Subquery(total_surtidos.values('total_surtidos'), output_field=IntegerField())
+            total_cola=Count('colas', distinct=True),
+            total_rebotados=Count('rebotados', distinct=True),
+            total_surtidos=Sum('colas__cantidad', distinct=True)
         )
 
         return qs
