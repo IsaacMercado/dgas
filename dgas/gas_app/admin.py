@@ -1,31 +1,31 @@
 from django.contrib import admin
 
 from .models import Estacion, Combustible, Vehiculo, Carga, Cola, VehiculoResumen, \
-    Rebotado, Pico, ColaConsulta
+    Rebotado, Contador, ColaConsulta
 
 
-class PicoInline(admin.TabularInline):
-    model = Pico
+class ContadorInline(admin.TabularInline):
+    model = Contador
     #fields = ['resumen',]
 
 
 @admin.register(Estacion)
 class EstacionAdmin(admin.ModelAdmin):
     pass
-    inlines = [PicoInline]
+    inlines = [ContadorInline]
     #list_display = ('cedula','primer_apellido', 'primer_nombre')
     #search_fields = ['cedula', 'primer_apellido']
 
 
-@admin.register(Pico)
-class PicoAdmin(admin.ModelAdmin):
+@admin.register(Contador)
+class ContadorAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad', 'completado')
-    list_filter = ('estacion',)
+    list_display = ('estacion', 'apertura', 'completado')
+    #list_filter = ('estacion',)
 
 
 @admin.register(Vehiculo)

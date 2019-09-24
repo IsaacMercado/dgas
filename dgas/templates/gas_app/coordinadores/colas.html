@@ -184,6 +184,61 @@
     <!-- /.modal -->
 
 
+    <div class="modal fade" id="modal-reporte">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Agregar vehículo</h4>
+                </div>
+                <div class="modal-body">
+
+                    <br>
+                    <label>Placa:</label>
+                    <input class="form-control" type="text" placeholder="Default input" id="add_placa" readonly>
+                    <br>
+                    <label>Cédula:</label>
+                    <input class="form-control" type="text" placeholder="Cedula empieza con V o E" id="username">
+                    <br>
+                    <br>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Tipo de vehiculo</label>
+                        <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
+                            <option value="Particular">Particular</option>
+                            <option value="Taxi">Taxi</option>
+                            <option value="Moto">Moto</option>
+
+                        </select>
+                    </div>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Cilindros</label>
+                        <select class="form-control" name="add_cilindros" id="add_cilindros">
+                            <option value="1">1</option>
+                            <option value="4">2</option>
+                            <option value="4">3</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <br>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarReporte()">Cancelar</button>
+                    <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
     <div class="modal fade" id="modal-alerta">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -349,15 +404,13 @@
                 });
 
 
-                // '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
-
-
                 var bnt = '<td>' +
                     '    <center>' +
                     '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
                     '       <i class="fa fa-power-off"></i> </a>' +
                     '       <a href="#" id="verDetalles" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-eye"></i> </a>' +
+                    '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
                     '    </div>' +
                     '    </center>' +
                     '</td>';
@@ -450,7 +503,15 @@
 
 
                 $('#tabla_combustible tbody').on('click', '#hacerReporte', function () {
-                    console.log('aja')
+                    $('#modal-reporte').modal('show');
+                });
+
+                $('#tabla_combustible tbody').on('click', '#ejcutarReport', function () {
+                    $('#modal-reporte').modal('show');
+                });
+
+                $('#tabla_combustible tbody').on('click', '#cancelarReporte', function () {
+                    $('#modal-reporte').modal('hide');
                 });
 
 
