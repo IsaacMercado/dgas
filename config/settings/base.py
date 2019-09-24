@@ -70,6 +70,7 @@ THIRD_PARTY_APPS = [
     'versatileimagefield',
     'pure_pagination',  # pagination number page
     'django_userforeignkey', # last insert or update
+    'qr_code',
 
 ]
 LOCAL_APPS = [
