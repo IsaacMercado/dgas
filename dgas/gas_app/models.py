@@ -137,11 +137,24 @@ class Estacion(models.Model):
         return [total_disponible, porcentaje, bar_color]
 
 
-class   Contador(models.Model):
+class Contador(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE, related_name='estaciones_islas', default=1)
     nombre = models.CharField(max_length=20, default='')
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, null=True, blank=True)
     activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return ('%s, %s') % (self.nombre, self.tipo_combustible,)
+
+
+class ContadorMedida(models.Model):
+    contador = models.ForeignKey(Contador, on_delete=models.CASCADE, related_name='_islas', default=1)
+    cantidad = models.PositiveIntegerField(default=0)
+
+    created_by = UserForeignKey(auto_user_add=True, related_name='contador_medida')
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='contador_medida_update')
+    last_modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return ('%s, %s') % (self.nombre, self.tipo_combustible,)
