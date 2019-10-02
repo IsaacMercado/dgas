@@ -23,6 +23,7 @@ TIPO_VEHICULO_CHOICES = Choices(
 
 class Estacion(models.Model):
     #usuario = models.ForeignKey(GasUser, on_delete=models.CASCADE, blank=True, null=True)
+    codigo_cliente = models.PositiveIntegerField(default=0)
     nombre = models.CharField(max_length=100, blank=True, null=True)
     direccion = models.CharField(max_length=100, blank=True, null=True)
     municipio_estacion = models.ForeignKey(Municipio, on_delete=models.CASCADE, default=15, null=True, blank=True)
@@ -136,7 +137,7 @@ class Estacion(models.Model):
         return [total_disponible, porcentaje, bar_color]
 
 
-class Pico(models.Model):
+class Contador(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE, related_name='estaciones_islas', default=1)
     nombre = models.CharField(max_length=20, default='')
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, null=True, blank=True)
@@ -146,24 +147,33 @@ class Pico(models.Model):
         return ('%s, %s') % (self.nombre, self.tipo_combustible,)
 
 
+class ContadorMedida(models.Model):
+    contador = models.ForeignKey(Contador, on_delete=models.CASCADE, related_name='_islas', default=1)
+    cantidad = models.PositiveIntegerField(default=0)
+
+    created_by = UserForeignKey(auto_user_add=True, related_name='contador_medida')
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='contador_medida_update')
+    last_modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return ('%s, %s') % (self.nombre, self.tipo_combustible,)
+
+
 class Combustible(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
-    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, null=True, blank=True)
-    estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='En plan')
-    # nro_factura = models.CharField(max_length=50, blank=True, null=True)
+    estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='En Camino')
     nota = models.CharField(max_length=100, blank=True, null=True)
-    cantidad = models.FloatField(default=0)
-    cantidad_maxima_por_vehiculo = models.PositiveIntegerField(default=0)
-    cantidad_maxima_por_motos = models.PositiveIntegerField(default=0)
-    cantidad_vehiculos = models.PositiveIntegerField(default=0)
-    cantidad_motos = models.PositiveIntegerField(default=0)
     fecha_planificacion = models.DateField(null=True, blank=True)
-    fecha_salida = models.DateTimeField(null=True, blank=True)
-    fecha_descarga = models.DateTimeField(null=True, blank=True)
-    fecha_surtiendo = models.DateTimeField(null=True, blank=True)
-    activar_cola = models.BooleanField(default=False)
-    cola_manual = models.BooleanField(default=False)
+    fecha_apertura = models.DateTimeField(null=True, blank=True)
+    fecha_cierre = models.DateTimeField(null=True, blank=True)
+    apertura = models.BooleanField(default=False)
     completado = models.BooleanField(default=False)
+
+    litros_surtidos_g91 = models.PositiveIntegerField(default=0)
+    litros_surtidos_g95 = models.PositiveIntegerField(default=0)
+    litros_surtidos_gsl = models.PositiveIntegerField(default=0)
+    notas = models.TextField(default='')
 
     created_by = UserForeignKey(auto_user_add=True, related_name='combustible_created')
     created_at = models.DateTimeField(auto_now_add=True)
