@@ -67,17 +67,23 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "rest_framework",
-    'versatileimagefield',
-    'pure_pagination',  # pagination number page
-    'django_userforeignkey', # last insert or update
+    "rest_framework.authtoken",  # token authentication
+    "versatileimagefield",
+    "pure_pagination",  # pagination number page
+    "django_userforeignkey", # last insert or update
+    "qr_code",
 
 ]
 LOCAL_APPS = [
+    "dgas.authentication.apps.AuthenticationConfig",
     "dgas.users.apps.UsersAppConfig",
     # Your stuff: custom apps go here
     "dgas.gas_app.apps.GasAppConfig",
+    "dgas.supervisor_app.apps.SupervisorAppConfig",
     "dgas.public_app.apps.PublicAppConfig",
     "dgas.api.apps.ApiConfig",
+    "dgas.users_app.apps.UsersAppConfig",
+
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -270,6 +276,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework_datatables.renderers.DatatablesRenderer',

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load static i18n %}
+{% load humanize %}
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+            <li class="active">Inicio</li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        {% comment %}
+                        Estación de servicio: {{ estacion.nombre }}
+                        {% endcomment %}
+
+                    </h3>
+
+                    <div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 250px;">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="table-responsive table-striped">
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Estacion</th>
+                            <th>Placa</th>
+                            <th>Combustible</th>
+                            <th>Cantidad</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for cola in colas %}
+                            <tr>
+                                <td>{{ cola.combustible }}</td>
+                                <td>{{ cola.vehiculo }}</td>
+                                <td>{{ cola.tipo_combustible }}</td>
+                                <td>{{ cola.cantidad }}</td>
+                                <td>{{ cola.created_at }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3"> No hay registros de vehículo</td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% include "_pagination.html" %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}
