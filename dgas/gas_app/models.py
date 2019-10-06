@@ -193,6 +193,8 @@ class Vehiculo(models.Model):
     cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado', help_text='Indicar el numero de cedula que aparece en el carnet de circulación vial')
     tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')
     cilindros = models.CharField(max_length=10, choices=CILINDROS_CHOICES, default='4')
+    organizacion = models.CharField('Organización', max_length=100, default='No aplica')
+    paso_preferencial = models.BooleanField(default=False)
 
     bloqueado = models.BooleanField(default=False)
     bloqueado_motivo = models.TextField(blank=True, null=True)

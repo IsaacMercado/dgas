@@ -89,6 +89,14 @@
                         <br><br>
 
                         <form class="form-inline" action="">
+
+                            <button type="button"
+                                    class="btn btn-reset btn-success btn-flat"
+                                    id="cerrar_cola">
+                                <i class="fa fa-arrow-left"></i>
+
+                            </button>
+
                             <div class="form-group">
                                 <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
                             </div>
@@ -96,10 +104,20 @@
                             <button onclick="registarEnCola()" type="button" class="btn btn-primary">Registrar en
                                 cola
                             </button>
+
+                            <!--
                             <button type="button"
-                                    class="btn btn-reset btn-success btn-flat"
-                                    id="cerrar_cola">Regresar
+                                    class="btn btn-reset btn-default btn-flat"
+                                    id="registrar_apoyo">
+                                <i class="fa fa-random"></i>
                             </button>
+                            -->
+                            <button type="button"
+                                    class="btn btn-reset btn-warning btn-flat"
+                                    id="consultar_vehiculo">
+                                <i class="fa fa-search"></i>
+                            </button>
+
                         </form>
 
                         <br>
@@ -228,7 +246,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" onclick="cancelarReporte()">Cancelar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarReporte()">Cancelar
+                    </button>
                     <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
                 </div>
             </div>
@@ -279,7 +298,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" onclick="cancelarEliminar()">Cancelar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarEliminar()">Cancelar
+                    </button>
                     <button type="button" class="btn btn-default pull-left" onclick="eliminarVehiculoDeCola()">Eliminar
                     </button>
                 </div>
@@ -353,6 +373,7 @@
         var URL = "/api/vehiculos/";
         var URL_VEH = "/api/vehiculos/";
         var URL_VEH_REB = "/api/vehiculos_rebotados/";
+        var URL_VEH_CON = "/api/consultar_vehiculo/";
 
         var URL_ESTACIONES = "/api/estaciones/";
 
@@ -404,13 +425,14 @@
                 });
 
 
+                // '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
+
                 var bnt = '<td>' +
                     '    <center>' +
                     '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
                     '       <i class="fa fa-power-off"></i> </a>' +
                     '       <a href="#" id="verDetalles" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-eye"></i> </a>' +
-                    '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
                     '    </div>' +
                     '    </center>' +
                     '</td>';
@@ -662,9 +684,9 @@
                     $('#tabla_colas tbody').on('click', '#cargarCola', function () {
 
                         var data_cola = table_cola.row($(this).parents('tr')).data();
-                        var cantidad = $('input[name="cantidad['+data_cola.id+']"]');
+                        var cantidad = $('input[name="cantidad[' + data_cola.id + ']"]');
 
-                        if (cantidad=='') cantidad=0;
+                        if (cantidad == '') cantidad = 0;
 
 
                         var data_cola = table_cola.row($(this).parents('tr')).data();
@@ -701,6 +723,14 @@
                     table_cola.destroy();
                 });
 
+                $('#registrar_apoyo').on('click', function () {
+                    registrarApoyo()
+                });
+
+                $('#consultar_vehiculo').on('click', function () {
+                    consultarVehiculo()
+                });
+
             });
 
         function registarEnCola() {
@@ -723,11 +753,115 @@
 
         }
 
+        function consultarVehiculo() {
+            $("#loading").show();
+
+            var buscar_placa_value = $("#buscar_placa").val();
+
+            if (buscar_placa_value.length < 6) {
+                alert('Número de placa invalida')
+            } else {
+                $.getJSON(URL_VEH_CON + $("#buscar_placa").val())
+                    .done(function (result) {
+
+                        var vehiculo = jQuery.parseJSON(result.data);
+                        var colas = jQuery.parseJSON(vehiculo.colas);
+                        var rebotes = jQuery.parseJSON(vehiculo.rebotes);
+
+                        if (vehiculo.existe == 'true') {
+
+                            var tableColas = "<br><table class=\"table\">";
+                            tableColas += "<tr><td colspan=2>&Uacute;ltimas cargas:</td><tr>";
+                            if(colas.length>0){
+                                for (x in colas) {
+                                    var create_a = new Date(colas[x].created_at);
+                                    var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
+                                    tableColas += "<tr><td>" + colas[x].combustible__estacion__nombre + "</td>";
+                                    tableColas += "<td>" + create_b + "</td></tr>";
+                                }
+                            }else{
+                                tableColas += "<tr><td colspan=2>Sin cargas</td><tr>";
+                            }
+                            tableColas += "</table>";
+
+
+                             var tableRebotes = "<br><table class=\"table\">";
+                            tableRebotes += "<tr><td colspan=2>&Uacute;ltimas rebotes:</td><tr>";
+                            if(rebotes.length>0){
+                                for (x in rebotes) {
+                                    var create_a = new Date(rebotes[x].created_at);
+                                    var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
+                                    tableRebotes += "<tr><td>" + rebotes[x].combustible__estacion__nombre + "</td>";
+                                    tableRebotes += "<td>" + create_b + "</td></tr>";
+                                }
+                            }else{
+                                tableRebotes += "<tr><td colspan=2>Sin cargas</td><tr>";
+                            }
+                            tableRebotes += "</table>";
+
+                            var bloq = "";
+
+                            if(vehiculo.bloqueado == true){
+                                 bloq = "<br><b>Vehículo bloqueado</b><br>";
+                                 bloq += "Motivo: " + vehiculo.bloqueado_motivo+"<br>";
+                                 bloq += "Hasta: " + vehiculo.bloqueado_hasta+"<br>";
+                            }else{
+                                bloq = "";
+                            }
+
+                            $("#alerta-mensaje-bloqueado").html(
+                                "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
+                                "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
+                                bloq+
+                                tableColas +
+                                tableRebotes
+                            );
+                            $('#modal-alerta-bloqueado').modal('show');
+
+                        } else {
+                            $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " no esta registrado, puede cargar </b>");
+                        }
+
+                    })   // on success - 200
+                    .fail(function ()    // on failure - 404
+                        {
+                            alert('Vehiculo no registrado puede cargar')
+                        }
+                    );
+            }
+
+        }
+
+        function registrarApoyo() {
+            $("#loading").show();
+
+            var buscar_placa_value = $("#buscar_placa").val();
+
+            if (buscar_placa_value.length < 6) {
+                alert('Número de placa invalida')
+            } else {
+                $.getJSON(URL + $("#buscar_placa").val())
+                    .done(ultimaCola)   // on success - 200
+                    .fail(function ()    // on failure - 404
+                        {
+                            $("#add_placa").val($("#buscar_placa").val());
+                            $('#modal-add-vehiculo').modal('show');
+                        }
+                    );
+            }
+
+        }
+
+        function muestraDatosConsultaVehiculo() {
+
+
+        }
+
         function ultimaCola() {
             $.getJSON(URL_ULTIMA_COLA + $("#buscar_placa").val())
                 .done(function (result)    // on failure - 404
                     {
-                        console.log('verifico ultimaCola()');
+                        //console.log('verifico ultimaCola()');
                         var ultima_carga = jQuery.parseJSON(result.data);
 
                         if (ultima_carga.bloqueado == 'true') {
