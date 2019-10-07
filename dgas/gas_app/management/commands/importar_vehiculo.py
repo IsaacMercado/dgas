@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     ta = Vehiculo(placa=placa,cedula=cedula, tipo_vehiculo='Moto', cilindros=cilindros)
                     ta.save()
                 except:
-                    print("Placa: " + placa +"Ya esta rgistrada")
+                    print("Placa: " + placa +"Ya esta registrada")
 
         if options['cargar_moto_taxi']:
 
