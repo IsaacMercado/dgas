@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load humanize %}
+{% block title %}Supervisor - Estadísticas{% endblock %}
+
+
+{% block css %}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+{% endblock css %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            Estadísticas
+            <small>Información</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>listado General</a></li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block content %}
+
+    <div class="alert alert-success" id="success-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Mensaje: </strong>
+        Regitro procesado.
+    </div>
+
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ num_user }}</h3>
+
+                    <p>Usuario registrados</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ num_vehiculos }}</h3>
+
+                    <p>Vehículos registrados</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ num_atendidos }}</h3>
+
+                    <p>Usuarios atendidos en el día</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>{{ num_rebotados }}</h3>
+
+                    <p>Número de rebotados al día</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+    </div>
+    <!-- /.row -->
+
+
+
+
+
+        <div class="box box-primary">
+            <div class="box-header">
+              <h3 class="box-title">Date picker</h3>
+            </div>
+            <div class="box-body">
+              <!-- Date -->
+              <div class="form-group">
+                <label>Date:</label>
+
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right"  name="daterange" value="01/01/2018 - 01/15/2018">
+                </div>
+                <!-- /.input group -->
+              </div>
+              <!-- /.form group -->
+
+
+            <div class="form-group">
+                <label>Estación</label>
+                <select class="form-control">
+                    <option>option 1</option>
+                    <option>option 2</option>
+                    <option>option 3</option>
+                    <option>option 4</option>
+                    <option>option 5</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Municipio</label>
+                <select class="form-control">
+                    <option>option 1</option>
+                    <option>option 2</option>
+                    <option>option 3</option>
+                    <option>option 4</option>
+                    <option>option 5</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Parroquia</label>
+                <select class="form-control">
+                    <option>option 1</option>
+                    <option>option 2</option>
+                    <option>option 3</option>
+                    <option>option 4</option>
+                    <option>option 5</option>
+                </select>
+            </div>
+               
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    
+    <script>
+        $(function() {
+          $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+          }, function(start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+          });
+        });
+    </script>
+
+
+{% endblock js %}
+

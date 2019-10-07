@@ -15,7 +15,8 @@ class Dashboard(TemplateView):
         context = super(Dashboard, self).get_context_data(**kwargs)
 
         if self.request.user.groups.filter(name='Estacion').exists():
-            context['estaciones'] = Estacion.objects.filter(usuario_id=self.request.user.id)
+            #context['estaciones'] = Estacion.objects.filter(usuario_id=self.request.user.id)
+            context['estaciones'] = Estacion.objects.all()
 
         if self.request.user.groups.filter(name='Recolector').exists():
             context['estaciones'] = Estacion.objects.all()
