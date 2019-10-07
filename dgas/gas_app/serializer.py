@@ -22,6 +22,7 @@ class VehiculoSupervisorSerializer(serializers.ModelSerializer):
         model = Vehiculo
         fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'cilindros','created_at', 'bloqueado')
 
+
 class CargaSerializer(serializers.ModelSerializer):
 
     class Meta:

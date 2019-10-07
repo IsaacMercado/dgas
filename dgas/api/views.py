@@ -493,6 +493,8 @@ class ConsultarVehiculo(mixins.ListModelMixin, generics.GenericAPIView):
                 {
                     "existe": "true",
                     "placa": vehiculo.placa,
+                    "organizacion": vehiculo.organizacion,
+                    "paso_preferencial": vehiculo.paso_preferencial,
                     "bloqueado": vehiculo.bloqueado,
                     "bloqueado_motivo": vehiculo.bloqueado_motivo,
                     "bloqueado_hasta": str(vehiculo.bloqueado_hasta),

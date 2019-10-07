@@ -795,7 +795,7 @@
                                     tableRebotes += "<td>" + create_b + "</td></tr>";
                                 }
                             }else{
-                                tableRebotes += "<tr><td colspan=2>Sin cargas</td><tr>";
+                                tableRebotes += "<tr><td colspan=2>Sin rebotes</td><tr>";
                             }
                             tableRebotes += "</table>";
 
@@ -810,11 +810,13 @@
                             }
 
                             $("#alerta-mensaje-bloqueado").html(
-                                "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
-                                "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
-                                bloq+
-                                tableColas +
-                                tableRebotes
+                                    "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
+                                    "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
+                                    "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
+                                    "Paso prefencial:<b> " + vehiculo.paso_preferencial + "</b><br>" +
+                                    bloq+
+                                    tableColas +
+                                    tableRebotes
                             );
                             $('#modal-alerta-bloqueado').modal('show');
 
