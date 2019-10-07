@@ -5,7 +5,7 @@ from .views import VehiculoViewSet, VehiculoUserViewSet, VehiculoSupervisorViewS
     CombustibleViewSet, ColaViewSet, UltimaColaList, \
     ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
     ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico, \
-    RebotadoViewSet
+    RebotadoViewSet, ConsultarVehiculo
 
 from dgas.gas_app import views
 
@@ -36,6 +36,7 @@ urlpatterns = [
     path('ultima_carga/<str:placa>', UltimaCargaList.as_view()),
     path('ultima_cola/<str:placa>', UltimaColaList.as_view()),
     path('cola/contar_cola/<int:combustible_id>', ContarCola.as_view()),
+    path('consultar_vehiculo/<str:placa>', ConsultarVehiculo.as_view()),
 
     # Recolector
     path('buscar_placa_publico/<str:placa>', BuscarPlacaPubico.as_view()),

@@ -19,7 +19,7 @@ from pure_pagination.mixins import PaginationMixin
 
 
 class VehiculoListView(LoginRequiredMixin, PaginationMixin, ListView):
-    paginate_by = 5
+    paginate_by = 50
 
     model = Vehiculo
     context_object_name = 'vehiculos'

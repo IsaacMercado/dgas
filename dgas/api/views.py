@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime, timedelta, date
 import pytz
+from django.core.serializers.json import DjangoJSONEncoder
 
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, ColaConsulta
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
@@ -458,5 +459,59 @@ class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):
                              "proxima_recarga": "",
                              "created_at": ''})
 
+        return Response(uc)
+
+
+class ConsultarVehiculo(mixins.ListModelMixin, generics.GenericAPIView):
+
+    serializer_class = ColaSerializer
+    # permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Para el chequeo de cargas a un dia
+        """
+        from datetime import datetime, timedelta, date
+        import pytz
+        utc = pytz.UTC
+
+        hoy = date.today()
+
+        placa = self.kwargs['placa']
+
+        try:
+
+            vehiculo = Vehiculo.objects.get(placa=placa)
+
+            colas = Cola.objects.filter(vehiculo=placa).values('combustible__estacion__nombre', 'created_at').order_by('-created_at')[:3]
+            rebotes = Rebotado.objects.filter(vehiculo=placa).values('combustible__estacion__nombre', 'created_at').order_by('-created_at')[:3]
+
+            colas_q = json.dumps(list(colas), cls=DjangoJSONEncoder)
+            rebotes_q = json.dumps(list(rebotes), cls=DjangoJSONEncoder)
+
+            uc = json.dumps(
+                {
+                    "existe": "true",
+                    "placa": vehiculo.placa,
+                    "organizacion": vehiculo.organizacion,
+                    "paso_preferencial": vehiculo.paso_preferencial,
+                    "bloqueado": vehiculo.bloqueado,
+                    "bloqueado_motivo": vehiculo.bloqueado_motivo,
+                    "bloqueado_hasta": str(vehiculo.bloqueado_hasta),
+                    "tipo_vehiculo": vehiculo.tipo_vehiculo,
+                    "colas": colas_q,
+                    "rebotes": rebotes_q
+
+                }
+            )
+
+        except Vehiculo.DoesNotExist:
+
+            uc = json.dumps(
+                {
+                    "existe": "false",
+                }
+            )
 
         return Response(uc)
+
