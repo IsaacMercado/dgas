@@ -6,7 +6,7 @@
 
 {% block css %}
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.css' %}" />
 
 {% endblock css %}
 
@@ -99,60 +99,90 @@
 
 
 
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Consulta</h3>
+    </div>
+    <!-- /.box-header -->
+    <!-- form start -->
+    <form role="form" id="formToPlot" action="javascript:toPagePlots()" data-url="{% url 'supervisor_app:supervisor_plots' %}">
+        <div class="box-body">
 
+        <div class="row">
+            <div class="col-xs-3">
+            
+                <div class="form-group">
+                    <label for="rangeDateConsult">Rango de Fechas</label>
+                    <div class="input-group date">
+                      <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                      </div>
+                      <input type="text" class="form-control pull-right"  name="daterange" value="01/01/2018 - 01/15/2018" id="rangeDateConsult">
+                    </div>
+                </div>
 
-        <div class="box box-primary">
+            </div>
+            <div class="col-xs-3">
+            
+                <div class="form-group">
+                    <label for="selectMunicipio">Municipio</label>
+                    <select class="form-control" id="selectMunicipio" name="municipioPlot">
+                        <option value="">Todos</option>
+                        {% for mun in municipios %}
+                        <option value="{{ mun.id }}">{{ mun.id }} - {{ mun }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-xs-3">
+            
+                <div class="form-group">
+                    <label for="selectParroquia">Parroquía</label>
+                    <select class="form-control" id="selectParroquia" name="parroquiaPlot">
+                        <option value="">Todos</option>
+                        {% for par in parroquias %}
+                        <option value="{{ par.id }}">{{ par.id }} - {{ par }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-xs-3">
+            
+                <div class="form-group">
+                    <label for="selectEstacion">Estación</label>
+                    <select class="form-control" id="selectEstacion" name="estacionPlot">
+                        <option value="">Todos</option>
+                        {% for est in estaciones %}
+                        <option value="{{ est.id }}">{{ est.id }} - {{ est }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+        
+        </div>
+
+        <!-- /.box-body -->
+
+        <div class="box-footer">
+            <button type="submit" class="btn btn-primary">Consultar</button>
+        </div>
+    </form>
+</div>
+     
+          <div class="box box-primary">
             <div class="box-header">
-              <h3 class="box-title">Date picker</h3>
+              <h3 class="box-title">Resultados</h3>
             </div>
             <div class="box-body">
-              <!-- Date -->
-              <div class="form-group">
-                <label>Date:</label>
-
-                <div class="input-group date">
-                  <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-                  <input type="text" class="form-control pull-right"  name="daterange" value="01/01/2018 - 01/15/2018">
+            
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe id="iframePlots" class="embed-responsive-item" src="{% url 'supervisor_app:supervisor_plots' %}"></iframe>
                 </div>
-                <!-- /.input group -->
-              </div>
-              <!-- /.form group -->
-
-
-            <div class="form-group">
-                <label>Estación</label>
-                <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Municipio</label>
-                <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Parroquia</label>
-                <select class="form-control">
-                    <option>option 1</option>
-                    <option>option 2</option>
-                    <option>option 3</option>
-                    <option>option 4</option>
-                    <option>option 5</option>
-                </select>
-            </div>
                
             </div>
             <!-- /.box-body -->
@@ -163,17 +193,26 @@
 
 {% block js %}
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
     
     <script>
         $(function() {
           $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
-          }, function(start, end, label) {
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            opens: 'left',
+            maxDate: moment(),
+            startDate: moment().subtract(1, 'month'),
+            endDate: moment(),
           });
         });
+    </script>
+    
+    <script>
+        function toPagePlots(){
+            var params = $.param($('#formToPlot').serializeArray());
+            var newUrl = $('#formToPlot').attr('data-url') + '?' + params;
+            $("#iframePlots").attr('src', newUrl);
+        }
     </script>
 
 

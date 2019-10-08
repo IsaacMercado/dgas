@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import datetime
 from braces.views import LoginRequiredMixin, GroupRequiredMixin
 from django.conf import settings
 from django.db.models import Sum
 from django.middleware.csrf import rotate_token
 from django.views.generic import RedirectView, TemplateView
+from django.http import HttpResponse
+from django.views import View
 
 from dgas.gas_app import models as md
-from dgas.users.models import User
+from dgas.users.models import User, Municipio, Parroquia
+from dgas.supervisor_app import plots
 
 import pytz
 from datetime import datetime
@@ -30,5 +32,51 @@ class SupervisorEstadisticas(GroupRequiredMixin, TemplateView):
         context["num_vehiculos"] = md.Vehiculo.objects.count()
         context["num_atendidos"] = md.Cola.objects.filter(created_at__gt=dateinit).count()
         context["num_rebotados"] = md.Rebotado.objects.filter(created_at__gt=dateinit).count()
+        
+        context['estaciones'] = md.Estacion.objects.all()
+        context['municipios'] = Municipio.objects.all()
+        context['parroquias'] = Parroquia.objects.all()
 
         return context
+
+
+class SupervisorPlots(GroupRequiredMixin, View):
+    # required
+    group_required = u"Supervisor"
+    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        context = super(SupervisorPlots, self).get_context_data(**kwargs)
+
+        return context
+    
+    def get(self, request, *args, **kwargs):
+        rangedate = request.GET.get('daterange','')
+        municipio = request.GET.get('municipioPlot','')
+        parroquia = request.GET.get('parroquiaPlot','')
+        estacion = request.GET.get('estacionPlot','')
+        
+        content = 'No ha realizado ninguna consulta'
+        params = {}
+        
+        if rangedate or municipio or parroquia or estacion:
+            date_ini, date_end = str(rangedate).split(' - ')
+            
+            params["init"] = datetime.strptime(date_ini, '%m/%d/%Y').replace(tzinfo=pytz.UTC)
+            params["end"] = datetime.strptime(date_end, '%m/%d/%Y').replace(tzinfo=pytz.UTC)
+            
+            if municipio:
+                params["municipio"] = Municipio.objects.get(id=int(municipio))
+            
+            if parroquia:
+                params["parroquia"] = Parroquia.objects.get(id=int(parroquia))
+            
+            if estacion:
+                params["estacion"] = md.Estacion.objects.get(id=int(estacion))
+
+            content = plots.plotly_consult(**params)
+
+        response = HttpResponse(content)
+        response["X-Frame-Options"] = "sameorigin"
+        return response
+    

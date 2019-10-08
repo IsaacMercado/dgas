@@ -12,5 +12,6 @@ urlpatterns = [
     #path('estaciones_mapa/', public_base.EstacionesMapa.as_view(), name='estaciones_mapa'),
     #path('colas/', public_base.ColasTemplateView.as_view(), name='colas'),
     path('estadistica/', estadisticas.SupervisorEstadisticas.as_view(), name='supervisor_estadistica'),
+    path('estadistica/plots/', estadisticas.SupervisorPlots.as_view(), name='supervisor_plots'),
 
 ]
