@@ -173,7 +173,7 @@ class Combustible(models.Model):
     litros_surtidos_g91 = models.PositiveIntegerField(default=0)
     litros_surtidos_g95 = models.PositiveIntegerField(default=0)
     litros_surtidos_gsl = models.PositiveIntegerField(default=0)
-    notas = models.TextField(default='')
+    notas = models.TextField(blank=True, null=True)
 
     created_by = UserForeignKey(auto_user_add=True, related_name='combustible_created')
     created_at = models.DateTimeField(auto_now_add=True)
