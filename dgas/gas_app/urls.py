@@ -9,7 +9,7 @@ urlpatterns = [
 
     # Coordinadores
     path('coordinadores/', coordinadores.Colas.as_view(), name='coodinadores_list'),
-    path('coordinadores_isla/', coordinadores.ColasIslas.as_view(), name='coodinadores_list'),
+    path('coordinadores_isla/', coordinadores.ColasIslas.as_view(), name='coodinadores_isla_list'),
 
     path('recolector/', recolector.CargaDashBoardListView.as_view(), name='recolector_dash'),
     path('recolector/cargar/<int:estacion_id>', recolector.CargaTemplateView.as_view(), name='carga'),

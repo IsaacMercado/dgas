@@ -812,7 +812,7 @@
                             var pp = ""
 
                             if(vehiculo.paso_preferencial == true){
-                                pp = "Paso preferencial"
+                                pp = "Dar apoyo si cola"
                             }else{
                                 pp = "Debe pasar a la cola"
                             }
@@ -821,7 +821,7 @@
                                     "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
                                     "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
                                     "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
-                                    "Paso prefencial:<b> " + vehiculo.paso_preferencial + "</b><br>" +
+                                    "Paso prefencial:<b> " + pp + "</b><br>" +
                                     bloq+
                                     tableColas +
                                     tableRebotes

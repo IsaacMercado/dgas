@@ -82,8 +82,12 @@
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
     <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
+
+    <!--
     <script src="{% static 'bower_components/pdfmake/build/pdfmake.min.js' %}"></script>
     <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
+    -->
+
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
     <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
@@ -128,7 +132,7 @@
                     "order": [[0, "desc"]],
 
                     columnDefs: [
-                        {targets: 2, render: $.fn.dataTable.render.moment( 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ', 'DD/MMM/YYYY HH:MM', 'es' )}
+                        {targets: 4, render: $.fn.dataTable.render.moment( 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ', 'DD/MMM/YYYY HH:MM', 'es' )}
                     ],
 
                     'columns': [
