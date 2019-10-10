@@ -809,6 +809,14 @@
                                 bloq = "";
                             }
 
+                            var pp = ""
+
+                            if(vehiculo.paso_preferencial == true){
+                                pp = "Paso preferencial"
+                            }else{
+                                pp = "Debe pasar a la cola"
+                            }
+
                             $("#alerta-mensaje-bloqueado").html(
                                     "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
                                     "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +

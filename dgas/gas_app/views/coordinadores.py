@@ -22,3 +22,15 @@ class Colas(GroupRequiredMixin, TemplateView):
 
         return context
 
+
+class ColasIslas(GroupRequiredMixin, TemplateView):
+    # required
+    group_required = u"Coordinador"
+    raise_exception = True
+
+    template_name = "gas_app/coordinadores/colas_v2.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ColasIslas, self).get_context_data(**kwargs)
+
+        return context
