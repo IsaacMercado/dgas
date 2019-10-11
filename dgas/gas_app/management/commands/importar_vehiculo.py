@@ -204,7 +204,7 @@ class Command(BaseCommand):
                     if diario == 'X':
                         tv = "Oficial Diario"
                     elif inter_diario == "X":
-                        tv = "Oficial Interdiario"
+                            tv = "Oficial Interdiario"
 
                     ta = Vehiculo.objects.get(placa=placa)
                     ta.tipo_vehiculo=tv
