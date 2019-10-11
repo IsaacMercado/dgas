@@ -4,25 +4,10 @@ from plotly import offline
 from plotly.subplots import make_subplots
 
 import pandas as pd
-from dgas.gas_app import models as md
-from datetime import datetime, timedelta
 import re
 
-plot = lambda figure: offline.plot(figure, output_type='div', include_plotlyjs='cdn')
 
-def num_days_cola(init, end):
-    print(init, end, init < end)
-    start = init
-    array = []
-    days = []
-    while start < end:
-        array.append(md.Cola.objects.filter(created_at__range=(start, start + timedelta(days=1))).count())
-        days.append(start.strftime('%d/%m'))
-        start += timedelta(days=1)
-    print(array, days)
-    return (array, days)
-
-def example_plotly():
+def example1_plotly():
 
     df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/Mining-BTC-180.csv")
 
@@ -83,9 +68,23 @@ def example_plotly():
 
     return plot(fig)
 
+def example2_plotly():
+    fig = make_subplots(
+        rows=5, cols=2,
+        specs=[[{}, {"rowspan": 2}],
+               [{}, None],
+               [{"rowspan": 2, "colspan": 2}, None],
+               [None, None],
+               [{}, {}]],
+        print_grid=True)
 
-def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
-    array, days = num_days_cola(init, end)
-    fig = go.FigureWidget(go.Scatter(x=days, y=array, mode="lines"))
-    return plot(fig)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(1,1)"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(1,2)"), row=1, col=2)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(2,1)"), row=2, col=1)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(3,1)"), row=3, col=1)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(5,1)"), row=5, col=1)
+    fig.add_trace(go.Scatter(x=[1, 2], y=[1, 2], name="(5,2)"), row=5, col=2)
+
+    fig.update_layout(title_text="specs examples")
+    return fig
 

@@ -139,11 +139,8 @@
             
                 <div class="form-group">
                     <label for="selectParroquia">Parroquía</label>
-                    <select class="form-control" id="selectParroquia" name="parroquiaPlot">
+                    <select class="form-control" id="selectParroquia" name="parroquiaPlot" disabled>
                         <option value="">Todos</option>
-                        {% for par in parroquias %}
-                        <option value="{{ par.id }}">{{ par.id }} - {{ par }}</option>
-                        {% endfor %}
                     </select>
                 </div>
 
@@ -154,9 +151,6 @@
                     <label for="selectEstacion">Estación</label>
                     <select class="form-control" id="selectEstacion" name="estacionPlot">
                         <option value="">Todos</option>
-                        {% for est in estaciones %}
-                        <option value="{{ est.id }}">{{ est.id }} - {{ est }}</option>
-                        {% endfor %}
                     </select>
                 </div>
 
@@ -181,7 +175,7 @@
             <div class="box-body">
             
                 <div class="embed-responsive embed-responsive-16by9">
-                  <iframe id="iframePlots" class="embed-responsive-item" src="{% url 'supervisor_app:supervisor_plots' %}"></iframe>
+                  <iframe id="iframePlots" class="embed-responsive-item"></iframe>
                 </div>
                
             </div>

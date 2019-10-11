@@ -4,11 +4,11 @@ from django.conf import settings
 from django.db.models import Sum
 from django.middleware.csrf import rotate_token
 from django.views.generic import RedirectView, TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from dgas.gas_app import models as md
-from dgas.users.models import User, Municipio, Parroquia
+from dgas.users import models as us
 from dgas.supervisor_app import plots
 
 import pytz
@@ -28,14 +28,14 @@ class SupervisorEstadisticas(GroupRequiredMixin, TemplateView):
         datenow = datetime.now()
         dateinit = datetime(datenow.year, datenow.month, datenow.day, tzinfo=pytz.UTC)
         
-        context["num_user"] = User.objects.count()
+        context["num_user"] = us.User.objects.count()
         context["num_vehiculos"] = md.Vehiculo.objects.count()
         context["num_atendidos"] = md.Cola.objects.filter(created_at__gt=dateinit).count()
         context["num_rebotados"] = md.Rebotado.objects.filter(created_at__gt=dateinit).count()
         
         context['estaciones'] = md.Estacion.objects.all()
-        context['municipios'] = Municipio.objects.all()
-        context['parroquias'] = Parroquia.objects.all()
+        context['municipios'] = us.Municipio.objects.all()
+        context['parroquias'] = us.Parroquia.objects.all()
 
         return context
 
@@ -66,10 +66,10 @@ class SupervisorPlots(GroupRequiredMixin, View):
             params["end"] = datetime.strptime(date_end, '%m/%d/%Y').replace(tzinfo=pytz.UTC)
             
             if municipio:
-                params["municipio"] = Municipio.objects.get(id=int(municipio))
+                params["municipio"] = us.Municipio.objects.get(id=int(municipio))
             
             if parroquia:
-                params["parroquia"] = Parroquia.objects.get(id=int(parroquia))
+                params["parroquia"] = us.Parroquia.objects.get(id=int(parroquia))
             
             if estacion:
                 params["estacion"] = md.Estacion.objects.get(id=int(estacion))
@@ -79,4 +79,5 @@ class SupervisorPlots(GroupRequiredMixin, View):
         response = HttpResponse(content)
         response["X-Frame-Options"] = "sameorigin"
         return response
-    
+
+
