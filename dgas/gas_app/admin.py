@@ -39,7 +39,7 @@ class VehiculoAdmin(admin.ModelAdmin):
 class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
-    list_filter = ('combustible',)
+    #list_filter = ('combustible',)
 
 
 @admin.register(VehiculoResumen)
@@ -80,7 +80,7 @@ class CargaAdmin(admin.ModelAdmin):
 class ColaAdmin(admin.ModelAdmin):
     list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'created_by','created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]
-    list_filter = ('combustible',)
+    #list_filter = ('combustible',)
 
 
 @admin.register(ColaConsulta)
