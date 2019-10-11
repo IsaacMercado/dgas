@@ -19,7 +19,7 @@ from pure_pagination.mixins import PaginationMixin
 
 
 class ColasListView(LoginRequiredMixin, PaginationMixin, ListView):
-    paginate_by = 5
+    paginate_by = 50
 
     model = Cola
     context_object_name = 'colas'

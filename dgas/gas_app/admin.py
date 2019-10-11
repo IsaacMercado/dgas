@@ -1,30 +1,30 @@
 from django.contrib import admin
 
 from .models import Estacion, Combustible, Vehiculo, Carga, Cola, VehiculoResumen, \
-    Rebotado, Pico
+    Rebotado, Contador, ColaConsulta
 
 
-class PicoInline(admin.TabularInline):
-    model = Pico
+class ContadorInline(admin.TabularInline):
+    model = Contador
     #fields = ['resumen',]
 
 
 @admin.register(Estacion)
 class EstacionAdmin(admin.ModelAdmin):
     pass
-    inlines = [PicoInline]
+    inlines = [ContadorInline]
     #list_display = ('cedula','primer_apellido', 'primer_nombre')
     #search_fields = ['cedula', 'primer_apellido']
 
 
-@admin.register(Pico)
-class PicoAdmin(admin.ModelAdmin):
+@admin.register(Contador)
+class ContadorAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad', 'completado')
+    list_display = ('estacion','nota', 'fecha_planificacion', 'apertura', 'completado')
     list_filter = ('estacion',)
 
 
@@ -39,7 +39,7 @@ class VehiculoAdmin(admin.ModelAdmin):
 class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
-    #list_filter = ('tipo_vehiculo',)
+    #list_filter = ('combustible',)
 
 
 @admin.register(VehiculoResumen)
@@ -79,4 +79,11 @@ class CargaAdmin(admin.ModelAdmin):
 @admin.register(Cola)
 class ColaAdmin(admin.ModelAdmin):
     list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'created_by','created_at', 'last_modified_at')
+    search_fields = ['vehiculo__placa',]
+    #list_filter = ('combustible',)
+
+
+@admin.register(ColaConsulta)
+class ColaConsultaAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'vehiculo', 'created_by','created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]
