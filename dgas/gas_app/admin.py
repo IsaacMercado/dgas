@@ -24,7 +24,7 @@ class ContadorAdmin(admin.ModelAdmin):
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    list_display = ('estacion','nota', 'fecha_planificacion', 'apertura', 'completado')
+    list_display = ('estacion', 'estado','nota', 'fecha_planificacion', 'apertura', 'completado')
     list_filter = ('estacion',)
 
 
