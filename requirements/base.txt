@@ -26,3 +26,4 @@ django-pure-pagination==0.3.0
 django-userforeignkey==0.3.0
 djangorestframework-datatables==0.4.1
 django-qr-code==1.0.0
+plotly==4.1.1

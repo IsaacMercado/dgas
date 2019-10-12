@@ -279,6 +279,7 @@ class ColaConsulta(models.Model):
 class Rebotado(models.Model):
     combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='rebotados')
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified_at = models.DateTimeField(auto_now=True)
     created_by = UserForeignKey(auto_user_add=True, related_name='rebotados_created')
