@@ -288,3 +288,15 @@ class Rebotado(models.Model):
         return str(self.vehiculo.placa)
 
 
+class RebotadoBloqueado(models.Model):
+    combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='rebotados_bloqueado')
+    vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
+    created_by = UserForeignKey(auto_user_add=True, related_name='rebotados_bloqueado_created')
+    last_modified_by = UserForeignKey(auto_user=True, auto_user_add=True, related_name='rebotados_bloqueado_updated')
+
+    def __str__(self):
+        return str(self.vehiculo.placa)
+
+
