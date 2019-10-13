@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Estacion, Combustible, Vehiculo, Carga, Cola, VehiculoResumen, \
-    Rebotado, Contador, ColaConsulta
+    Rebotado, Contador, ColaConsulta, RebotadoBloqueado
 
 
 class ContadorInline(admin.TabularInline):
@@ -86,4 +86,10 @@ class ColaAdmin(admin.ModelAdmin):
 @admin.register(ColaConsulta)
 class ColaConsultaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'vehiculo', 'created_by','created_at', 'last_modified_at')
+    search_fields = ['vehiculo__placa',]
+
+
+@admin.register(RebotadoBloqueado)
+class RebotadoBloqueado(admin.ModelAdmin):
+    list_display = ('vehiculo', 'combustible', 'created_by', 'created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]
