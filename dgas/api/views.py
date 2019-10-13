@@ -166,12 +166,14 @@ class UltimaColaList(APIView):
 
                     if not ultima_cola.cargado:
                         uc = json.dumps({"cargar": "false",
+                                         "bloqueado": "false",
                                          "mensaje": " ya esta registrado para surtir gasolina",
                                          "estacion": str(ultima_cola.combustible),
                                          "proxima_recarga": "",
                                          "created_at": str(ultima_cola.created_at)})
                     elif p > hoy:
                         uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
+                                         "bloqueado": "false",
                                          "estacion": str(ultima_cola.combustible),
                                          "proxima_recarga": str(p),
                                          "created_at": str(ultima_cola.created_at)})

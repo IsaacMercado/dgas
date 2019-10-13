@@ -464,7 +464,7 @@
                                 return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                             }
                         },
-                        {"title": "Total surtidos", "data": "total_surtidos", "responsivePriority": 1,},
+                        //{"title": "Total surtidos", "data": "total_surtidos", "responsivePriority": 1,},
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
                         {"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
                         {
@@ -875,6 +875,7 @@
                     {
                         //console.log('verifico ultimaCola()');
                         var ultima_carga = jQuery.parseJSON(result.data);
+                        console.log(ultima_carga);
 
                         if (ultima_carga.bloqueado == 'true') {
 
