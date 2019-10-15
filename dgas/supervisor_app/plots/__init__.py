@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 
 from dgas.gas_app import models as md
 from datetime import datetime, timedelta
+import collections
 
 #from .example import *
 
@@ -21,11 +22,11 @@ def plot_num_days_cola(init, end):
     start, array, days = init, [], []
 
     while start < end:
-        array.append(md.Cola.objects.filter(created_at__range=(start, start + timedelta(days=1))).count())
+        array.append(md.Cola.objects.filter(created_at__range=(start, start+timedelta(days=1))).count())
         days.append(start.strftime('%d/%m'))
         start += timedelta(days=1)
 
-    return go.Scatter(x=days, y=array, mode="lines", name='days_cola')
+    return go.Scatter(x=days, y=array, mode="lines", name='Atendidos')
 
 
 def range_data(init, end, cmunicipio=None, cestacion=None):
@@ -47,6 +48,7 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
     nombre_estacion = []
     litros_surtidos = []
     litros_consumidos = []
+    atendidos_dias = collections.OrderedDict()
 
     def action_for_station(estacion):
         rebo_esta = range_rebo.filter(id_estacion=estacion.id)
@@ -70,6 +72,19 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
 
         nombre_estacion.append(estacion.nombre)
 
+        start = init
+
+        while start < end:
+            num_aten = cola_esta.filter(created_at__range=(start, start+timedelta(days=1))).count()
+            name_day = start.strftime('%d/%m')
+
+            if name_day in atendidos_dias:
+                atendidos_dias[name_day] += num_aten
+            else:
+                atendidos_dias[name_day] = num_aten
+
+            start += timedelta(days=1)
+
 
     if cestacion:
         action_for_station(cestacion)
@@ -85,7 +100,8 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
             'rebotados': num_rebotados, 
             'nombre_estacion': nombre_estacion,
             'consumo': litros_consumidos,
-            'surtidos': litros_surtidos
+            'surtidos': litros_surtidos,
+            'atendidos_dias': atendidos_dias
             }
 
 
@@ -135,7 +151,10 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     # Add traces
 
     fig.add_trace(
-        plot_num_days_cola(init, end), 
+        go.Scatter(
+            x=list(data['atendidos_dias'].keys()), 
+            y=list(data['atendidos_dias'].values()), 
+            mode="lines", name='Atendidos'), 
         row=3, col=1)
 
     fig.add_trace(
