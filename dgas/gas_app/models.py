@@ -247,6 +247,7 @@ class Cola(models.Model):
     tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default=95, null=True, blank=True)
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
+    cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado')
 
     created_by = UserForeignKey(auto_user_add=True, related_name='cola_created')
     created_at = models.DateTimeField(auto_now_add=True)
