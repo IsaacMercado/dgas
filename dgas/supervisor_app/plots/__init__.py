@@ -31,16 +31,16 @@ def plot_num_days_cola(init, end):
 def range_data(init, end, cmunicipio=None, cestacion=None):
     # Total de litros, total de rebotados, promedio / vehiculo
     range_cola = md.Cola.objects\
-            .filter(created_at__range=(init, end))\
+            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
             .annotate(id_estacion=F('combustible__estacion'))
     range_rebo = md.Rebotado.objects\
-            .filter(created_at__range=(init, end))\
+            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
             .annotate(id_estacion=F('combustible__estacion'))
     range_cont = md.ContadorMedida.objects\
-            .filter(created_at__range=(init, end))\
+            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
             .annotate(id_estacion=F('contador__estacion'))
     range_comb  = md.Combustible.objects\
-            .filter(created_at__range=(init, end))
+            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))
 
     num_rebotados = []
     num_vehiculos = []
@@ -106,8 +106,8 @@ def result_table(data):
                     data['rebotados'],
                     data['consumo'],
                     data['surtidos'],
-                    [round(i/j,2) for i,j in zip(data['consumo'], data['atendidos'])],
-                    [round(i*1000/j,2) for i,j in zip(data['surtidos'], data['atendidos'])],
+                    [round(i/j,2) if j!= 0 else 0 for i,j in zip(data['consumo'], data['atendidos'])],
+                    [round(i*1000/j,2) if j!=0 else 0 for i,j in zip(data['surtidos'], data['atendidos'])],
                 ]},
         )
 
@@ -142,6 +142,7 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
         go.Bar(
             x=data['nombre_estacion'], 
             y=data['atendidos'],
+            name="Atendidos",
             ), 
         row=4, col=1)
 
@@ -149,6 +150,7 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
         go.Bar(
             x=data['nombre_estacion'], 
             y=data['rebotados'],
+            name="Rebotados",
             ), 
         row=4, col=1)
 
