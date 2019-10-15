@@ -62,8 +62,8 @@ class SupervisorPlots(GroupRequiredMixin, View):
         if rangedate or municipio or parroquia or estacion:
             date_ini, date_end = str(rangedate).split(' - ')
             
-            params["init"] = datetime.strptime(date_ini, '%m/%d/%Y').replace(tzinfo=pytz.UTC)
-            params["end"] = datetime.strptime(date_end, '%m/%d/%Y').replace(tzinfo=pytz.UTC)
+            params["init"] = datetime.strptime(date_ini, '%d/%m/%Y').replace(tzinfo=pytz.UTC)
+            params["end"] = datetime.strptime(date_end, '%d/%m/%Y').replace(tzinfo=pytz.UTC)
             
             if municipio:
                 params["municipio"] = us.Municipio.objects.get(id=int(municipio))
