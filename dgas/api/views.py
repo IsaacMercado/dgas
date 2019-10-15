@@ -13,10 +13,10 @@ from datetime import datetime, timedelta, date
 import pytz
 from django.core.serializers.json import DjangoJSONEncoder
 
-from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, ColaConsulta
+from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, RebotadoBloqueado, ColaConsulta
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
     CombustibleSerializer, ColaSerializer, VehiculoSupervisorSerializer, \
-    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer
+    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer, RebotadoBloqueadoSerializer
 from dgas.users.models import User
 
 
@@ -59,6 +59,15 @@ class RebotadoViewSet(viewsets.ModelViewSet):
     """
     queryset = Rebotado.objects.all()
     serializer_class = RebotadoSerializer
+
+
+class RebotadoBloqueadoViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions for Rebotado
+    """
+    queryset = RebotadoBloqueado.objects.all()
+    serializer_class = RebotadoBloqueadoSerializer
 
 
 class CargaViewSet(viewsets.ModelViewSet):
@@ -157,12 +166,14 @@ class UltimaColaList(APIView):
 
                     if not ultima_cola.cargado:
                         uc = json.dumps({"cargar": "false",
+                                         "bloqueado": "false",
                                          "mensaje": " ya esta registrado para surtir gasolina",
                                          "estacion": str(ultima_cola.combustible),
                                          "proxima_recarga": "",
                                          "created_at": str(ultima_cola.created_at)})
                     elif p > hoy:
                         uc = json.dumps({"cargar": "false", "mensaje": " ya surtio gasolina",
+                                         "bloqueado": "false",
                                          "estacion": str(ultima_cola.combustible),
                                          "proxima_recarga": str(p),
                                          "created_at": str(ultima_cola.created_at)})

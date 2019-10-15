@@ -5,7 +5,7 @@ from .views import VehiculoViewSet, VehiculoUserViewSet, VehiculoSupervisorViewS
     CombustibleViewSet, ColaViewSet, UltimaColaList, \
     ContarCola, ColaCrudViewSet, ColaPublicaViewSet, ColaPublicaHistoricaViewSet, \
     ColaPublicaHistoricaViewSet, EstacionViewSet, CombustibleHistoricoViewSet, BuscarPlacaPubico, \
-    RebotadoViewSet, ConsultarVehiculo
+    RebotadoViewSet, RebotadoBloqueadoViewSet, ConsultarVehiculo
 
 from dgas.gas_app import views
 
@@ -15,6 +15,7 @@ router = DefaultRouter()
 router.register(r'vehiculos', VehiculoViewSet)
 router.register(r'vehiculos_user', VehiculoUserViewSet)
 router.register(r'vehiculos_rebotados', RebotadoViewSet)
+router.register(r'vehiculos_rebotados_bloqueado', RebotadoBloqueadoViewSet)
 
 router.register(r'vehiculos_supervisor', VehiculoSupervisorViewSet)
 

@@ -333,7 +333,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" id="btnclose" data-dismiss="modal">Continuar</button>
+                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -373,6 +373,8 @@
         var URL = "/api/vehiculos/";
         var URL_VEH = "/api/vehiculos/";
         var URL_VEH_REB = "/api/vehiculos_rebotados/";
+        var URL_VEH_REB_BLOQ = "/api/vehiculos_rebotados_bloqueado/";
+
         var URL_VEH_CON = "/api/consultar_vehiculo/";
 
         var URL_ESTACIONES = "/api/estaciones/";
@@ -462,7 +464,7 @@
                                 return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                             }
                         },
-                        {"title": "Total surtidos", "data": "total_surtidos", "responsivePriority": 1,},
+                        //{"title": "Total surtidos", "data": "total_surtidos", "responsivePriority": 1,},
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
                         {"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
                         {
@@ -1021,6 +1023,39 @@
                         });
 
                         $('#modal-alerta').modal('hide');
+                        $("#loading").hide();
+                        $("#buscar_placa").val('');
+                    },
+                    error: function (request, status, error) {
+                        alert('Error rebotando vehículo');
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+
+
+        }
+
+        function rebotarBloqueadoVehiculo() {
+
+            var data_vehiculo = {
+                "combustible": combustible_id,
+                "vehiculo": $("#buscar_placa").val(),
+            };
+
+            $.ajax(
+                {
+                    url: URL_VEH_REB_BLOQ,
+                    data: data_vehiculo,
+                    dataType: "json",
+                    type: "post",
+                    headers: ajax_header,
+                    success: function (request) {
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+
+                        $('#modal-alerta-bloqueado').modal('hide');
                         $("#loading").hide();
                         $("#buscar_placa").val('');
                     },
