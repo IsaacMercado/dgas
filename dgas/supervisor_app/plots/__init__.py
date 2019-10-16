@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 
 from dgas.gas_app import models as md
 from datetime import datetime, timedelta
-import collections
+import pandas as pd
 
 #from .example import *
 
@@ -18,37 +18,22 @@ def plot(figure):
         include_plotlyjs='cdn'
         )
 
-def plot_num_days_cola(init, end):
-    start, array, days = init, [], []
-
-    while start < end:
-        array.append(md.Cola.objects.filter(created_at__range=(start, start+timedelta(days=1))).count())
-        days.append(start.strftime('%d/%m'))
-        start += timedelta(days=1)
-
-    return go.Scatter(x=days, y=array, mode="lines", name='Atendidos')
-
 
 def range_data(init, end, cmunicipio=None, cestacion=None):
     # Total de litros, total de rebotados, promedio / vehiculo
     range_cola = md.Cola.objects\
-            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
-            .annotate(id_estacion=F('combustible__estacion'))
+            .filter(created_at__date__range=(init, end))\
+            .annotate(id_estacion=F('combustible__estacion'),
+                type_car=F('vehiculo__tipo_vehiculo'))
     range_rebo = md.Rebotado.objects\
-            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
-            .annotate(id_estacion=F('combustible__estacion'))
+            .filter(created_at__date__range=(init, end))\
+            .annotate(id_estacion=F('combustible__estacion'),
+                type_car=F('vehiculo__tipo_vehiculo'))
     range_cont = md.ContadorMedida.objects\
-            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))\
+            .filter(created_at__date__range=(init, end))\
             .annotate(id_estacion=F('contador__estacion'))
     range_comb  = md.Combustible.objects\
-            .filter(created_at__range=(init, end + timedelta(days=1,seconds=-1)))
-
-    num_rebotados = []
-    num_vehiculos = []
-    nombre_estacion = []
-    litros_surtidos = []
-    litros_consumidos = []
-    atendidos_dias = collections.OrderedDict()
+            .filter(created_at__date__range=(init, end))
 
     def action_for_station(estacion):
         rebo_esta = range_rebo.filter(id_estacion=estacion.id)
@@ -65,43 +50,41 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
         total_rebotados = rebo_esta.count()
         total_cola = cola_esta.count()
 
-        num_rebotados.append(total_rebotados)
-        num_vehiculos.append(total_cola)
-        litros_consumidos.append(total_consumido)
-        litros_surtidos.append(total_surtido)
+        return (total_cola, total_rebotados, estacion.nombre,
+                total_consumido, total_surtido)
 
-        nombre_estacion.append(estacion.nombre)
+    def get_count_date(tdate):
+        return (tdate.strftime('%d/%m'),
+                range_cola.filter(created_at__date=tdate.date()).count())
 
-        start = init
+    def get_count_type(type_to):
+        index, content = type_to
+        return (index, range_cola.filter(type_car=content).count())
 
-        while start < end:
-            num_aten = cola_esta.filter(created_at__range=(start, start+timedelta(days=1))).count()
-            name_day = start.strftime('%d/%m')
+    atendidos_dias, tipos_atendidos, data_send = None, None, None
 
-            if name_day in atendidos_dias:
-                atendidos_dias[name_day] += num_aten
-            else:
-                atendidos_dias[name_day] = num_aten
-
-            start += timedelta(days=1)
-
+    if init == end:
+        tipos_atendidos = dict(map(get_count_type, md.TIPO_VEHICULO_CHOICES))
+    else:
+        atendidos_dias = dict(map(get_count_date, pd.date_range(init, end).to_pydatetime()))
 
     if cestacion:
-        action_for_station(cestacion)
+        data_send = list(map(action_for_station, [cestacion]))
     elif cmunicipio:
-        for estacion in md.Estacion.objects.filter(municipio_estacion=cmunicipio):
-            action_for_station(estacion)
+        data_send = list(map(action_for_station, md.Estacion.objects.filter(municipio_estacion=cmunicipio)))
     else:
-        for estacion in md.Estacion.objects.all():
-            action_for_station(estacion)
+        data_send = list(map(action_for_station, md.Estacion.objects.all()))
+
+    data_send = list(map(list, zip(*data_send)))
 
     return {
-            'atendidos': num_vehiculos,
-            'rebotados': num_rebotados, 
-            'nombre_estacion': nombre_estacion,
-            'consumo': litros_consumidos,
-            'surtidos': litros_surtidos,
-            'atendidos_dias': atendidos_dias
+            'atendidos': data_send[0],
+            'rebotados': data_send[1], 
+            'nombre_estacion': data_send[2],
+            'consumo': data_send[3],
+            'surtidos': data_send[4],
+            'atendidos_dias': atendidos_dias,
+            'tipos_vehiculos': tipos_atendidos
             }
 
 
@@ -130,7 +113,12 @@ def result_table(data):
 
 def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     # Calculate data
+    from time import time
+    start = time()
+
     data = range_data(init, end, municipio)
+
+    print("Time totals:", time()-start)
 
     # Initialize figure with subplots
     fig = make_subplots(
@@ -138,24 +126,35 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
         shared_xaxes=False,
         specs=[[{"type": "table"}],
                [{"type": "table"}],
-               [{"type": "bar"}],
-               [{"type": "scatter"}],],
+               [{"type": "bar"} if init == end else {"type": "scatter"}],
+               [{"type": "bar"}],],
         subplot_titles=(
             "Resultados por Municipio", 
             "Resultados Generales", 
-            "Número de Atendidos por Día", 
+            "Número de Vehículos Atendidos por Tipo" if init == end else "Número de Atendidos por Día", 
             "Número de Atendidos por Estación"),
         row_heights = [0.3, 0.1, 0.3, 0.3]
     )
 
     # Add traces
 
-    fig.add_trace(
-        go.Scatter(
-            x=list(data['atendidos_dias'].keys()), 
-            y=list(data['atendidos_dias'].values()), 
-            mode="lines", name='Atendidos'), 
-        row=3, col=1)
+    if init == end:
+        fig.add_trace(
+            go.Bar(
+                x=list(data['tipos_vehiculos'].keys()), 
+                y=list(data['tipos_vehiculos'].values()), 
+                name='Atendidos',
+                text=list(data['tipos_vehiculos'].values()),
+                textposition='auto',
+                ), 
+            row=3, col=1)
+    else:
+        fig.add_trace(
+            go.Scatter(
+                x=list(data['atendidos_dias'].keys()), 
+                y=list(data['atendidos_dias'].values()), 
+                mode="lines", name='Atendidos'), 
+            row=3, col=1)
 
     fig.add_trace(
         go.Bar(
@@ -194,15 +193,15 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
         result_table(data), 
         row=1, col=1)
 
-    # Update xaxis properties
-    fig.update_xaxes(title_text="Días en el rango de fechas", row=3, col=1)
-    fig.update_xaxes(title_text="Municipios", row=4, col=1)
 
-    # Update yaxis properties
+    if not init == end:
+        fig.update_xaxes(title_text="Días en el rango de fechas", row=3, col=1)
+    else:
+        fig.update_xaxes(title_text="Tipo de Vehículos", row=3, col=1)
     fig.update_yaxes(title_text="Atendidos", row=3, col=1)
-    fig.update_yaxes(title_text="Atendidos", row=4, col=1)
 
-    # Update layout
+    fig.update_xaxes(title_text="Estaciones", row=4, col=1)
+    fig.update_yaxes(title_text="Atendidos", row=4, col=1)
 
     fig.update_layout(
         height=1200,
