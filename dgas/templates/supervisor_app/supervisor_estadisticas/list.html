@@ -117,7 +117,7 @@
                       <div class="input-group-addon">
                         <i class="fa fa-calendar"></i>
                       </div>
-                      <input type="text" class="form-control pull-right"  name="daterange" value="01/01/2018 - 01/15/2018" id="rangeDateConsult">
+                      <input type="text" class="form-control pull-right"  name="daterange" id="rangeDateConsult">
                     </div>
                 </div>
 
@@ -149,7 +149,7 @@
             
                 <div class="form-group">
                     <label for="selectEstacion">Estación</label>
-                    <select class="form-control" id="selectEstacion" name="estacionPlot">
+                    <select class="form-control" id="selectEstacion" name="estacionPlot" disabled>
                         <option value="">Todos</option>
                     </select>
                 </div>
@@ -225,7 +225,7 @@
                     "Noviembre",
                     "Diciembre"
                 ],
-                "firstDay": 1
+                "firstDay": 0
             },
             opens: 'right',
             maxDate: moment(),

@@ -30,8 +30,8 @@ class SupervisorEstadisticas(GroupRequiredMixin, TemplateView):
         
         context["num_user"] = us.User.objects.count()
         context["num_vehiculos"] = md.Vehiculo.objects.count()
-        context["num_atendidos"] = md.Cola.objects.filter(created_at__gt=dateinit).count()
-        context["num_rebotados"] = md.Rebotado.objects.filter(created_at__gt=dateinit).count()
+        context["num_atendidos"] = md.Cola.objects.filter(created_at__date__gt=dateinit).count()
+        context["num_rebotados"] = md.Rebotado.objects.filter(created_at__date__gt=dateinit).count()
         
         context['estaciones'] = md.Estacion.objects.all()
         context['municipios'] = us.Municipio.objects.all()
@@ -62,8 +62,10 @@ class SupervisorPlots(GroupRequiredMixin, View):
         if rangedate or municipio or parroquia or estacion:
             date_ini, date_end = str(rangedate).split(' - ')
             
-            params["init"] = datetime.strptime(date_ini, '%d/%m/%Y').replace(tzinfo=pytz.UTC)
-            params["end"] = datetime.strptime(date_end, '%d/%m/%Y').replace(tzinfo=pytz.UTC)
+            params["init"] = datetime.strptime(date_ini, '%d/%m/%Y')\
+                            .replace(tzinfo=pytz.UTC).date()
+            params["end"] = datetime.strptime(date_end, '%d/%m/%Y')\
+                            .replace(tzinfo=pytz.UTC).date()
             
             if municipio:
                 params["municipio"] = us.Municipio.objects.get(id=int(municipio))
