@@ -1,10 +1,10 @@
 from plotly import graph_objs as go
 from plotly import offline
-
 from plotly.subplots import make_subplots
 
 from dgas.gas_app import models as md
 from datetime import datetime, timedelta
+
 import pandas as pd
 
 #from .example import *
@@ -20,80 +20,154 @@ def plot(figure):
 
 
 def range_data(init, end, cmunicipio=None, cestacion=None):
-    # Total de litros, total de rebotados, promedio / vehiculo
+
+    # Consultas
+
     range_cola = md.Cola.objects\
             .filter(created_at__date__range=(init, end))\
-            .annotate(id_estacion=F('combustible__estacion'),
-                type_car=F('vehiculo__tipo_vehiculo'))
+            .annotate(
+                id_estacion=F('combustible__estacion'),
+                type_car=F('vehiculo__tipo_vehiculo'),
+                id_municipio = F('combustible__estacion__municipio_estacion')
+            )
     range_rebo = md.Rebotado.objects\
             .filter(created_at__date__range=(init, end))\
-            .annotate(id_estacion=F('combustible__estacion'),
-                type_car=F('vehiculo__tipo_vehiculo'))
+            .annotate(
+                id_estacion=F('combustible__estacion'),
+                type_car=F('vehiculo__tipo_vehiculo'),
+                id_municipio = F('combustible__estacion__municipio_estacion')
+            )
     range_cont = md.ContadorMedida.objects\
             .filter(created_at__date__range=(init, end))\
-            .annotate(id_estacion=F('contador__estacion'))
+            .annotate(
+                id_estacion=F('contador__estacion'),
+                id_municipio = F('contador__estacion__municipio_estacion')
+            )
     range_comb  = md.Combustible.objects\
-            .filter(created_at__date__range=(init, end))
-
-    def action_for_station(estacion):
-        rebo_esta = range_rebo.filter(id_estacion=estacion.id)
-        cola_esta = range_cola.filter(id_estacion=estacion.id)
-        cont_esta = range_cont.filter(id_estacion=estacion.id)
-        comb_esta = range_comb.filter(estacion=estacion)
-
-        total_surtido = comb_esta.aggregate(
-            total_litros= Sum('litros_surtidos_g91')+Sum('litros_surtidos_g95')+Sum('litros_surtidos_gsl')
-            )['total_litros'] or 0
-        total_consumido = cont_esta.aggregate(
-            total_litros=Max('cantidad')-Min('cantidad')
-            )['total_litros'] or 0
-        total_rebotados = rebo_esta.count()
-        total_cola = cola_esta.count()
-
-        return (total_cola, total_rebotados, estacion.nombre,
-                total_consumido, total_surtido)
-
-    def get_count_date(tdate):
-        return (tdate.strftime('%d/%m'),
-                range_cola.filter(created_at__date=tdate.date(), id_estacion__in=stations).count()
-                )
-
-    def get_count_type(type_to):
-        index, content = type_to
-        return (index, 
-            range_cola.filter(type_car=content, id_estacion__in=stations).count()
+            .filter(created_at__date__range=(init, end))\
+            .annotate(
+                id_municipio = F('estacion__municipio_estacion')
             )
 
-    atendidos_dias, tipos_atendidos, stations = None, None, None
-
+    stations = None
     if cestacion:
-        stations = [cestacion]
+        stations = md.Estacion.objects.filter(id=cestacion.id)
     elif cmunicipio:
         stations = md.Estacion.objects.filter(municipio_estacion=cmunicipio)
     else:
         stations = md.Estacion.objects.all()
 
-    if init == end:
-        tipos_atendidos = dict(map(get_count_type, md.TIPO_VEHICULO_CHOICES))
-    else:
-        atendidos_dias = dict(map(get_count_date, pd.date_range(init, end).to_pydatetime()))
 
-    data_send = list(map(action_for_station, stations))
-    data_send = list(map(list, zip(*data_send)))
+    # Convertir a DataFrame
+
+    df_cola = pd.DataFrame(range_cola.values(
+        'cantidad',
+        'created_at',
+        'last_modified_at',
+        'id_estacion',
+        'type_car',
+        'id_municipio'
+        ))
+    df_cola['created_at'] = df_cola['created_at'].dt.date
+    df_cola['last_modified_at'] = df_cola['last_modified_at'].dt.date
+
+    df_rebo = pd.DataFrame(range_rebo.values(
+        'created_at',
+        'last_modified_at',
+        'id_estacion',
+        'type_car',
+        'id_municipio'
+        ))
+    df_rebo['created_at'] = df_rebo['created_at'].dt.date
+    df_rebo['last_modified_at'] = df_rebo['last_modified_at'].dt.date
+
+    if range_cont:
+        df_cont = pd.DataFrame(range_cont.values(
+            'cantidad',
+            'created_at',
+            'id_estacion',
+            'id_municipio'
+            ))
+        df_cont['created_at'] = df_cont['created_at'].dt.date
+    else:
+        df_cont = None
+
+    if range_comb:
+        df_comb = pd.DataFrame(range_comb.values(
+            'id_municipio',
+            'litros_surtidos_g91',
+            'litros_surtidos_g95',
+            'litros_surtidos_gsl',
+            'estacion',
+            ))
+    else:
+        df_comb = None
+
+
+    df_stations = pd.DataFrame(stations.values('id', 'nombre'))
+    df_stations.index = df_stations['id']
+
+    # Variables
+
+    df_dates = count_type  = df_smooth = None
+
+    # Calculo de metricas
+
+    df_stations['atendidos'] = df_stations['id'].apply(
+        lambda x: df_cola['id_estacion'][df_cola['id_estacion']==x].count()
+    )
+    df_stations['rebotados'] = df_stations['id'].apply(
+        lambda x: df_rebo['id_estacion'][df_rebo['id_estacion']==x].count()
+    )
+
+    if df_cont:
+        def size_range(x):
+            col = df_cont['cantidad'][df_cont['id_estacion']==x]
+            return col.max()-col.min()
+
+        df_stations['litros'] = df_stations['id'].apply(
+            #lambda x: df_cont[df_cont['id_estacion']==x].sort_values('created_at')['cantidad'].diff().sum()
+            size_range
+        )
+    else:
+        df_stations['litros'] = 0.0
+
+
+    if range_comb:
+        df_stations['surtidos'] = df_stations['id'].apply(
+            lambda x: df_comb[df_comb['estacion']==x][
+                    ['litros_surtidos_g91','litros_surtidos_g95','litros_surtidos_gsl']
+                ].sum().sum()
+        )
+    else:
+        df_stations['surtidos'] = 0.0
+
+    count_type = pd.value_counts(df_cola["type_car"])
+
+    df_dates = pd.DataFrame(pd.date_range(init, end), columns=['day'])
+    df_dates.index = df_dates['day']
+    df_dates['count'] = df_dates['day'].apply(
+            lambda x: df_cola['last_modified_at'][df_cola['last_modified_at']==x].count()
+        )
+
+    """
+    if not init == end:
+        from statsmodels.nonparametric.smoothers_lowess import lowess
+        result = lowess(df_dates['count'], df_dates['day'])
+        df_smooth = pd.DataFrame(result, columns=['day','count'])
+        df_smooth['day'] = pd.to_datetime(df_smooth['day'])
+    """
 
     return {
-            'atendidos': data_send[0],
-            'rebotados': data_send[1], 
-            'nombre_estacion': data_send[2],
-            'consumo': data_send[3],
-            'surtidos': data_send[4],
-            'atendidos_dias': atendidos_dias,
-            'tipos_vehiculos': tipos_atendidos,
-            'tiempo': pd.date_range(init, end)
+            'stations': df_stations,
+            'dates': df_dates, 
+            'smooth': df_smooth,
+            'types': count_type
             }
 
 
-def result_table(data):
+def result_table(dict_data):
+    data = dict_data['stations']
     return go.Table(
         header = {'values': [
                     "Estacion", 
@@ -105,13 +179,13 @@ def result_table(data):
                     "Surtido/Vehiculo"
                 ]},
         cells = {'values': [
-                    data['nombre_estacion'], 
+                    data['nombre'], 
                     data['atendidos'], 
                     data['rebotados'],
-                    data['consumo'],
+                    data['litros'],
                     data['surtidos'],
-                    [round(i/j,2) if j!= 0 else 0 for i,j in zip(data['consumo'], data['atendidos'])],
-                    [round(i*1000/j,2) if j!=0 else 0 for i,j in zip(data['surtidos'], data['atendidos'])],
+                    (data['litros']/data['atendidos']).round(1),
+                    (data['surtidos']*1000/data['atendidos']).round(1),
                 ]},
         )
 
@@ -124,6 +198,11 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     data = range_data(init, end, municipio)
 
     print("Time totals:", time()-start)
+
+    stations = data['stations']
+    smooth = data['smooth']
+    type_car = data['types']
+    dates_time = data['dates']
 
     # Initialize figure with subplots
     fig = make_subplots(
@@ -146,34 +225,41 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     if init == end:
         fig.add_trace(
             go.Bar(
-                x=list(data['tipos_vehiculos'].keys()), 
-                y=list(data['tipos_vehiculos'].values()), 
+                x=type_car.index, 
+                y=type_car, 
                 name='Atendidos',
-                text=list(data['tipos_vehiculos'].values()),
+                text=type_car,
                 textposition='auto',
                 ), 
             row=3, col=1)
     else:
         fig.add_trace(
             go.Scatter(
-                x=data['tiempo'],
-                y=list(data['atendidos_dias'].values()), 
-
+                x=dates_time['day'],
+                y=dates_time['count'], 
                 mode="lines", name='Atendidos'), 
             row=3, col=1)
+        """
+        fig.add_trace(
+            go.Scatter(
+                x=smooth['day'],
+                y=smooth['count'], 
+                mode="lines", name='Atendidos'), 
+            row=3, col=1)
+        """
 
     fig.add_trace(
         go.Bar(
-            x=data['nombre_estacion'], 
-            y=data['atendidos'],
+            x=stations['nombre'], 
+            y=stations['atendidos'],
             name="Atendidos",
             ), 
         row=4, col=1)
 
     fig.add_trace(
         go.Bar(
-            x=data['nombre_estacion'], 
-            y=data['rebotados'],
+            x=stations['nombre'], 
+            y=stations['rebotados'],
             name="Rebotados",
             ), 
         row=4, col=1)
@@ -187,10 +273,10 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
                         "Lts. Surtidos",
                     ]},
             cells = {'values': [
-                        sum(data['atendidos']), 
-                        sum(data['rebotados']),
-                        sum(data['consumo']),
-                        sum(data['surtidos'])*1000,
+                        stations['atendidos'].sum(), 
+                        stations['rebotados'].sum(),
+                        stations['litros'].sum(),
+                        stations['surtidos'].sum()*1000,
                     ]},
         ), 
         row=2, col=1)
