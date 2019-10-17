@@ -55,26 +55,30 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
 
     def get_count_date(tdate):
         return (tdate.strftime('%d/%m'),
-                range_cola.filter(created_at__date=tdate.date()).count())
+                range_cola.filter(created_at__date=tdate.date(), id_estacion__in=stations).count()
+                )
 
     def get_count_type(type_to):
         index, content = type_to
-        return (index, range_cola.filter(type_car=content).count())
+        return (index, 
+            range_cola.filter(type_car=content, id_estacion__in=stations).count()
+            )
 
-    atendidos_dias, tipos_atendidos, data_send = None, None, None
+    atendidos_dias, tipos_atendidos, stations = None, None, None
+
+    if cestacion:
+        stations = [cestacion]
+    elif cmunicipio:
+        stations = md.Estacion.objects.filter(municipio_estacion=cmunicipio)
+    else:
+        stations = md.Estacion.objects.all()
 
     if init == end:
         tipos_atendidos = dict(map(get_count_type, md.TIPO_VEHICULO_CHOICES))
     else:
         atendidos_dias = dict(map(get_count_date, pd.date_range(init, end).to_pydatetime()))
 
-    if cestacion:
-        data_send = list(map(action_for_station, [cestacion]))
-    elif cmunicipio:
-        data_send = list(map(action_for_station, md.Estacion.objects.filter(municipio_estacion=cmunicipio)))
-    else:
-        data_send = list(map(action_for_station, md.Estacion.objects.all()))
-
+    data_send = list(map(action_for_station, stations))
     data_send = list(map(list, zip(*data_send)))
 
     return {
@@ -84,7 +88,8 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
             'consumo': data_send[3],
             'surtidos': data_send[4],
             'atendidos_dias': atendidos_dias,
-            'tipos_vehiculos': tipos_atendidos
+            'tipos_vehiculos': tipos_atendidos,
+            'tiempo': pd.date_range(init, end)
             }
 
 
@@ -151,8 +156,9 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     else:
         fig.add_trace(
             go.Scatter(
-                x=list(data['atendidos_dias'].keys()), 
+                x=data['tiempo'],
                 y=list(data['atendidos_dias'].values()), 
+
                 mode="lines", name='Atendidos'), 
             row=3, col=1)
 
@@ -210,4 +216,3 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
         )
 
     return plot(fig)
-
