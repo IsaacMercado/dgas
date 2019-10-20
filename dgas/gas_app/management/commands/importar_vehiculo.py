@@ -8,12 +8,11 @@ import datetime
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
 
         # Named (optional) arguments
         parser.add_argument(
-                '--cargar_vehiculos',
+            '--cargar_vehiculos',
             action='store_true',
             dest='cargar_vehiculos',
             default=False,
@@ -86,13 +85,13 @@ class Command(BaseCommand):
                     cilindros = cilindros.strip(' \t\n\r')
                     print(placa, cedula, cilindros)
                 except:
-                   pass
+                    pass
 
                 try:
-                    ta = Vehiculo(placa=placa,cedula=cedula, tipo_vehiculo='Moto', cilindros=cilindros)
+                    ta = Vehiculo(placa=placa, cedula=cedula, tipo_vehiculo='Moto', cilindros=cilindros)
                     ta.save()
                 except:
-                    print("Placa: " + placa +"Ya esta registrada")
+                    print("Placa: " + placa + "Ya esta registrada")
 
         if options['cargar_moto_taxi']:
 
@@ -109,17 +108,17 @@ class Command(BaseCommand):
                     cedula = cedula.strip(' \t\n\r')
                     print(placa, cedula)
                 except:
-                   print('Error leyendo Linea nro: '+str(nro_linea))
-                   print(file_line)
-                   exit(0)
+                    print('Error leyendo Linea nro: ' + str(nro_linea))
+                    print(file_line)
+                    exit(0)
 
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo="Moto Taxita"
-                    ta.cedula=cedula
+                    ta.tipo_vehiculo = "Moto Taxita"
+                    ta.cedula = cedula
                     ta.save()
                 except:
-                    print("Placa: " + placa +"Ya no esta registrada")
+                    print("Placa: " + placa + "Ya no esta registrada")
                     mt_insert = Vehiculo(placa=placa, cedula=cedula, tipo_vehiculo='Moto Taxita', cilindros=1)
                     mt_insert.save()
 
@@ -138,13 +137,13 @@ class Command(BaseCommand):
                     placa = placa.strip(' \t\n\r')
                     print(placa)
                 except:
-                   print('Error leyendo Linea nro: '+str(nro_linea))
-                   print(file_line)
-                   exit(0)
+                    print('Error leyendo Linea nro: ' + str(nro_linea))
+                    print(file_line)
+                    exit(0)
 
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo="TP Gasolina"
+                    ta.tipo_vehiculo = "TP Gasolina"
                     ta.save()
                 except:
                     nv = Vehiculo(placa=placa, tipo_vehiculo="TP Gasolina", created_at=datetime.datetime.now())
@@ -166,20 +165,20 @@ class Command(BaseCommand):
                     placa = placa.strip(' \t\n\r')
                     print(placa)
                 except:
-                   print('Error leyendo Linea nro: '+str(nro_linea))
-                   print(file_line)
-                   exit(0)
+                    print('Error leyendo Linea nro: ' + str(nro_linea))
+                    print(file_line)
+                    exit(0)
 
                 try:
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo="TP Gasoil"
+                    ta.tipo_vehiculo = "TP Gasoil"
                     ta.save()
                 except:
                     nv = Vehiculo(placa=placa, tipo_vehiculo="TP Gasoil", created_at=datetime.datetime.now())
                     nv.save()
                     print("Placa: " + placa + "Nuevo registro")
 
-        if options['cargar_oficial_diario']:
+        if options['cargar_oficial']:
 
             archivo = options['archivo']
             file_handle = open(archivo)
@@ -191,28 +190,29 @@ class Command(BaseCommand):
             for file_line in file_list:
                 nro_linea += 1
                 try:
-                    [placa, diario, inter_diario] = file_line.split(",")
-                    inter_diario = inter_diario.strip(' \t\n\r')
-                    print(placa)
+
+                    [placa, organizacion, frecuencia] = file_line.split(",")
+                    frecuencia = inter_diario.strip(' \t\n\r')
+
                 except:
-                   print('Error leyendo Linea nro: '+str(nro_linea))
-                   print(file_line)
-                   exit(0)
+
+                    print('Error leyendo Linea nro: ' + str(nro_linea))
+                    print(file_line)
+                    exit(0)
 
                 try:
 
-                    if diario == 'X':
+                    if frecuencia == 'T':
                         tv = "Oficial Diario"
-                    elif inter_diario == "X":
-                            tv = "Oficial Interdiario"
+                    elif inter_diario == "F":
+                        tv = "Oficial Interdiario"
 
                     ta = Vehiculo.objects.get(placa=placa)
-                    ta.tipo_vehiculo=tv
+                    ta.organizacion = organizacion
+                    ta.tipo_vehiculo = tv
                     ta.save()
                 except:
-                    print("Placa: " + placa +"Ya no esta registrada")
-                    mt_insert = Vehiculo(placa=placa, cedula='No regisrada', tipo_vehiculo=tv, cilindros=4)
-                    mt_insert.save()
+                    print("Placa: " + placa + " no esta registrada")
 
         if options['cola_verifica']:
 
@@ -223,7 +223,6 @@ class Command(BaseCommand):
             nro_linea = 0
             tv = ''
 
-
             # verifica carga
             for file_line in file_list:
                 nro_linea += 1
@@ -233,10 +232,10 @@ class Command(BaseCommand):
                     if len(vehiculo) > 7 or len(vehiculo) < 6:
                         print("Placa invalida", vehiculo)
                 except Exception as e:
-                   print('Error leyendo Linea nro: '+str(nro_linea))
-                   print(e)
-                   print(file_line)
-                   exit(0)
+                    print('Error leyendo Linea nro: ' + str(nro_linea))
+                    print(e)
+                    print(file_line)
+                    exit(0)
 
         if options['cola_carga']:
             archivo = options['archivo']
@@ -257,7 +256,7 @@ class Command(BaseCommand):
                         c = Cola(combustible_id=combustible,
                                  vehiculo_id=vehiculo,
                                  cargado=True,
-                        )
+                                 )
                         c.save()
                     except:
                         print('Error insertando en cola: ' + vehiculo)
