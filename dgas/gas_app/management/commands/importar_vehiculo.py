@@ -45,11 +45,11 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '--cargar_oficial_diario',
+            '--cargar_oficial',
             action='store_true',
-            dest='cargar_oficial_diario',
+            dest='cargar_oficial',
             default=False,
-            help='Cargar oficial diario'
+            help='Cargar oficial con institucion'
         )
 
         parser.add_argument(
@@ -180,6 +180,7 @@ class Command(BaseCommand):
 
         if options['cargar_oficial']:
 
+            print('Cargando')
             archivo = options['archivo']
             file_handle = open(archivo)
             file_list = file_handle.readlines()
@@ -187,12 +188,13 @@ class Command(BaseCommand):
             nro_linea = 0
             tv = ''
 
+
             for file_line in file_list:
                 nro_linea += 1
                 try:
 
                     [placa, organizacion, frecuencia] = file_line.split(",")
-                    frecuencia = inter_diario.strip(' \t\n\r')
+                    frecuencia = frecuencia.strip(' \t\n\r')
 
                 except:
 
@@ -213,6 +215,7 @@ class Command(BaseCommand):
                     ta.save()
                 except:
                     print("Placa: " + placa + " no esta registrada")
+
 
         if options['cola_verifica']:
 
