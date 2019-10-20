@@ -188,7 +188,6 @@ class Command(BaseCommand):
             nro_linea = 0
             tv = ''
 
-
             for file_line in file_list:
                 nro_linea += 1
                 try:
@@ -206,8 +205,12 @@ class Command(BaseCommand):
 
                     if frecuencia == 'T':
                         tv = "Oficial Diario"
-                    elif inter_diario == "F":
+                    elif frecuencia == "F":
                         tv = "Oficial Interdiario"
+                    elif frecuencia == "TP":
+                        tv = "TP Gasolina"
+                    elif frecuencia == "Taxi":
+                        tv = "Taxi"
 
                     ta = Vehiculo.objects.get(placa=placa)
                     ta.organizacion = organizacion
