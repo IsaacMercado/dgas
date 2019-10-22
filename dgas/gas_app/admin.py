@@ -73,7 +73,7 @@ class SaleSummaryAdmin(admin.ModelAdmin):
 
 @admin.register(Carga)
 class CargaAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')
+    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'cedula', 'nota', 'created_by', 'created_at')
 
 
 @admin.register(Cola)
