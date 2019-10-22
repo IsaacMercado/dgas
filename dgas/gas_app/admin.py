@@ -73,12 +73,12 @@ class SaleSummaryAdmin(admin.ModelAdmin):
 
 @admin.register(Carga)
 class CargaAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'cedula', 'nota', 'created_by', 'created_at')
+    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')
 
 
 @admin.register(Cola)
 class ColaAdmin(admin.ModelAdmin):
-    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'created_by','created_at', 'last_modified_at')
+    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'cedula', 'nota', 'created_by','created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]
     #list_filter = ('combustible',)
 
