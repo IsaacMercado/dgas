@@ -219,7 +219,6 @@ class Command(BaseCommand):
                 except:
                     print("Placa: " + placa + " no esta registrada")
 
-
         if options['cola_verifica']:
 
             archivo = options['archivo']
