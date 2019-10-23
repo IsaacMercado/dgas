@@ -55,7 +55,11 @@ class CombustibleSerializer(serializers.ModelSerializer):
                   'total_cola',
                   'total_rebotados',
                   'total_surtidos',
-                  'total_colas_cantidad'
+                  'total_colas_cantidad',
+                  'litros_surtidos_g91',
+                  'litros_surtidos_g95',
+                  'litros_surtidos_gsl',
+                  'notas',
         )
 
 

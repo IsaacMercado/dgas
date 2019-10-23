@@ -211,16 +211,16 @@
                     <h4 class="modal-title">Generar reporte de cierre</h4>
                 </div>
                 <div class="modal-body">
-                    <div id="estacion" ></div>
+                    <div id="estacion"></div>
                     <br>
                     <label>Listros surtidos de 91:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_g91" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_g91" value="0">
                     <br>
                     <label>Listros surtidos de 95:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_g95" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_g95" value="0">
                     <br>
                     <label>Listros surtidos de gasoil:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_gsl" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_gsl" value="0">
                     <br>
 
                     <label>Notas</label>
@@ -232,7 +232,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" id="cancelarReporte">Cancelar
                     </button>
-                    <button type="button" id="crearRepote" class="btn btn-primary">Crear reporte y cerrar estación</button>
+                    <button type="button" id="crearRepote" class="btn btn-primary">Crear reporte y cerrar estación
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -317,7 +318,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar</button>
+                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -411,8 +413,7 @@
                 });
 
 
-
-                var bnt = '<td>' +
+                var bnt = '<td nowrap>' +
                     '    <center>' +
                     '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
@@ -434,12 +435,42 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
                     "order": [[0, "desc"]],
+                    fixedColumns: true,
+
+                    "columnDefs": [
+                        {width: 90, targets: 7},
+                        {
+                            "targets": [8],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [9],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [10],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [11],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [12],
+                            "visible": false,
+                            "searchable": false
+                        }
+                    ],
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
-                        {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
+                        //{"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
                         {"title": "Nota", "data": "nota", "responsivePriority": 1,},
                         {
                             "data": "estacion.operativa",
@@ -454,6 +485,23 @@
                         {
                             "data": null,
                             "defaultContent": bnt
+                        },
+                        {"title": "91", "data": "litros_surtidos_g91", "responsivePriority": 1,},
+                        {"title": "95", "data": "litros_surtidos_g91", "responsivePriority": 1,},
+                        {"title": "gsl", "data": "litros_surtidos_gsl", "responsivePriority": 1,},
+                        {"title": "notas", "data": "notas", "responsivePriority": 1,},
+                        {
+                            "responsivePriority": 1,
+                            "data": null,    // this will allow usage of full object
+                            "render": function (data, type, full, meta) {
+                                var total_surtidos=data.litros_surtidos_g91+data.litros_surtidos_g91+data.litros_surtidos_gsl;
+                                if (data.total_cola > 0){
+                                    var total = total_surtidos / data.total_cola
+                                }else{
+                                    var total = 'No aplica'
+                                }
+                                return (total);
+                            }
                         }
                     ],
                     dom: 'lBfrtip',
@@ -514,16 +562,16 @@
                 $('#tabla_combustible tbody').on('click', '#hacerReporte', function () {
 
                     var data = table.row($(this).parents('tr')).data();
-                     combustible_id = data['id'];
-                     var estacion = data['estacion']['nombre'];
-                     var municipio = data['estacion']['municipio'];
+                    combustible_id = data['id'];
+                    var estacion = data['estacion']['nombre'];
+                    var municipio = data['estacion']['municipio'];
 
-                     console.log(combustible_id, "ssssss");
+                    console.log(combustible_id, "ssssss");
 
-                     $("#estacion").html(
-                         "<h3>Estación:<b>" + estacion + "</b></h3>"+
-                         "<h4>Municipio:<b> " + municipio + "</b></h4>"
-                     );
+                    $("#estacion").html(
+                        "<h3>Estación:<b>" + estacion + "</b></h3>" +
+                        "<h4>Municipio:<b> " + municipio + "</b></h4>"
+                    );
 
                     $('#modal-reporte').modal('show');
                 });
@@ -791,14 +839,14 @@
 
                             var tableColas = "<br><table class=\"table\">";
                             tableColas += "<tr><td colspan=2>&Uacute;ltimas cargas:</td><tr>";
-                            if(colas.length>0){
+                            if (colas.length > 0) {
                                 for (x in colas) {
                                     var create_a = new Date(colas[x].created_at);
                                     var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
                                     tableColas += "<tr><td>" + colas[x].combustible__estacion__nombre + "</td>";
                                     tableColas += "<td>" + create_b + "</td></tr>";
                                 }
-                            }else{
+                            } else {
                                 tableColas += "<tr><td colspan=2>Sin cargas</td><tr>";
                             }
                             tableColas += "</table>";
@@ -806,44 +854,44 @@
 
                             var tableRebotes = "<br><table class=\"table\">";
                             tableRebotes += "<tr><td colspan=2>&Uacute;ltimas rebotes:</td><tr>";
-                            if(rebotes.length>0){
+                            if (rebotes.length > 0) {
                                 for (x in rebotes) {
                                     var create_a = new Date(rebotes[x].created_at);
                                     var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
                                     tableRebotes += "<tr><td>" + rebotes[x].combustible__estacion__nombre + "</td>";
                                     tableRebotes += "<td>" + create_b + "</td></tr>";
                                 }
-                            }else{
+                            } else {
                                 tableRebotes += "<tr><td colspan=2>Sin rebotes</td><tr>";
                             }
                             tableRebotes += "</table>";
 
                             var bloq = "";
 
-                            if(vehiculo.bloqueado == true){
-                                 bloq = "<br><b>Vehículo bloqueado</b><br>";
-                                 bloq += "Motivo: " + vehiculo.bloqueado_motivo+"<br>";
-                                 bloq += "Hasta: " + vehiculo.bloqueado_hasta+"<br>";
-                            }else{
+                            if (vehiculo.bloqueado == true) {
+                                bloq = "<br><b>Vehículo bloqueado</b><br>";
+                                bloq += "Motivo: " + vehiculo.bloqueado_motivo + "<br>";
+                                bloq += "Hasta: " + vehiculo.bloqueado_hasta + "<br>";
+                            } else {
                                 bloq = "";
                             }
 
                             var pp = ""
 
-                            if(vehiculo.paso_preferencial == true){
+                            if (vehiculo.paso_preferencial == true) {
                                 pp = "Dar apoyo sin cola"
-                            }else{
+                            } else {
                                 pp = "Debe pasar a la cola"
                             }
 
                             $("#alerta-mensaje-bloqueado").html(
-                                    "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
-                                    "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
-                                    "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
-                                    "Paso prefencial:<b> " + pp + "</b><br>" +
-                                    bloq+
-                                    tableColas +
-                                    tableRebotes
+                                "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>" +
+                                "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
+                                "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
+                                "Paso prefencial:<b> " + pp + "</b><br>" +
+                                bloq +
+                                tableColas +
+                                tableRebotes
                             );
                             $('#modal-alerta-bloqueado').modal('show');
 
