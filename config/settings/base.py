@@ -72,7 +72,7 @@ THIRD_PARTY_APPS = [
     "pure_pagination",  # pagination number page
     "django_userforeignkey", # last insert or update
     "qr_code",
-
+    "django_plotly_dash.apps.DjangoPlotlyDashConfig", # dash plot.ly 
 ]
 LOCAL_APPS = [
     "dgas.authentication.apps.AuthenticationConfig",
@@ -140,6 +140,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_userforeignkey.middleware.UserForeignKeyMiddleware",
+
+    "django_plotly_dash.middleware.BaseMiddleware", # dash plot.ly
+    #"whitenoise.middleware.WhiteNoiseMiddleware",
+    #"django_plotly_dash.middleware.ExternalRedirectionMiddleware",
 ]
 
 # STATIC
@@ -154,6 +158,11 @@ STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+
+    # Ploy.ly
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder',
+    'django_plotly_dash.finders.DashAppDirectoryFinder',
 ]
 
 # MEDIA
@@ -294,4 +303,19 @@ REST_FRAMEWORK = {
 # Google Maps
 MAP_KEY = env("MAP_KEY")
 
+# Plot.ly
+PLOTLY_COMPONENTS = [
 
+    # Common components
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+
+    # django-plotly-dash components
+    'dpd_components',
+    # static support if serving local assets
+    #'dpd_static_support',
+
+    # Other components, as needed
+    #'dash_bootstrap_components',
+]

@@ -6,10 +6,10 @@ from dgas.gas_app import models as md
 from datetime import datetime, timedelta
 
 import pandas as pd
-
-#from .example import *
+from time import time
 
 from django.db.models import F, Max, Min, Sum
+from django.conf import settings
 
 def plot(figure):
     return offline.plot(
@@ -17,7 +17,6 @@ def plot(figure):
         output_type='div', 
         include_plotlyjs='cdn'
         )
-
 
 def range_data(init, end, cmunicipio=None, cestacion=None):
 
@@ -56,7 +55,6 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
         stations = md.Estacion.objects.filter(municipio_estacion=cmunicipio)
     else:
         stations = md.Estacion.objects.all()
-
 
     # Convertir a DataFrame
 
@@ -103,7 +101,6 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
     else:
         df_comb = None
 
-
     df_stations = pd.DataFrame(stations.values('id', 'nombre'))
     df_stations.index = df_stations['id']
 
@@ -142,21 +139,13 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
     else:
         df_stations['surtidos'] = 0.0
 
-    count_type = pd.value_counts(df_cola["type_car"])
+    count_type = pd.value_counts(df_cola["type_car"][df_cola['id_estacion'].isin(df_stations['id'])])
 
     df_dates = pd.DataFrame(pd.date_range(init, end), columns=['day'])
     df_dates.index = df_dates['day']
     df_dates['count'] = df_dates['day'].apply(
-            lambda x: df_cola['last_modified_at'][df_cola['last_modified_at']==x].count()
+            lambda x: df_cola['created_at'][(df_cola['created_at']==x) & (df_cola['id_estacion'].isin(df_stations['id']))].count()
         )
-
-    """
-    if not init == end:
-        from statsmodels.nonparametric.smoothers_lowess import lowess
-        result = lowess(df_dates['count'], df_dates['day'])
-        df_smooth = pd.DataFrame(result, columns=['day','count'])
-        df_smooth['day'] = pd.to_datetime(df_smooth['day'])
-    """
 
     return {
             'stations': df_stations,
@@ -192,11 +181,9 @@ def result_table(dict_data):
 
 def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
     # Calculate data
-    from time import time
+
     start = time()
-
     data = range_data(init, end, municipio)
-
     print("Time totals:", time()-start)
 
     stations = data['stations']
@@ -239,14 +226,6 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
                 y=dates_time['count'], 
                 mode="lines", name='Atendidos'), 
             row=3, col=1)
-        """
-        fig.add_trace(
-            go.Scatter(
-                x=smooth['day'],
-                y=smooth['count'], 
-                mode="lines", name='Atendidos'), 
-            row=3, col=1)
-        """
 
     fig.add_trace(
         go.Bar(
