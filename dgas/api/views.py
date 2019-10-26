@@ -16,7 +16,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, RebotadoBloqueado, ColaConsulta
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
     CombustibleSerializer, ColaSerializer, VehiculoSupervisorSerializer, \
-    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer, RebotadoBloqueadoSerializer
+    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer, RebotadoBloqueadoSerializer, \
+    VehiculoBloqueadosSerializer
 from dgas.users.models import User
 
 
@@ -50,6 +51,18 @@ class VehiculoUserViewSet(viewsets.ModelViewSet):
 
     def post_save(self, obj):
         obj.usuario = self.request.user
+
+
+class VehiculoBloqueadosViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Vehiculo.objects.all()
+    serializer_class = VehiculoBloqueadosSerializer
+
+    def get_queryset(self):
+
+        qs = self.queryset.filter(bloqueado=True)
+
+        return qs
+
 
 
 class RebotadoViewSet(viewsets.ModelViewSet):
