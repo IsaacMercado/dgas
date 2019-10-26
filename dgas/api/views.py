@@ -240,6 +240,11 @@ class CombustiblePublicoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = CombustibleSerializer
     permission_classes = (AllowAny,)
 
+    def get_queryset(self):
+        today = date.today()
+        qs = self.queryset.filter(fecha_planificacion=today)
+        return qs
+
 
 class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
@@ -353,7 +358,6 @@ class ContarCola(APIView):
         combustible = Combustible.objects.get(pk=combustible_id)
 
         cargado = Cola.objects.filter(combustible_id=combustible_id, cargado=True).count()
-        print(cargado)
         total = Cola.objects.filter(combustible_id=combustible_id).count()
         total_rebotados = Rebotado.objects.filter(combustible_id=combustible_id).count()
 
