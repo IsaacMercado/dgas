@@ -6,23 +6,24 @@
 
 {% block css %}
     <style>
-    .iframe-container{
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; /* Ratio 16:9 ( 100%/16*9 = 56.25% ) */
-}
-.iframe-container > *{
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-}
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Ratio 16:9 ( 100%/16*9 = 56.25% ) */
+        }
+
+        .iframe-container > * {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
     </style>
 {% endblock css %}
 
@@ -46,7 +47,49 @@
 
     <h2>Bienvenidos al Sistema de Gestión para la Normalización de Combustible</h2>
 
-    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Novedadees</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+
+                    <!-- ./box-body -->
+                    <div class="box-footer">
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="col-sm-6 col-xs-6">
+                                <div class="description-block border-right">
+                                    <a class="btn btn-block btn-primary" href="{% url "public_app:colas" %}">
+                                    <h5 class="description-header">Planificación Diaria</h5>
+                                    </a>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-6 col-xs-6">
+                                <div class="description-block">
+                                    <a class="btn btn-block btn-primary" href="{% url "public_app:vehiculo_multados" %}">
+                                    <h5 class="description-header">Vehículos multados (Bloqueados)</h5>
+                                    </a>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.box-footer -->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box -->
+
 
 
     <!-- Dasboard Operadores-->

@@ -50,6 +50,7 @@ class CombustibleSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'estacion',
                   'nota',
+                  'fecha_planificacion',
                   'created_at',
                   'last_modified_at',
                   'total_cola',

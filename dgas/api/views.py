@@ -198,11 +198,12 @@ class UltimaColaList(APIView):
         return Response(uc)
 
 
+'''
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
     serializer_class = CombustibleSerializer
     #permission_classes = (AllowAny,)
-
+'''
 
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
@@ -232,6 +233,12 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         )
 
         return qs
+
+
+class CombustiblePublicoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Combustible.objects.all()
+    serializer_class = CombustibleSerializer
+    permission_classes = (AllowAny,)
 
 
 class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -379,6 +386,12 @@ class ContarCola(APIView):
 class EstacionViewSet(viewsets.ModelViewSet):
     queryset = Estacion.objects.all()
     serializer_class = EstacionSerializer
+
+
+class EstacionPublicViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Estacion.objects.all()
+    serializer_class = EstacionSerializer
+    permission_classes = (AllowAny,)
 
 
 class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):

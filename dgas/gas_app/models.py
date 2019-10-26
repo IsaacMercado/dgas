@@ -190,7 +190,7 @@ class Combustible(models.Model):
 class Vehiculo(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     placa = models.CharField(max_length=7, primary_key=True, help_text='Sin espacio en blanco y letras en mayusculas')
-    cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado', help_text='Indicar el numero de cedula que aparece en el carnet de circulación vial')
+    cedula = models.CharField('Nro. de cédula de identidad o RIF', max_length=20, default='No Registrado', help_text='Indicar el numero de cedula o RIF que aparece en el carnet de circulación vial')
     tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')
     cilindros = models.CharField(max_length=10, choices=CILINDROS_CHOICES, default='4')
     organizacion = models.CharField('Organización', max_length=100, default='No aplica')
