@@ -241,8 +241,14 @@ class CombustiblePublicoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        today = date.today()
+
+        if self.request.GET.get('q'):
+            today = date.today() + timedelta(days=1)
+        else:
+            today = date.today()
+
         qs = self.queryset.filter(fecha_planificacion=today)
+
         return qs
 
 
@@ -253,8 +259,6 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
 
     def get_queryset(self):
         #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
-
-
 
         qs = self.queryset.filter(completado=True) \
             .annotate(

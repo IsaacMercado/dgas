@@ -36,6 +36,10 @@
                 <!-- /.box-header -->
                 <div class="box-body">
 
+                    <button type="button" class="btn btn-default" id="today">Hoy</button>
+                    <button type="button" class="btn btn-default" id="tomorrow">Mañana</button>
+                    <br> <br>
+
                     <div class="row" id="combustible">
                         <div id="table-combustible" class="container col-md-12">
                             <table id="tabla_combustible"
@@ -145,6 +149,7 @@
 
                         {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
                         {"title": "Nota", "data": "nota", "responsivePriority": 1,},
+                        {"title": "Estado", "data": "estado", "responsivePriority": 1,},
                         {
                             "data": "estacion.operativa",
                             "title": "Abierta",
@@ -228,6 +233,16 @@
                     $('#cola').hide();
                     $('#combustible').show();
                     table_cola.destroy();
+
+                });
+
+                $('#tomorrow').on('click', function () {
+                   table.ajax.url('/api/combustible_publico/?format=datatables&q=t').load();
+
+                });
+
+                $('#today').on('click', function () {
+                    table.ajax.url('/api/combustible_publico/?format=datatables').load();
 
                 });
 
