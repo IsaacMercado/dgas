@@ -25,10 +25,10 @@ class ContadorAdmin(admin.ModelAdmin):
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('Planificacion', {'fields': ('estacion', 'estado', 'apertura', 'completado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'fecha_planificacion'), 'classes': ['wide']}),
+        ('Planificacion', {'fields': ('estacion', 'estado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'fecha_planificacion', 'apertura', 'completado'), 'classes': ['wide']}),
         ('Reporte', {'fields': ('litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl', 'notas',), 'classes': ['wide']}),
     )
-    list_display = ('estacion', 'estado','nota', 'fecha_planificacion', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl', 'apertura', 'completado')
+    list_display = ('estacion', 'estado','nota', 'fecha_planificacion', 'apertura', 'completado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl')
     list_filter = ('estacion',)
 
 
