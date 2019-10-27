@@ -6,7 +6,7 @@ from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
-CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando' 'En camino', 'Descargando', 'Despachando', 'Cerrada')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
