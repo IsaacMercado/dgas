@@ -6,7 +6,7 @@ from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
-CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando' 'En camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
@@ -169,6 +169,10 @@ class Combustible(models.Model):
     fecha_cierre = models.DateTimeField(null=True, blank=True)
     apertura = models.BooleanField(default=False)
     completado = models.BooleanField(default=False)
+
+    litros_planeados_g91 = models.PositiveIntegerField(default=0)
+    litros_planeados_g95 = models.PositiveIntegerField(default=0)
+    litros_planeados_gsl = models.PositiveIntegerField(default=0)
 
     litros_surtidos_g91 = models.PositiveIntegerField(default=0)
     litros_surtidos_g95 = models.PositiveIntegerField(default=0)

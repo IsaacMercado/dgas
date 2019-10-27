@@ -24,21 +24,31 @@ class ContadorAdmin(admin.ModelAdmin):
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('Planificacion', {'fields': ('estacion', 'estado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'fecha_planificacion', 'apertura', 'completado'), 'classes': ['wide']}),
+        ('Reporte', {'fields': ('litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl', 'notas',), 'classes': ['wide']}),
+    )
     list_display = ('estacion', 'estado','nota', 'fecha_planificacion', 'apertura', 'completado')
     list_filter = ('estacion',)
 
 
 @admin.register(Vehiculo)
 class VehiculoAdmin(admin.ModelAdmin):
-    list_display = ('placa', 'cedula', 'usuario', 'tipo_vehiculo')
+    fieldsets = (
+        ('Datos Generales', {'fields': ('placa', 'cedula', 'tipo_vehiculo', 'cilindros', 'organizacion', 'paso_preferencial',), 'classes': ['wide']}),
+        ('Multa', {'fields': ('bloqueado', 'bloqueado_motivo', 'bloqueado_fecha', 'bloqueado_hasta',), 'classes': ['wide']}),
+    )
+    list_display = ('placa', 'cedula', 'usuario', 'bloqueado', 'tipo_vehiculo')
     search_fields = ['placa', 'cedula']
     list_filter = ('tipo_vehiculo',)
+    readonly_fields = ('usuario',)
 
 
 @admin.register(Rebotado)
 class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
+    exclude = ['usuario']
     #list_filter = ('combustible',)
 
 
@@ -69,11 +79,6 @@ class SaleSummaryAdmin(admin.ModelAdmin):
         )
 
         return response
-
-
-@admin.register(Carga)
-class CargaAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')
 
 
 @admin.register(Cola)
