@@ -279,7 +279,8 @@
                 </div>
                 <div class="modal-body">
 
-                    <div id="mensaje-confirmacions"></div>
+                    <div id="mensaje-confirmacion"></div>
+                    <input type="hidden" id="cola_id">
 
                 </div>
                 <div class="modal-footer">
@@ -426,7 +427,8 @@
 
 
                 table = $('#tabla_combustible').DataTable({
-                    'serverSide': true,
+                    //"processing": true,
+                    "serverSide": true,
                     //"scrollY": 200,
                     "scrollX": true,
                     'ajax': '/api/combustible/?format=datatables',
@@ -435,10 +437,11 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
                     "order": [[0, "desc"]],
-                    fixedColumns: true,
+                    //fixedColumns: true,
 
+                    /*
                     "columnDefs": [
-                        {width: 90, targets: 7},
+                        {width: 100, targets: 7},
                         {
                             "targets": [8],
                             "visible": false,
@@ -465,6 +468,7 @@
                             "searchable": false
                         }
                     ],
+                    */
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
@@ -486,6 +490,7 @@
                             "data": null,
                             "defaultContent": bnt
                         },
+                        /*
                         {"title": "91", "data": "litros_surtidos_g91", "responsivePriority": 1,},
                         {"title": "95", "data": "litros_surtidos_g95", "responsivePriority": 1,},
                         {"title": "gsl", "data": "litros_surtidos_gsl", "responsivePriority": 1,},
@@ -503,6 +508,7 @@
                                 return (total);
                             }
                         }
+                        */
                     ],
                     dom: 'lBfrtip',
                     buttons: [
@@ -566,7 +572,7 @@
                     var estacion = data['estacion']['nombre'];
                     var municipio = data['estacion']['municipio'];
 
-                    console.log(combustible_id, "ssssss");
+                    //console.log(combustible_id, "ssssss");
 
                     $("#estacion").html(
                         "<h3>Estación:<b>" + estacion + "</b></h3>" +
@@ -607,17 +613,14 @@
                             }
                         );
 
-                    // '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
-
-
-                    var bntCola = '<td>' +
+                    var bntCola = '<td nowrap>' +
                         '    <center>' +
                         '    <div class="btn-group">' +
-                        '       <a id="cargarCola" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> </a>' +
+                        '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
+                        '       <a id="cargarCola" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> Procesar</a>' +
                         '    </div>' +
                         '    </center>' +
                         '</td>';
-
 
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
@@ -628,28 +631,43 @@
                         "language": {
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                         },
+                        fixedColumns: true,
 
                         "order": [[0, "asc"]],
+
+                        "columnDefs": [
+                            {
+                                width: 100, targets: 6
+                            },
+
+                        ],
 
                         'columns': [
 
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
                             {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
-                            /*
-                            {
-                                "data": "cargado",
-                                "title": "Cargado",
-                                "render": function (data, type, row) {
-                                    return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
-                                }
-                            },
-                            */
                             {
                                 orderable: false,
                                 "data": "cantidad",
                                 "title": "Cantidad",
                                 render: function (data, type, row) {
                                     return '<input class="form-control form-control-sm" type="number" min="0" max="5" name="cantidad[' + row.id + ']" value="' + data + '">';
+                                }
+                            },
+                             {
+                                orderable: false,
+                                "data": "tipo_combustible",
+                                "title": "Tipo Combustible",
+                                render: function (data, type, row) {
+
+                                    var tc = '<div class="form-group"><div class="form-control form-control-sm"><select name="tipo_combustible[' + row.id + ']">'+
+                                    '    <option selected value="91">91</option>' +
+                                    '    <option value="95">95</option>' +
+                                    '    <option value="Gasoil">Gasoil</option>' +
+                                    '</select></div></div>';
+
+
+                                    return tc;
                                 }
                             },
                             {
@@ -660,24 +678,24 @@
                                     return '<input class="form-control form-control-sm" type="number" min="0" max="100" name="cedula[' + row.id + ']" value="' + data + '">';
                                 }
                             },
+
+
                             {
                                 orderable: false,
                                 "data": "nota",
                                 "title": "Nota",
                                 render: function (data, type, row) {
+
+
                                     return '<input class="form-control form-control-sm" type="text" max="100" name="nota[' + row.id + ']" value="' + data + '">';
                                 }
                             },
-                            /*
-                            {
-                                "data": null,
-                                "defaultContent": "<button>Cargar</button>"
-                            },
-                            */
+
                             {
                                 "title": "Acciones",
                                 "data": null,
-                                "defaultContent": bntCola
+                                "defaultContent": bntCola,
+                                "responsivePriority": 1,
                             }
 
                         ],
@@ -741,6 +759,16 @@
                     $('#tabla_colas tbody').on('click', '#borrarDeCola', function () {
 
                         $('#modal-confirmar').modal('show');
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+
+                        $("#cola_id").val(data_cola.id);
+
+                        $("#mensaje-confirmacion").html(
+                            "<br>Seguro de eliminar el vehículo placas: <b>" + data_cola.vehiculo.placa + "</b><br>"
+                        );
+
+                        console.log(data_cola);
+                        console.log(data_cola.vehiculo.placa)
 
                     });
 
@@ -750,6 +778,7 @@
                         var cantidad = $('input[name="cantidad[' + data_cola.id + ']"]');
                         var cedula = $('input[name="cedula[' + data_cola.id + ']"]');
                         var nota = $('input[name="nota[' + data_cola.id + ']"]');
+                        var tc = $('select[name="tipo_combustible[' + data_cola.id + ']"]');
 
                         if (cantidad == '') cantidad = 0;
 
@@ -759,7 +788,8 @@
                             "cargado": true,
                             "cantidad": cantidad.val(),
                             "cedula": cedula.val(),
-                            "nota": nota.val()
+                            "nota": nota.val(),
+                            "tipo_combustible": tc.val()
                         };
                         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                         $.ajax(
@@ -790,9 +820,6 @@
                     table_cola.destroy();
                 });
 
-                $('#registrar_apoyo').on('click', function () {
-                    registrarApoyo()
-                });
 
                 $('#consultar_vehiculo').on('click', function () {
                     consultarVehiculo()
@@ -1178,6 +1205,38 @@
         }
 
         function cancelarEliminar() {
+            $('#modal-confirmar').modal('hide');
+        }
+
+        function eliminarVehiculoDeCola() {
+
+             var data_vehiculo = {
+                "id": combustible_id,
+            };
+
+            $.ajax(
+                {
+                    url: URL_COLA + combustible_id + '/' + $("#cola_id").val() + '/',
+                    data: data_vehiculo,
+                    dataType: "json",
+                    type: "delete",
+                    headers: ajax_header,
+                    success: function (request) {
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+                        table_cola.ajax.reload();
+
+                        $('#modal-confirmar').modal('hide');
+                    },
+                    error: function (request, status, error) {
+                        alert('Error rebotando vehículo');
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+
+
             $('#modal-confirmar').modal('hide');
         }
 
