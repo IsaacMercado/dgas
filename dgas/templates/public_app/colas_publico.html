@@ -131,6 +131,7 @@
                     },
 
                     "order": [[0, "desc"]],
+                    "iDisplayLength": 50,
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
@@ -188,6 +189,7 @@
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
                         "serverSide": true,
+                        "iDisplayLength": 50,
                         //"scrollY": 200,
                         "scrollX": true,
                         'ajax': '/api/colas_publico/' + data['id'] + '/?format=datatables',
