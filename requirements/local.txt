@@ -30,7 +30,7 @@ django-coverage-plugin==1.6.0  # https://github.com/nedbat/django_coverage_plugi
 pytest-django==3.4.8  # https://github.com/pytest-dev/pytest-django
 pyOpenSSL==19.0.0
 
-# Data
+# Statistics
 # ------------------------------------------------------------------------------
 jupyter==1.0.0
 numpy==1.16.4

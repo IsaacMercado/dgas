@@ -24,6 +24,10 @@ urlpatterns = [
     path("usuarios/", include("dgas.users_app.urls")),
     path("supervisor/", include("dgas.supervisor_app.urls")),
     path("api/", include("dgas.api.urls")),
+
+    # Dash plotly
+    path('supervisor/django_plotly_dash/', include('django_plotly_dash.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
