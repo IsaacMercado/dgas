@@ -248,7 +248,7 @@ class Carga(models.Model):
 class Cola(models.Model):
     combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='colas')
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
-    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default=95, null=True, blank=True)
+    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default='95', null=True, blank=True)
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
     cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado')
