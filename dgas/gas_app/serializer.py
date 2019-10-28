@@ -65,12 +65,12 @@ class CombustibleSerializer(serializers.ModelSerializer):
                   'total_rebotados',
                   #'total_surtidos',
                   'total_colas_cantidad',
-                  #'litros_planeados_g91',
-                  #'litros_planeados_g95',
-                  #'litros_planeados_gsl',
-                  #'litros_surtidos_g91',
-                  #'litros_surtidos_g95',
-                  #'litros_surtidos_gsl',
+                  'litros_planeados_g91',
+                  'litros_planeados_g95',
+                  'litros_planeados_gsl',
+                  'litros_surtidos_g91',
+                  'litros_surtidos_g95',
+                  'litros_surtidos_gsl',
                   'notas',
         )
 

@@ -427,7 +427,7 @@
 
 
                 table = $('#tabla_combustible').DataTable({
-                    //"processing": true,
+                    "processing": true,
                     "serverSide": true,
                     //"scrollY": 200,
                     "scrollX": true,
@@ -437,9 +437,9 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
                     "order": [[0, "desc"]],
-                    //fixedColumns: true,
+                    fixedColumns: true,
 
-                    /*
+
                     "columnDefs": [
                         {width: 100, targets: 7},
                         {
@@ -468,7 +468,7 @@
                             "searchable": false
                         }
                     ],
-                    */
+
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
@@ -490,7 +490,7 @@
                             "data": null,
                             "defaultContent": bnt
                         },
-                        /*
+
                         {"title": "91", "data": "litros_surtidos_g91", "responsivePriority": 1,},
                         {"title": "95", "data": "litros_surtidos_g95", "responsivePriority": 1,},
                         {"title": "gsl", "data": "litros_surtidos_gsl", "responsivePriority": 1,},
@@ -508,7 +508,7 @@
                                 return (total);
                             }
                         }
-                        */
+                        
                     ],
                     dom: 'lBfrtip',
                     buttons: [
