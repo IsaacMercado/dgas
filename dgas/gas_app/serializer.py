@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado
+from .models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, RebotadoBloqueado
 
 
 class VehiculoSerializer(serializers.ModelSerializer):
@@ -20,7 +20,15 @@ class VehiculoSupervisorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vehiculo
-        fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'cilindros','created_at', 'bloqueado')
+        fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'organizacion', 'paso_preferencial', 'cilindros','created_at', 'bloqueado')
+
+
+class VehiculoBloqueadosSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vehiculo
+        fields = ('placa', 'bloqueado_motivo', 'bloqueado_fecha', 'bloqueado_hasta')
+
 
 class CargaSerializer(serializers.ModelSerializer):
 
@@ -38,13 +46,30 @@ class EstacionSerializer(serializers.ModelSerializer):
 
 class CombustibleSerializer(serializers.ModelSerializer):
 
-    estacion = EstacionSerializer()
-    total_cola = serializers.IntegerField()
+    estacion = EstacionSerializer(read_only=True)
+    total_cola = serializers.IntegerField(read_only=True)
+    total_rebotados = serializers.IntegerField(read_only=True)
+    total_colas_cantidad = serializers.IntegerField(read_only=True)
+    total_surtidos = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = Combustible
-        fields = ('id', 'tipo_combustible', 'estacion', 'nota', 'activar_cola',
-                  'cantidad_maxima_por_vehiculo', 'cantidad_vehiculos', 'created_at', 'last_modified_at', 'total_cola')
+        fields = ('id',
+                  'estacion',
+                  'estado',
+                  'nota',
+                  'fecha_planificacion',
+                  'created_at',
+                  'last_modified_at',
+                  'total_cola',
+                  'total_rebotados',
+                  'total_surtidos',
+                  'total_colas_cantidad',
+                  'litros_surtidos_g91',
+                  'litros_surtidos_g95',
+                  'litros_surtidos_gsl',
+                  'notas',
+        )
 
 
 class ColaSerializer(serializers.ModelSerializer):
@@ -56,7 +81,7 @@ class ColaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'nota', 'tipo_combustible')
 
 
 class ColaCrudSerializer(serializers.ModelSerializer):
@@ -65,7 +90,7 @@ class ColaCrudSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'tipo_combustible')
 
 
 class ColaPublicoSerializer(serializers.ModelSerializer):
@@ -81,4 +106,10 @@ class RebotadoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rebotado
+        fields = ('id', 'combustible', 'vehiculo')
+
+class RebotadoBloqueadoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RebotadoBloqueado
         fields = ('id', 'combustible', 'vehiculo')

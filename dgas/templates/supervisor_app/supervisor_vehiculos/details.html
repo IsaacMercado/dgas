@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load humanize %}
+{% load plotly_dash %}
+
+{% block title %}Supervisor - Estadísticas{% endblock %}
+
+{% block css %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.css' %}" />
+
+{% endblock css %}
+
+{% block new-head %}
+    {% plotly_header %}
+{% endblock new-head %}
+
+{% block content-header %}
+
+    <section class="content-header">
+        <h1>
+            Estadísticas
+            <small>Información</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>listado General</a></li>
+        </ol>
+    </section>
+
+{% endblock content-header %}
+
+{% block content %}
+
+    <div class="alert alert-success" id="success-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Mensaje: </strong>
+    </div>
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Resultados</h3>
+        </div>
+        <div id='some-id' class="box-body">
+            {% plotly_direct name="SupervisorApp" %}
+        </div>
+    </div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+
+    <script>
+        const targetNode = document.getElementById('some-id');
+        var inputNode = null;
+
+        const inputTypes = [
+            window.HTMLInputElement,
+            window.HTMLSelectElement,
+            window.HTMLTextAreaElement,
+        ];
+
+        function triggerInputChange(node, value='') {
+            if ( inputTypes.indexOf(node.__proto__.constructor) >-1 ) {
+
+                const setValue = Object.getOwnPropertyDescriptor(node.__proto__, 'value').set;
+                const event = new Event('input', { bubbles: true });
+
+                setValue.call(node, value);
+                node.dispatchEvent(event);
+            }
+        };
+
+        const callback = function(mutationsList, observer) {
+            for(let mutation of mutationsList) {
+                if ($('#input-range-date').length) {
+                    $('#input-range-date').daterangepicker(
+                        {
+                            locale: {
+                                "format": "DD/MM/YYYY",
+                                "separator": " - ",
+                                "applyLabel": "Aplicar",
+                                "cancelLabel": "Cancelar",
+                                "daysOfWeek": ["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
+                                "monthNames": [
+                                    "Enero",
+                                    "Febrero",
+                                    "Marzo",
+                                    "Abril",
+                                    "Mayo",
+                                    "Junio",
+                                    "Julio",
+                                    "Agosto",
+                                    "Septiembre",
+                                    "Octubre",
+                                    "Noviembre",
+                                    "Diciembre"
+                                ],
+                                "firstDay": 0
+                            },
+                            opens: 'right',
+                            maxDate: moment(),
+                            //startDate: moment().subtract(1, 'month'),
+                            //endDate: moment(),
+                            autoUpdateInput: false,
+
+                        }, function(start, end, label) {
+                            triggerInputChange(this.element[0], start.format('DD/MM/YYYY')+'-'+end.format('DD/MM/YYYY'));
+                        });
+                    inputNode = document.getElementById('input-range-date');
+                    observer.disconnect();
+                };
+            };
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, { attributes: true, childList: true, subtree: true });
+
+    </script>
+
+{% endblock js %}
+
+{% block footer %}
+    {% plotly_footer %}
+{% endblock footer %}

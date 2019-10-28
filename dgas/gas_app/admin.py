@@ -1,45 +1,55 @@
 from django.contrib import admin
 
 from .models import Estacion, Combustible, Vehiculo, Carga, Cola, VehiculoResumen, \
-    Rebotado, Pico
+    Rebotado, Contador, ColaConsulta, RebotadoBloqueado
 
 
-class PicoInline(admin.TabularInline):
-    model = Pico
+class ContadorInline(admin.TabularInline):
+    model = Contador
     #fields = ['resumen',]
 
 
 @admin.register(Estacion)
 class EstacionAdmin(admin.ModelAdmin):
     pass
-    inlines = [PicoInline]
+    inlines = [ContadorInline]
     #list_display = ('cedula','primer_apellido', 'primer_nombre')
     #search_fields = ['cedula', 'primer_apellido']
 
 
-@admin.register(Pico)
-class PicoAdmin(admin.ModelAdmin):
+@admin.register(Contador)
+class ContadorAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Combustible)
 class CombustibleAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'estado', 'cantidad', 'completado')
+    fieldsets = (
+        ('Planificacion', {'fields': ('estacion', 'estado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'fecha_planificacion', 'apertura', 'completado', 'nota'), 'classes': ['wide']}),
+        ('Reporte', {'fields': ('litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl', 'notas',), 'classes': ['wide']}),
+    )
+    list_display = ('estacion', 'estado','nota', 'fecha_planificacion', 'apertura', 'completado', 'litros_planeados_g91', 'litros_planeados_g95', 'litros_planeados_gsl', 'litros_surtidos_g91', 'litros_surtidos_g95', 'litros_surtidos_gsl')
     list_filter = ('estacion',)
 
 
 @admin.register(Vehiculo)
 class VehiculoAdmin(admin.ModelAdmin):
-    list_display = ('placa', 'cedula', 'usuario', 'tipo_vehiculo')
+    fieldsets = (
+        ('Datos Generales', {'fields': ('placa', 'cedula', 'tipo_vehiculo', 'cilindros', 'organizacion', 'paso_preferencial',), 'classes': ['wide']}),
+        ('Multa', {'fields': ('bloqueado', 'bloqueado_motivo', 'bloqueado_fecha', 'bloqueado_hasta',), 'classes': ['wide']}),
+    )
+    list_display = ('placa', 'cedula', 'usuario', 'bloqueado', 'tipo_vehiculo')
     search_fields = ['placa', 'cedula']
     list_filter = ('tipo_vehiculo',)
+    readonly_fields = ('usuario',)
 
 
 @admin.register(Rebotado)
 class VehiculoAdmin(admin.ModelAdmin):
     list_display = ('combustible', 'vehiculo', 'created_at', 'created_by')
     search_fields = ['vehiculo__placa']
-    #list_filter = ('tipo_vehiculo',)
+    exclude = ['usuario']
+    #list_filter = ('combustible',)
 
 
 @admin.register(VehiculoResumen)
@@ -71,12 +81,20 @@ class SaleSummaryAdmin(admin.ModelAdmin):
         return response
 
 
-@admin.register(Carga)
-class CargaAdmin(admin.ModelAdmin):
-    list_display = ('estacion', 'tipo_combustible', 'cantidad', 'created_by', 'created_at')
-
-
 @admin.register(Cola)
 class ColaAdmin(admin.ModelAdmin):
-    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'created_by','created_at', 'last_modified_at')
+    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'cedula', 'nota', 'created_by','created_at', 'last_modified_at')
+    search_fields = ['vehiculo__placa',]
+    #list_filter = ('combustible',)
+
+
+@admin.register(ColaConsulta)
+class ColaConsultaAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'vehiculo', 'created_by','created_at', 'last_modified_at')
+    search_fields = ['vehiculo__placa',]
+
+
+@admin.register(RebotadoBloqueado)
+class RebotadoBloqueado(admin.ModelAdmin):
+    list_display = ('vehiculo', 'combustible', 'created_by', 'created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]

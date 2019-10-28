@@ -334,3 +334,6 @@ dgas/media/
 !.envs/.local/
 
 dgas/*/migrations/
+
+notebooks/*.pdf
+notebooks/.*

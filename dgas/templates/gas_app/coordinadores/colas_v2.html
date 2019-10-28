@@ -89,6 +89,14 @@
                         <br><br>
 
                         <form class="form-inline" action="">
+
+                            <button type="button"
+                                    class="btn btn-reset btn-success btn-flat"
+                                    id="cerrar_cola">
+                                <i class="fa fa-arrow-left"></i>
+
+                            </button>
+
                             <div class="form-group">
                                 <input class="form-control" type="text" placeholder="Nro. Placa" id="buscar_placa">
                             </div>
@@ -96,10 +104,20 @@
                             <button onclick="registarEnCola()" type="button" class="btn btn-primary">Registrar en
                                 cola
                             </button>
+
+                            <!--
                             <button type="button"
-                                    class="btn btn-reset btn-success btn-flat"
-                                    id="cerrar_cola">Regresar
+                                    class="btn btn-reset btn-default btn-flat"
+                                    id="registrar_apoyo">
+                                <i class="fa fa-random"></i>
                             </button>
+                            -->
+                            <button type="button"
+                                    class="btn btn-reset btn-warning btn-flat"
+                                    id="consultar_vehiculo">
+                                <i class="fa fa-search"></i>
+                            </button>
+
                         </form>
 
                         <br>
@@ -152,7 +170,7 @@
                         <label>Tipo de vehiculo</label>
                         <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
                             <option value="Particular">Particular</option>
-                            <option value="Transporte Publico">Taxi</option>
+                            <option value="Taxi">Taxi</option>
                             <option value="Moto">Moto</option>
 
                         </select>
@@ -184,6 +202,62 @@
     <!-- /.modal -->
 
 
+    <div class="modal fade" id="modal-reporte">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Agregar vehículo</h4>
+                </div>
+                <div class="modal-body">
+
+                    <br>
+                    <label>Placa:</label>
+                    <input class="form-control" type="text" placeholder="Default input" id="add_placa" readonly>
+                    <br>
+                    <label>Cédula:</label>
+                    <input class="form-control" type="text" placeholder="Cedula empieza con V o E" id="username">
+                    <br>
+                    <br>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Tipo de vehiculo</label>
+                        <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
+                            <option value="Particular">Particular</option>
+                            <option value="Taxi">Taxi</option>
+                            <option value="Moto">Moto</option>
+
+                        </select>
+                    </div>
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Cilindros</label>
+                        <select class="form-control" name="add_cilindros" id="add_cilindros">
+                            <option value="1">1</option>
+                            <option value="4">2</option>
+                            <option value="4">3</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <br>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarReporte()">Cancelar
+                    </button>
+                    <button type="button" onclick="addVehiculo()" class="btn btn-primary">Grabar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
     <div class="modal fade" id="modal-alerta">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -199,7 +273,67 @@
                 </div>
                 <div class="modal-footer">
                     <!--button type="button" class="btn btn-default pull-left" onclick="cancelarAlerta()">Cancelar</button -->
-                    <button type="button" class="btn btn-default pull-left" onclick="rebotarVehiculo()">Continuar</button>
+                    <button type="button" class="btn btn-default pull-left" onclick="rebotarVehiculo()">Continuar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
+    <div class="modal fade" id="modal-confirmar">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button -->
+                    <h4 class="modal-title">Alerta del sistema</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div id="mensaje-confirmacions"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" onclick="cancelarEliminar()">Cancelar
+                    </button>
+                    <button type="button" class="btn btn-default pull-left" onclick="eliminarVehiculoDeCola()">Eliminar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div class="modal fade" id="modal-alerta-bloqueado">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Alerta del sistema</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{% static 'images/blocked_icon.png' %}" class="img-circle" height="80"
+                                 width="80" alt="Bloqueado">
+                        </div>
+                        <div class="col-md-10">
+                            <div id="alerta-mensaje-bloqueado"></div>
+                        </div>
+                    </div>
+                    <div id="alerta-mensaje"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -219,11 +353,15 @@
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
     <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
+
+    {% comment %}
     <script src="{% static 'bower_components/pdfmake/build/pdfmake.min.js' %}"></script>
     <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
+    {% endcomment %}
+
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
-
+    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
 
     <script type="text/javascript">
 
@@ -235,6 +373,9 @@
         var URL = "/api/vehiculos/";
         var URL_VEH = "/api/vehiculos/";
         var URL_VEH_REB = "/api/vehiculos_rebotados/";
+        var URL_VEH_REB_BLOQ = "/api/vehiculos_rebotados_bloqueado/";
+
+        var URL_VEH_CON = "/api/consultar_vehiculo/";
 
         var URL_ESTACIONES = "/api/estaciones/";
 
@@ -286,12 +427,15 @@
                 });
 
 
+                // '       <a href="#" id="hacerReporte" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-file-text"></i> </a>' +
+
                 var bnt = '<td>' +
                     '    <center>' +
+                    '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
                     '       <i class="fa fa-power-off"></i> </a>' +
                     '       <a href="#" id="verDetalles" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-warning"> <i class="fa fa-eye"></i> </a>' +
-                    '       <a href="#" onClick="verHacerReporte();" data-toggle="tooltip" title="detalles" class="btn btn-sm btn-info"> <i class="fa fa-file-text-o"></i> </a>' +
+                    '    </div>' +
                     '    </center>' +
                     '</td>';
 
@@ -312,6 +456,7 @@
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
                         {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
+                        {"title": "Nota", "data": "nota", "responsivePriority": 1,},
                         {
                             "data": "estacion.operativa",
                             "title": "Abierta",
@@ -319,7 +464,9 @@
                                 return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                             }
                         },
+                        //{"title": "Total surtidos", "data": "total_surtidos", "responsivePriority": 1,},
                         {"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
+                        {"title": "Rebotados", "data": "total_rebotados", "responsivePriority": 1,},
                         {
                             "data": null,
                             "defaultContent": bnt
@@ -380,6 +527,19 @@
                 });
 
 
+                $('#tabla_combustible tbody').on('click', '#hacerReporte', function () {
+                    $('#modal-reporte').modal('show');
+                });
+
+                $('#tabla_combustible tbody').on('click', '#ejcutarReport', function () {
+                    $('#modal-reporte').modal('show');
+                });
+
+                $('#tabla_combustible tbody').on('click', '#cancelarReporte', function () {
+                    $('#modal-reporte').modal('hide');
+                });
+
+
                 $('#tabla_combustible tbody').on('click', '#verDetalles', function () {
 
                     var data = table.row($(this).parents('tr')).data();
@@ -403,6 +563,16 @@
                         );
 
 
+                    var bntCola = '<td>' +
+                        '    <center>' +
+                        '    <div class="btn-group">' +
+                        '       <a id="cargarDatosSurtido" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> </a>' +
+                        '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
+                        '    </div>' +
+                        '    </center>' +
+                        '</td>';
+
+
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
                         "serverSide": true,
@@ -413,12 +583,13 @@
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                         },
 
-                        "order": [[0, "desc"]],
+                        "order": [[0, "asc"]],
 
                         'columns': [
 
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
                             {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
+                            /*
                             {
                                 "data": "cargado",
                                 "title": "Cargado",
@@ -426,9 +597,24 @@
                                     return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
                                 }
                             },
+
+                            {
+                                orderable: false,
+                                "data": "cantidad",
+                                "title": "Cantidad",
+                                render: function (data, type, row) {
+                                    return '<input class="form-control form-control-sm" type="number" min="0" max="5" name="cantidad[' + row.id + ']" value="' + data + '">';
+                                }
+                            },
                             {
                                 "data": null,
                                 "defaultContent": "<button>Cargar</button>"
+                            },
+                            */
+                            {
+                                "title": "Acciones",
+                                "data": null,
+                                "defaultContent": bntCola
                             }
 
                         ],
@@ -489,6 +675,43 @@
                         );
                     });
 
+                    $('#tabla_colas tbody').on('click', '#borrarDeCola', function () {
+
+                        $('#modal-confirmar').modal('show');
+
+                    });
+
+                    $('#tabla_colas tbody').on('click', '#cargarCola', function () {
+
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+                        var cantidad = $('input[name="cantidad[' + data_cola.id + ']"]');
+
+                        if (cantidad == '') cantidad = 0;
+
+
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+                        var data_update = {
+                            "cargado": true,
+                            "cantidad": cantidad.val()
+                        };
+                        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                        $.ajax(
+                            {
+                                url: URL_COLA + combustible_id + '/' + data_cola['id'] + '/',
+                                data: data_update,
+                                type: 'patch',
+                                dataType: 'json',
+                                headers: ajax_header,
+                                success: function (data) {
+                                    table_cola.ajax.reload();
+                                },
+                                error: function (request, status, error) {
+                                    console.log(request)
+                                    //alert(request.responseText);
+                                }
+                            }
+                        );
+                    });
 
                 });
 
@@ -498,6 +721,14 @@
                     table.ajax.reload();
                     $('#combustible').show();
                     table_cola.destroy();
+                });
+
+                $('#registrar_apoyo').on('click', function () {
+                    registrarApoyo()
+                });
+
+                $('#consultar_vehiculo').on('click', function () {
+                    consultarVehiculo()
                 });
 
             });
@@ -522,27 +753,170 @@
 
         }
 
+        function consultarVehiculo() {
+            $("#loading").show();
+
+            var buscar_placa_value = $("#buscar_placa").val();
+
+            if (buscar_placa_value.length < 6) {
+                alert('Número de placa invalida')
+            } else {
+                $.getJSON(URL_VEH_CON + $("#buscar_placa").val())
+                    .done(function (result) {
+
+                        var vehiculo = jQuery.parseJSON(result.data);
+                        var colas = jQuery.parseJSON(vehiculo.colas);
+                        var rebotes = jQuery.parseJSON(vehiculo.rebotes);
+
+                        if (vehiculo.existe == 'true') {
+
+                            var tableColas = "<br><table class=\"table\">";
+                            tableColas += "<tr><td colspan=2>&Uacute;ltimas cargas:</td><tr>";
+                            if(colas.length>0){
+                                for (x in colas) {
+                                    var create_a = new Date(colas[x].created_at);
+                                    var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
+                                    tableColas += "<tr><td>" + colas[x].combustible__estacion__nombre + "</td>";
+                                    tableColas += "<td>" + create_b + "</td></tr>";
+                                }
+                            }else{
+                                tableColas += "<tr><td colspan=2>Sin cargas</td><tr>";
+                            }
+                            tableColas += "</table>";
+
+
+                            var tableRebotes = "<br><table class=\"table\">";
+                            tableRebotes += "<tr><td colspan=2>&Uacute;ltimas rebotes:</td><tr>";
+                            if(rebotes.length>0){
+                                for (x in rebotes) {
+                                    var create_a = new Date(rebotes[x].created_at);
+                                    var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
+                                    tableRebotes += "<tr><td>" + rebotes[x].combustible__estacion__nombre + "</td>";
+                                    tableRebotes += "<td>" + create_b + "</td></tr>";
+                                }
+                            }else{
+                                tableRebotes += "<tr><td colspan=2>Sin rebotes</td><tr>";
+                            }
+                            tableRebotes += "</table>";
+
+                            var bloq = "";
+
+                            if(vehiculo.bloqueado == true){
+                                 bloq = "<br><b>Vehículo bloqueado</b><br>";
+                                 bloq += "Motivo: " + vehiculo.bloqueado_motivo+"<br>";
+                                 bloq += "Hasta: " + vehiculo.bloqueado_hasta+"<br>";
+                            }else{
+                                bloq = "";
+                            }
+
+                            var pp = ""
+
+                            if(vehiculo.paso_preferencial == true){
+                                pp = "Dar apoyo si cola"
+                            }else{
+                                pp = "Debe pasar a la cola"
+                            }
+
+                            $("#alerta-mensaje-bloqueado").html(
+                                    "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
+                                    "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
+                                    "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
+                                    "Paso prefencial:<b> " + pp + "</b><br>" +
+                                    bloq+
+                                    tableColas +
+                                    tableRebotes
+                            );
+                            $('#modal-alerta-bloqueado').modal('show');
+
+                        } else {
+                            $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " no esta registrado, puede cargar </b>");
+                        }
+
+                    })   // on success - 200
+                    .fail(function ()    // on failure - 404
+                        {
+                            alert('Vehiculo no registrado puede cargar')
+                        }
+                    );
+            }
+
+        }
+
+        function registrarApoyo() {
+            $("#loading").show();
+
+            var buscar_placa_value = $("#buscar_placa").val();
+
+            if (buscar_placa_value.length < 6) {
+                alert('Número de placa invalida')
+            } else {
+                $.getJSON(URL + $("#buscar_placa").val())
+                    .done(ultimaCola)   // on success - 200
+                    .fail(function ()    // on failure - 404
+                        {
+                            $("#add_placa").val($("#buscar_placa").val());
+                            $('#modal-add-vehiculo').modal('show');
+                        }
+                    );
+            }
+
+        }
+
+        function muestraDatosConsultaVehiculo() {
+
+
+        }
+
         function ultimaCola() {
             $.getJSON(URL_ULTIMA_COLA + $("#buscar_placa").val())
                 .done(function (result)    // on failure - 404
                     {
-                        console.log('verifico ultimaCola()');
+                        //console.log('verifico ultimaCola()');
                         var ultima_carga = jQuery.parseJSON(result.data);
 
-                        if (ultima_carga.cargar == 'false') {
+                        if (ultima_carga.bloqueado == 'true') {
 
-                            var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-                            var created_at = new Date(ultima_carga.created_at);
+                            var bloqueado_fecha = new Date(ultima_carga.bloqueado_fecha);
+                            var bloqueado_hasta = new Date(ultima_carga.bloqueado_hasta);
 
-                            $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
-                            if (ultima_carga.proxima_recarga != '') {
-                                //var pr = new Date(ultima_carga.proxima_recarga);
-                                $("#alerta-mensaje").append("<br><br><b>Próxima recarga el: </b>" + ultima_carga.proxima_recarga)
-                            }
-                            $('#modal-alerta').modal('show');
+                            bloqueado_fecha = moment(bloqueado_fecha).format('DD/MM/YYYY h:mm a');
+                            bloqueado_hasta = bloqueado_hasta.toLocaleDateString("es-Ve");
+
+                            $("#alerta-mensaje-bloqueado").html(
+                                "<b>Atención: </b><br>Vehículo placas: <b>" + $("#buscar_placa").val() +
+                                "</b> <br> Ha sido <b>bloqueado</b> el " + bloqueado_fecha +
+                                "<br> Hasta el: " + bloqueado_hasta +
+                                "<p> <b><br>Causa:</b><br>  " +
+                                ultima_carga.bloqueado_motivo
+                            );
+                            $('#modal-alerta-bloqueado').modal('show');
+
                         } else {
-                            encolarVehiculo()
+
+
+                            if (ultima_carga.cargar == 'false') {
+
+                                var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+                                var created_at = new Date(ultima_carga.created_at);
+
+                                created_at = moment(created_at).format('DD/MM/YYYY h:mm a');
+
+                                $("#alerta-mensaje").html("<b>Atención: </b> vehículo placas: <b>" + $("#buscar_placa").val() + " </b>" + ultima_carga.mensaje + " en la estación: " + ultima_carga.estacion + " fecha: " + created_at);
+
+                                if (ultima_carga.proxima_recarga != '') {
+                                    //var pr = new Date(ultima_carga.proxima_recarga);
+                                    $("#alerta-mensaje").append("<br><br><b>Próxima recarga el: </b>" + ultima_carga.proxima_recarga)
+                                }
+                                $('#modal-alerta').modal('show');
+                            } else if (ultima_carga.error == 'true') {
+                                $("#alerta-mensaje").append("<br><br><b>Error: </b>" + ultima_carga.msg)
+                            } else {
+                                encolarVehiculo()
+                            }
+
                         }
+
+
                     }
                 )   // on success - 200
                 .fail();
@@ -580,6 +954,8 @@
                         $("#buscar_placa").val('');
                     },
                     error: function (request, status, error) {
+                        console.log(status);
+                        console.log(error);
                         console.log('encolarVehiculo');
                         console.log(request);
                         alert(request.responseText);
@@ -658,6 +1034,39 @@
 
         }
 
+        function rebotarBloqueadoVehiculo() {
+
+            var data_vehiculo = {
+                "combustible": combustible_id,
+                "vehiculo": $("#buscar_placa").val(),
+            };
+
+            $.ajax(
+                {
+                    url: URL_VEH_REB_BLOQ,
+                    data: data_vehiculo,
+                    dataType: "json",
+                    type: "post",
+                    headers: ajax_header,
+                    success: function (request) {
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+
+                        $('#modal-alerta-bloqueado').modal('hide');
+                        $("#loading").hide();
+                        $("#buscar_placa").val('');
+                    },
+                    error: function (request, status, error) {
+                        alert('Error rebotando vehículo');
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+
+
+        }
+
         function add_success() {
             //alert("Added carga Successfully");
             $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
@@ -699,6 +1108,10 @@
                     }
                 );
 
+        }
+
+        function cancelarEliminar() {
+            $('#modal-confirmar').modal('hide');
         }
 
     </script>
