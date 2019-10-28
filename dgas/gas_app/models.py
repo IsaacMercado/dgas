@@ -6,7 +6,7 @@ from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
-CARGA_ESTADO_CHOICES = Choices('En plan', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
@@ -170,6 +170,10 @@ class Combustible(models.Model):
     apertura = models.BooleanField(default=False)
     completado = models.BooleanField(default=False)
 
+    litros_planeados_g91 = models.PositiveIntegerField(default=0)
+    litros_planeados_g95 = models.PositiveIntegerField(default=0)
+    litros_planeados_gsl = models.PositiveIntegerField(default=0)
+
     litros_surtidos_g91 = models.PositiveIntegerField(default=0)
     litros_surtidos_g95 = models.PositiveIntegerField(default=0)
     litros_surtidos_gsl = models.PositiveIntegerField(default=0)
@@ -190,7 +194,7 @@ class Combustible(models.Model):
 class Vehiculo(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     placa = models.CharField(max_length=7, primary_key=True, help_text='Sin espacio en blanco y letras en mayusculas')
-    cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado', help_text='Indicar el numero de cedula que aparece en el carnet de circulación vial')
+    cedula = models.CharField('Nro. de cédula de identidad o RIF', max_length=20, default='No Registrado', help_text='Indicar el numero de cedula o RIF que aparece en el carnet de circulación vial')
     tipo_vehiculo = models.CharField(max_length=20, choices=TIPO_VEHICULO_CHOICES, default='Particular')
     cilindros = models.CharField(max_length=10, choices=CILINDROS_CHOICES, default='4')
     organizacion = models.CharField('Organización', max_length=100, default='No aplica')
@@ -248,7 +252,7 @@ class Cola(models.Model):
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
     cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado')
-    nota = models.CharField('Nota', max_length=100, default='Ninguna')
+    nota = models.CharField('Nota', max_length=100, default='Particular')
 
     created_by = UserForeignKey(auto_user_add=True, related_name='cola_created')
     created_at = models.DateTimeField(auto_now_add=True)

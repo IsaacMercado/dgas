@@ -23,6 +23,13 @@ class VehiculoSupervisorSerializer(serializers.ModelSerializer):
         fields = ('usuario', 'placa', 'cedula', 'tipo_vehiculo', 'organizacion', 'paso_preferencial', 'cilindros','created_at', 'bloqueado')
 
 
+class VehiculoBloqueadosSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vehiculo
+        fields = ('placa', 'bloqueado_motivo', 'bloqueado_fecha', 'bloqueado_hasta')
+
+
 class CargaSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -49,7 +56,9 @@ class CombustibleSerializer(serializers.ModelSerializer):
         model = Combustible
         fields = ('id',
                   'estacion',
+                  'estado',
                   'nota',
+                  'fecha_planificacion',
                   'created_at',
                   'last_modified_at',
                   'total_cola',
@@ -72,7 +81,7 @@ class ColaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'nota')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'nota', 'tipo_combustible')
 
 
 class ColaCrudSerializer(serializers.ModelSerializer):
@@ -81,7 +90,7 @@ class ColaCrudSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'tipo_combustible')
 
 
 class ColaPublicoSerializer(serializers.ModelSerializer):
