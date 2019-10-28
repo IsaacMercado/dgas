@@ -427,7 +427,7 @@
 
 
                 table = $('#tabla_combustible').DataTable({
-                    "processing": true,
+                    //"processing": true,
                     "serverSide": true,
                     //"scrollY": 200,
                     "scrollX": true,
@@ -437,7 +437,7 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
                     "order": [[0, "desc"]],
-                    fixedColumns: true,
+                    //fixedColumns: true,
 
                     "columnDefs": [
                         {width: 100, targets: 7},
