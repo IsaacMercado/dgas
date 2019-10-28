@@ -211,16 +211,16 @@
                     <h4 class="modal-title">Generar reporte de cierre</h4>
                 </div>
                 <div class="modal-body">
-                    <div id="estacion" ></div>
+                    <div id="estacion"></div>
                     <br>
                     <label>Listros surtidos de 91:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_g91" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_g91" value="0">
                     <br>
                     <label>Listros surtidos de 95:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_g95" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_g95" value="0">
                     <br>
                     <label>Listros surtidos de gasoil:</label>
-                    <input class="form-control" type="number"  id="litros_surtidos_gsl" value="0">
+                    <input class="form-control" type="number" id="litros_surtidos_gsl" value="0">
                     <br>
 
                     <label>Notas</label>
@@ -232,7 +232,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" id="cancelarReporte">Cancelar
                     </button>
-                    <button type="button" id="crearRepote" class="btn btn-primary">Crear reporte y cerrar estación</button>
+                    <button type="button" id="crearRepote" class="btn btn-primary">Crear reporte y cerrar estación
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -278,7 +279,8 @@
                 </div>
                 <div class="modal-body">
 
-                    <div id="mensaje-confirmacions"></div>
+                    <div id="mensaje-confirmacion"></div>
+                    <input type="hidden" id="cola_id">
 
                 </div>
                 <div class="modal-footer">
@@ -317,7 +319,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar</button>
+                    <button type="button" class="btn btn-default" onclick="rebotarBloqueadoVehiculo()">Continuar
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -411,8 +414,7 @@
                 });
 
 
-
-                var bnt = '<td>' +
+                var bnt = '<td nowrap>' +
                     '    <center>' +
                     '    <div class="btn-group">' +
                     '       <a href="#" id="cerrarAbrirCombutible" data-toggle="tooltip" title="Abrir/Cerrar Estación" class="btn btn-sm btn-default">' +
@@ -425,7 +427,8 @@
 
 
                 table = $('#tabla_combustible').DataTable({
-                    'serverSide': true,
+                    //"processing": true,
+                    "serverSide": true,
                     //"scrollY": 200,
                     "scrollX": true,
                     'ajax': '/api/combustible/?format=datatables',
@@ -434,12 +437,44 @@
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
                     "order": [[0, "desc"]],
+                    //fixedColumns: true,
+
+                    /*
+                    "columnDefs": [
+                        {width: 100, targets: 7},
+                        {
+                            "targets": [8],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [9],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [10],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [11],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [12],
+                            "visible": false,
+                            "searchable": false
+                        }
+                    ],
+                    */
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
-                        {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
+                        //{"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
                         {"title": "Nota", "data": "nota", "responsivePriority": 1,},
                         {
                             "data": "estacion.operativa",
@@ -454,7 +489,26 @@
                         {
                             "data": null,
                             "defaultContent": bnt
+                        },
+                        /*
+                        {"title": "91", "data": "litros_surtidos_g91", "responsivePriority": 1,},
+                        {"title": "95", "data": "litros_surtidos_g95", "responsivePriority": 1,},
+                        {"title": "gsl", "data": "litros_surtidos_gsl", "responsivePriority": 1,},
+                        {"title": "notas", "data": "notas", "responsivePriority": 1,},
+                        {
+                            "responsivePriority": 1,
+                            "data": null,    // this will allow usage of full object
+                            "render": function (data, type, full, meta) {
+                                var total_surtidos=data.litros_surtidos_g91+data.litros_surtidos_g91+data.litros_surtidos_gsl;
+                                if (data.total_cola > 0){
+                                    var total = total_surtidos / data.total_cola
+                                }else{
+                                    var total = 'No aplica'
+                                }
+                                return (total);
+                            }
                         }
+                        */
                     ],
                     dom: 'lBfrtip',
                     buttons: [
@@ -514,16 +568,16 @@
                 $('#tabla_combustible tbody').on('click', '#hacerReporte', function () {
 
                     var data = table.row($(this).parents('tr')).data();
-                     combustible_id = data['id'];
-                     var estacion = data['estacion']['nombre'];
-                     var municipio = data['estacion']['municipio'];
+                    combustible_id = data['id'];
+                    var estacion = data['estacion']['nombre'];
+                    var municipio = data['estacion']['municipio'];
 
-                     console.log(combustible_id, "ssssss");
+                    //console.log(combustible_id, "ssssss");
 
-                     $("#estacion").html(
-                         "<h3>Estación:<b>" + estacion + "</b></h3>"+
-                         "<h4>Municipio:<b> " + municipio + "</b></h4>"
-                     );
+                    $("#estacion").html(
+                        "<h3>Estación:<b>" + estacion + "</b></h3>" +
+                        "<h4>Municipio:<b> " + municipio + "</b></h4>"
+                    );
 
                     $('#modal-reporte').modal('show');
                 });
@@ -559,17 +613,14 @@
                             }
                         );
 
-                    // '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
-
-
-                    var bntCola = '<td>' +
+                    var bntCola = '<td nowrap>' +
                         '    <center>' +
                         '    <div class="btn-group">' +
-                        '       <a id="cargarCola" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> </a>' +
+                        '       <a id="borrarDeCola" data-toggle="tooltip" title="Eliminar de la cola" class="btn btn-sm btn-danger"> <i class="fa fa-trash-o"></i> </a>' +
+                        '       <a id="cargarCola" data-toggle="tooltip" title="Cargar combustible" class="btn btn-sm btn-success"> <i class="fa fa-save "></i> Procesar</a>' +
                         '    </div>' +
                         '    </center>' +
                         '</td>';
-
 
                     table_cola = $('#tabla_colas').DataTable({
                         "processing": true,
@@ -580,28 +631,43 @@
                         "language": {
                             "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                         },
+                        fixedColumns: true,
 
                         "order": [[0, "asc"]],
+
+                        "columnDefs": [
+                            {
+                                width: 100, targets: 6
+                            },
+
+                        ],
 
                         'columns': [
 
                             {"title": "Id", "data": "id", "responsivePriority": 1,},
                             {"title": "Placa", "data": "vehiculo.placa", "responsivePriority": 1,},
-                            /*
-                            {
-                                "data": "cargado",
-                                "title": "Cargado",
-                                "render": function (data, type, row) {
-                                    return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
-                                }
-                            },
-                            */
                             {
                                 orderable: false,
                                 "data": "cantidad",
                                 "title": "Cantidad",
                                 render: function (data, type, row) {
                                     return '<input class="form-control form-control-sm" type="number" min="0" max="5" name="cantidad[' + row.id + ']" value="' + data + '">';
+                                }
+                            },
+                             {
+                                orderable: false,
+                                "data": "tipo_combustible",
+                                "title": "Tipo Combustible",
+                                render: function (data, type, row) {
+
+                                    var tc = '<div class="form-group"><div class="form-control form-control-sm"><select name="tipo_combustible[' + row.id + ']">'+
+                                    '    <option selected value="91">91</option>' +
+                                    '    <option value="95">95</option>' +
+                                    '    <option value="Gasoil">Gasoil</option>' +
+                                    '</select></div></div>';
+
+
+                                    return tc;
                                 }
                             },
                             {
@@ -612,24 +678,24 @@
                                     return '<input class="form-control form-control-sm" type="number" min="0" max="100" name="cedula[' + row.id + ']" value="' + data + '">';
                                 }
                             },
+
+
                             {
                                 orderable: false,
                                 "data": "nota",
                                 "title": "Nota",
                                 render: function (data, type, row) {
+
+
                                     return '<input class="form-control form-control-sm" type="text" max="100" name="nota[' + row.id + ']" value="' + data + '">';
                                 }
                             },
-                            /*
-                            {
-                                "data": null,
-                                "defaultContent": "<button>Cargar</button>"
-                            },
-                            */
+
                             {
                                 "title": "Acciones",
                                 "data": null,
-                                "defaultContent": bntCola
+                                "defaultContent": bntCola,
+                                "responsivePriority": 1,
                             }
 
                         ],
@@ -693,6 +759,16 @@
                     $('#tabla_colas tbody').on('click', '#borrarDeCola', function () {
 
                         $('#modal-confirmar').modal('show');
+                        var data_cola = table_cola.row($(this).parents('tr')).data();
+
+                        $("#cola_id").val(data_cola.id);
+
+                        $("#mensaje-confirmacion").html(
+                            "<br>Seguro de eliminar el vehículo placas: <b>" + data_cola.vehiculo.placa + "</b><br>"
+                        );
+
+                        console.log(data_cola);
+                        console.log(data_cola.vehiculo.placa)
 
                     });
 
@@ -702,6 +778,7 @@
                         var cantidad = $('input[name="cantidad[' + data_cola.id + ']"]');
                         var cedula = $('input[name="cedula[' + data_cola.id + ']"]');
                         var nota = $('input[name="nota[' + data_cola.id + ']"]');
+                        var tc = $('select[name="tipo_combustible[' + data_cola.id + ']"]');
 
                         if (cantidad == '') cantidad = 0;
 
@@ -711,7 +788,8 @@
                             "cargado": true,
                             "cantidad": cantidad.val(),
                             "cedula": cedula.val(),
-                            "nota": nota.val()
+                            "nota": nota.val(),
+                            "tipo_combustible": tc.val()
                         };
                         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                         $.ajax(
@@ -742,9 +820,6 @@
                     table_cola.destroy();
                 });
 
-                $('#registrar_apoyo').on('click', function () {
-                    registrarApoyo()
-                });
 
                 $('#consultar_vehiculo').on('click', function () {
                     consultarVehiculo()
@@ -791,14 +866,14 @@
 
                             var tableColas = "<br><table class=\"table\">";
                             tableColas += "<tr><td colspan=2>&Uacute;ltimas cargas:</td><tr>";
-                            if(colas.length>0){
+                            if (colas.length > 0) {
                                 for (x in colas) {
                                     var create_a = new Date(colas[x].created_at);
                                     var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
                                     tableColas += "<tr><td>" + colas[x].combustible__estacion__nombre + "</td>";
                                     tableColas += "<td>" + create_b + "</td></tr>";
                                 }
-                            }else{
+                            } else {
                                 tableColas += "<tr><td colspan=2>Sin cargas</td><tr>";
                             }
                             tableColas += "</table>";
@@ -806,44 +881,44 @@
 
                             var tableRebotes = "<br><table class=\"table\">";
                             tableRebotes += "<tr><td colspan=2>&Uacute;ltimas rebotes:</td><tr>";
-                            if(rebotes.length>0){
+                            if (rebotes.length > 0) {
                                 for (x in rebotes) {
                                     var create_a = new Date(rebotes[x].created_at);
                                     var create_b = moment(create_a).format('DD/MM/YYYY h:mm a');
                                     tableRebotes += "<tr><td>" + rebotes[x].combustible__estacion__nombre + "</td>";
                                     tableRebotes += "<td>" + create_b + "</td></tr>";
                                 }
-                            }else{
+                            } else {
                                 tableRebotes += "<tr><td colspan=2>Sin rebotes</td><tr>";
                             }
                             tableRebotes += "</table>";
 
                             var bloq = "";
 
-                            if(vehiculo.bloqueado == true){
-                                 bloq = "<br><b>Vehículo bloqueado</b><br>";
-                                 bloq += "Motivo: " + vehiculo.bloqueado_motivo+"<br>";
-                                 bloq += "Hasta: " + vehiculo.bloqueado_hasta+"<br>";
-                            }else{
+                            if (vehiculo.bloqueado == true) {
+                                bloq = "<br><b>Vehículo bloqueado</b><br>";
+                                bloq += "Motivo: " + vehiculo.bloqueado_motivo + "<br>";
+                                bloq += "Hasta: " + vehiculo.bloqueado_hasta + "<br>";
+                            } else {
                                 bloq = "";
                             }
 
                             var pp = ""
 
-                            if(vehiculo.paso_preferencial == true){
+                            if (vehiculo.paso_preferencial == true) {
                                 pp = "Dar apoyo sin cola"
-                            }else{
+                            } else {
                                 pp = "Debe pasar a la cola"
                             }
 
                             $("#alerta-mensaje-bloqueado").html(
-                                    "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>"+
-                                    "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
-                                    "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
-                                    "Paso prefencial:<b> " + pp + "</b><br>" +
-                                    bloq+
-                                    tableColas +
-                                    tableRebotes
+                                "<br>Vehículo placas: <b>" + $("#buscar_placa").val() + "</b><br>" +
+                                "Tipo de vehiculo:<b> " + vehiculo.tipo_vehiculo + "</b><br>" +
+                                "Organización:<b> " + vehiculo.organizacion + "</b><br>" +
+                                "Paso prefencial:<b> " + pp + "</b><br>" +
+                                bloq +
+                                tableColas +
+                                tableRebotes
                             );
                             $('#modal-alerta-bloqueado').modal('show');
 
@@ -1130,6 +1205,38 @@
         }
 
         function cancelarEliminar() {
+            $('#modal-confirmar').modal('hide');
+        }
+
+        function eliminarVehiculoDeCola() {
+
+             var data_vehiculo = {
+                "id": combustible_id,
+            };
+
+            $.ajax(
+                {
+                    url: URL_COLA + combustible_id + '/' + $("#cola_id").val() + '/',
+                    data: data_vehiculo,
+                    dataType: "json",
+                    type: "delete",
+                    headers: ajax_header,
+                    success: function (request) {
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+                        table_cola.ajax.reload();
+
+                        $('#modal-confirmar').modal('hide');
+                    },
+                    error: function (request, status, error) {
+                        alert('Error rebotando vehículo');
+                    }
+                    //error: add_error
+                }
+            ); // ajax()
+
+
             $('#modal-confirmar').modal('hide');
         }
 
