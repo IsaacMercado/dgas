@@ -81,7 +81,7 @@ class ColaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'nota')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'nota', 'tipo_combustible')
 
 
 class ColaCrudSerializer(serializers.ModelSerializer):
@@ -90,7 +90,7 @@ class ColaCrudSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cola
-        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula')
+        fields = ('id', 'vehiculo', 'cargado', 'combustible', 'cantidad', 'cedula', 'tipo_combustible')
 
 
 class ColaPublicoSerializer(serializers.ModelSerializer):
