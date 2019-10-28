@@ -78,7 +78,7 @@ class CargaAdmin(admin.ModelAdmin):
 
 @admin.register(Cola)
 class ColaAdmin(admin.ModelAdmin):
-    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'created_by','created_at', 'last_modified_at')
+    list_display = ('vehiculo', 'combustible', 'cargado', 'cantidad', 'cedula', 'nota', 'created_by','created_at', 'last_modified_at')
     search_fields = ['vehiculo__placa',]
     #list_filter = ('combustible',)
 

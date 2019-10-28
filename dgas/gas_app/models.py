@@ -248,6 +248,7 @@ class Cola(models.Model):
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
     cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado')
+    nota = models.CharField('Nota', max_length=100, default='Ninguna')
 
     created_by = UserForeignKey(auto_user_add=True, related_name='cola_created')
     created_at = models.DateTimeField(auto_now_add=True)
