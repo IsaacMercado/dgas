@@ -6,7 +6,7 @@ from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
-CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando', 'En camino', 'Descargando', 'Despachando', 'Cerrada')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando', 'En Camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
@@ -248,7 +248,7 @@ class Carga(models.Model):
 class Cola(models.Model):
     combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE, related_name='colas')
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
-    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default=95, null=True, blank=True)
+    tipo_combustible = models.CharField(max_length=10, choices=COMBUSTIBLE_TIPO_CHOICES, default='95', null=True, blank=True)
     cantidad = models.FloatField(default=0)
     cargado = models.BooleanField(default=False)
     cedula = models.CharField('Nro. de cédula de identidad', max_length=20, default='No Registrado')
