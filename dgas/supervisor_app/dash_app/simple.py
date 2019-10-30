@@ -22,159 +22,164 @@ from plotly import graph_objs as go
 from dgas.gas_app import models as md
 from dgas.users import models as us
 
-from .utils import format_date, input_to_date, generate_table
+from .utils import format_date, input_to_date, generate_table, box_bootstrap3
 from .get_data import load_data
 
 NOT_DATA = "No se han cargado datos."
-PAGE_SIZE = 10
+MINUTOS = 5
 
 app = DjangoDash('SupervisorApp')   # replaces dash.Dash
 
 app.layout = html.Div([
 
-    html.Label('Rango de fechas'),
-    html.Br(),
-    dcc.Input(
-        id='input-range-date', 
-        type='text', 
-        className='form-control pull-right',
-    ),
-    html.Br(),
-    html.Div(id='message-date'),
-    html.Br(),
+    box_bootstrap3("Consulta", [
+        html.Label('Rango de fechas'),
+        html.Br(),
+        dcc.Input(
+            id='input-range-date', 
+            type='text', 
+            className='form-control pull-right',
+        ),
+        html.Br(),
+        dcc.Loading(id="loading-01", children=[html.Div(id='message-date'),], type="dot"),
+        html.Br(),
 
-    html.Label('Municipios'),
-    dcc.Dropdown(
-        id='municipios',
-        placeholder='Municipios',
-        options=[{"label": mun.municipio, "value": mun.id} for mun in us.Municipio.objects.all()],
-        multi=True
-    ),
+        html.Label('Municipios'),
+        dcc.Dropdown(
+            id='municipios',
+            placeholder='Municipios',
+            options=[{"label": mun.municipio, "value": mun.id} for mun in us.Municipio.objects.all()],
+            multi=True
+        ),
+        
+        html.Label('Parroquias'),
+        dcc.Dropdown(
+            id='parroquias',
+            multi=True,
+            placeholder='Parroquias',
+            disabled=True
+        ),
+
+        html.Label('Estaciones'),
+        dcc.Dropdown(
+            id='estaciones',
+            placeholder='Estaciones',
+            multi=True
+        ),
+        html.Br(),
+
+        html.Button(
+            'Consultar',
+            id='submit-button',
+            className='btn btn-primary',
+        ),
+        html.Br(),
+
+        dcc.Interval(id='interval-time', interval=5*1000, n_intervals=0),
+        html.Div(id='message-time-computo'),
+        html.Br(),
+        ]),
     
-    html.Label('Parroquias'),
-    dcc.Dropdown(
-        id='parroquias',
-        multi=True,
-        placeholder='Parroquias',
-        disabled=True
-    ),
+    box_bootstrap3( "Resultados", [
 
-    html.Label('Estaciones'),
-    dcc.Dropdown(
-        id='estaciones',
-        placeholder='Estaciones',
-        multi=True
-    ),
-    html.Br(),
+        html.Center([html.H4('Resultados por Estación'),]),
 
-    html.Button(
-        'Consultar',
-        id='submit-button',
-        className='btn btn-primary',
-    ),
-    html.Br(),
+        dcc.Loading(id="loading-1", children=[
 
-    dcc.Interval(id='interval-time', interval=10*1000, n_intervals=0),
-    html.Div(id='message-time-computo'),
-    html.Br(),
+            dash_table.DataTable(
+                id='table-estaciones',
+                columns=[
+                        {"name": 'Estación', "id": 'nombre'},
+                        {"name": 'Atendidos', "id": 'atendidos'},
+                        {"name": 'Rebotados', "id": 'rebotados'},
+                        {"name": 'Consumido', "id": 'litros'},
+                        {"name": 'Surtidos', "id": 'surtidos'},
+                        {"name": 'Consumo/Vehiculo', "id": 'litros_per'},
+                        {"name": 'Surtido/Vehiculo', "id": 'surtido_per'},
+                    ],
+                style_cell={
+                    'textAlign': 'left',
+                    'font-family':'sans-serif',
+                    'maxHeight': '70px',
+                    'border': 'thin lightgrey solid'
+                },
+                export_format='csv',
+                export_headers='display',
+                merge_duplicate_headers=True,
+                include_headers_on_copy_paste=True,
+                fixed_rows={ 'headers': True, 'data': 0 },
+                sort_action='native',
+                ),
 
-    html.Center([html.H4('Resultados por Estación'),]),
-    dash_table.DataTable(
-        id='table-estaciones',
-        columns=[
-                {"name": 'Estación', "id": 'nombre'},
-                {"name": 'Atendidos', "id": 'atendidos'},
-                {"name": 'Rebotados', "id": 'rebotados'},
-                {"name": 'Consumido', "id": 'litros'},
-                {"name": 'Surtidos', "id": 'surtidos'},
-                {"name": 'Consumo/Vehiculo', "id": 'litros_per'},
-                {"name": 'Surtido/Vehiculo', "id": 'surtido_per'},
-            ],
-        data=[{
-            'atendidos': '',
-            'rebotados': '',
-            'litros': '',
-            'surtidos': '',
-            'litros_per': '',
-            'surtido_per': '',
-        }],
-        style_cell={
-            'textAlign': 'left',
-            'font-family':'sans-serif',
-            'maxHeight': '70px',
-            'border': 'thin lightgrey solid'
-        },
-        export_format='csv',
-        export_headers='display',
-        merge_duplicate_headers=True,
-        include_headers_on_copy_paste=True,
-        fixed_rows={ 'headers': True, 'data': 0 },
-        sort_action='native',
-    ),
-    html.Br(),
+            ], type="default"),
 
-    html.Center([html.H4('Resultados por Estación'),]),
-    dash_table.DataTable(
-        id='table-general',
-        columns=[
-                {"name": 'Atendidos', "id": 'atendidos'},
-                {"name": 'Rebotados', "id": 'rebotados'},
-                {"name": 'Consumido', "id": 'litros'},
-                {"name": 'Surtidos', "id": 'surtidos'},
-                {"name": 'Consumo/Vehiculo', "id": 'litros_per'},
-                {"name": 'Surtido/Vehiculo', "id": 'surtido_per'},
-            ],
-        data=[{
-            'atendidos': '',
-            'rebotados': '',
-            'litros': '',
-            'surtidos': '',
-            'litros_per': '',
-            'surtido_per': '',
-        }],
-        style_cell={
-            'textAlign': 'left',
-            'font-family':'sans-serif',
-            'border': 'thin lightgrey solid'
-        },
-    ),
-    html.Br(),
 
-    html.Center([html.H4('Vehiculos con mayor número de cargas'),]),
-    dash_table.DataTable(
-        id='table-vehiculo-cargas',
-        columns=[
-                {"name": 'Placa', "id": 'placa'},
-                {"name": 'Número de carga', "id": 'vehiculo_id'},
-            ],
-        data=[],
-        style_cell={
-            'textAlign': 'left',
-            'font-family':'sans-serif',
-        },
-        page_current=0,
-        page_size=PAGE_SIZE,        
-        page_action='custom',
-        export_format='csv',
-        export_headers='display',
-        merge_duplicate_headers=True,
-        include_headers_on_copy_paste=True,
-    ),
-    html.Br(),
-    html.Br(),
+    
+        html.Br(),
 
-    html.Div(id='graph-div-01'),
-    dcc.Checklist(
-        id='is-smooth',
-        options=[{'label': 'Suavizar datos', 'value': 'smooth'},],
-    ),
-    html.Br(),
+        html.Center([html.H4('Resultados Generales'),]),
 
-    html.Div(id='graph-div-02'),
-    html.Br(),
 
-    html.Div(id='graph-div-03'),
-    html.Br(),
+        dcc.Loading(id="loading-2", children=[
+            dash_table.DataTable(
+                id='table-general',
+                columns=[
+                        {"name": 'Atendidos', "id": 'atendidos'},
+                        {"name": 'Rebotados', "id": 'rebotados'},
+                        {"name": 'Consumido', "id": 'litros'},
+                        {"name": 'Surtidos', "id": 'surtidos'},
+                        {"name": 'Consumo/Vehiculo', "id": 'litros_per'},
+                        {"name": 'Surtido/Vehiculo', "id": 'surtido_per'},
+                    ],
+                style_cell={
+                    'textAlign': 'left',
+                    'font-family':'sans-serif',
+                    'border': 'thin lightgrey solid'
+                    },
+                ),
+            ], type="default"),
+
+        html.Br(),
+
+        html.Center([html.H4('Vehiculos con mayor número de cargas'),]),
+
+        dcc.Loading(id="loading-3", children=[
+            dash_table.DataTable(
+                id='table-vehiculo-cargas',
+                columns=[
+                        {"name": 'Placa', "id": 'placa'},
+                        {"name": 'Número de carga', "id": 'vehiculo_id'},
+                        ],
+                style_cell={
+                    'textAlign': 'left',
+                    'font-family':'sans-serif',
+                    },
+                page_current=0,
+                page_size=10,        
+                page_action='custom',
+                export_format='csv',
+                export_headers='display',
+                merge_duplicate_headers=True,
+                include_headers_on_copy_paste=True,
+                ),
+            ], type="default"),
+
+        html.Br(),
+        html.Br(),
+
+        dcc.Loading(id="loading-4", children=[html.Div(id='graph-div-01'),]),
+        dcc.Checklist(
+            id='is-smooth',
+            options=[{'label': 'Suavizar datos', 'value': 'smooth'},],
+        ),
+        html.Br(),
+
+        dcc.Loading(id="loading-5", children=[html.Div(id='graph-div-02'),]),
+        html.Br(),
+
+        dcc.Loading(id="loading-6", children=[html.Div(id='graph-div-03'),]),
+        html.Br(),
+        ]),
 
     ])
 
@@ -185,6 +190,8 @@ def callback_update_interval(n):
     if 'dataframes' in cache:
         data = cache.get('dataframes')
         init, end = data['init'], data['end']
+        if 'df_stations' in cache:
+            pass
         return "Datos cargados. Del " + init.strftime("%d/%m/%Y") + " al " + end.strftime("%d/%m/%Y")
     return "Datos sin cargar. Por favor seleccione una fecha."
 
@@ -207,7 +214,7 @@ def callback_read_date(date_str):
     start = time()
     data = load_data(date_str)
     init, end = data['init'], data['end']
-    cache.set("dataframes", data, 60*15)
+    cache.set("dataframes", data, 60*MINUTOS)
     return 'Datos cargados. Tiempo de carga: ' + str(round(time()-start, 2)) + ' segundos.'
 
 @app.callback(
@@ -221,7 +228,14 @@ def callback_read_date(date_str):
     ])
 def callback_query(n_clicks, date, municipios, parroquias, estaciones):
 
-    print(n_clicks, date, municipios, parroquias, estaciones)
+    white = [{
+        'atendidos': '',
+        'rebotados': '',
+        'litros': '',
+        'surtidos': '',
+        'litros_per': '',
+        'surtido_per': '',
+        }]
 
     # Iniciando varibles
 
@@ -233,16 +247,16 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
     dates = input_to_date(date)
 
     if not dates:
-        return []
+        return white
     else:
         init, end = dates
 
-    dfs = cache.get_or_set('dataframes', load_data(date), 60*15)
+    dfs = cache.get_or_set('dataframes', load_data(date), 60*MINUTOS)
 
     if dfs['state'] == 'load':
 
         if not (dfs['init'], dfs['end']) == (init, end):
-            cache.set('dataframes', load_data(date), 60*15)
+            cache.set('dataframes', load_data(date), 60*MINUTOS)
             dfs = cache.get('dataframes')
             if dfs and (dfs['state'] == 'load'):
                 df_cola = dfs['df_cola']
@@ -253,7 +267,7 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
                 init = dfs['init']
                 end = dfs['end']
             else:
-                return []
+                return white
         else:
             df_cola = dfs['df_cola']
             df_rebo = dfs['df_rebo']
@@ -263,7 +277,7 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
             init = dfs['init']
             end = dfs['end']
     else:
-        return []
+        return white
 
     # Filtrando por estaciones
 
@@ -310,7 +324,7 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
     df_stations['surtido_per'] = (df_stations['surtidos']/df_stations['atendidos']).round(1)
     df_stations['litros_per'] = (df_stations['litros']/df_stations['atendidos']).round(1)
 
-    cache.set('df_stations', df_stations)
+    cache.set('df_stations', df_stations, 60*MINUTOS)
 
     return df_stations[
             ['nombre','atendidos','rebotados','litros','surtidos','litros_per','surtido_per']
@@ -323,7 +337,14 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
 def callback_general_result(event):
     df_stations = cache.get('df_stations')
     if df_stations is None:
-        return []
+        return [{
+            'atendidos': '',
+            'rebotados': '',
+            'litros': '',
+            'surtidos': '',
+            'litros_per': '',
+            'surtido_per': '',
+            }]
     return [{
                 'atendidos': df_stations['atendidos'].sum(),
                 'rebotados': df_stations['rebotados'].sum(),
@@ -338,7 +359,7 @@ def callback_general_result(event):
     Output('table-vehiculo-cargas', 'data'),
     [Input('table-vehiculo-cargas', "page_current"),
      Input('table-vehiculo-cargas', "page_size"),
-     Input('table-general', 'data')])
+     Input('table-estaciones', 'data')])
 def update_table(page_current, page_size, data):
 
     print(page_current, page_size)
@@ -349,7 +370,7 @@ def update_table(page_current, page_size, data):
     if (not df_stations is None) and (not df_stations is None) and (dfs['state'] == 'load'):
         df_cola = dfs['df_cola']
     else:
-        return []
+        return [{'placa':'','vehiculo_id':''}]
 
     count_placas = pd.value_counts(df_cola["vehiculo_id"][df_cola['id_estacion'].isin(df_stations['id'])])[:100]
     df_placas = pd.DataFrame(count_placas)
@@ -363,7 +384,7 @@ def update_table(page_current, page_size, data):
 @app.callback(
     Output('graph-div-01', 'children'), 
     [
-        Input('table-general', 'data'),
+        Input('table-estaciones', 'data'),
         Input('is-smooth', 'value'),
     ])
 def callback_time_result(event, is_smooth):
@@ -423,7 +444,7 @@ def callback_time_result(event, is_smooth):
 
 @app.callback(
     Output('graph-div-02', 'children'), 
-    [Input('graph-div-01', 'children')])
+    [Input('table-estaciones', 'data')])
 def callback_type_result(event):
 
     df_stations = cache.get('df_stations')
@@ -462,7 +483,7 @@ def callback_type_result(event):
 
 @app.callback(
     Output('graph-div-03', 'children'), 
-    [Input('graph-div-02', 'children')])
+    [Input('table-estaciones', 'data')])
 def callback_cola_plot_result(event):
     
     if not 'df_stations' in cache:
