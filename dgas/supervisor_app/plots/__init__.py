@@ -79,7 +79,7 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
     df_rebo['created_at'] = df_rebo['created_at'].dt.date
     df_rebo['last_modified_at'] = df_rebo['last_modified_at'].dt.date
 
-    if range_cont:
+    if range_cont.count() > 0:
         df_cont = pd.DataFrame(range_cont.values(
             'cantidad',
             'created_at',
@@ -90,7 +90,7 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
     else:
         df_cont = None
 
-    if range_comb:
+    if range_comb.count() > 0:
         df_comb = pd.DataFrame(range_comb.values(
             'id_municipio',
             'litros_surtidos_g91',
