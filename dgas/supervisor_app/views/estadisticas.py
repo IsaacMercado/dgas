@@ -88,4 +88,4 @@ class SupervisorDashPoltly(GroupRequiredMixin, TemplateView):
     group_required = u"Supervisor"
     raise_exception = True
 
-    template_name = "supervisor_app/supervisor_vehiculos/details.html"
+    template_name = "supervisor_app/supervisor_estadisticas/details.html"
