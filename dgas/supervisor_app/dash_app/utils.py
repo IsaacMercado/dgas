@@ -1,6 +1,8 @@
 import re
 from datetime import datetime, timedelta
 
+import dash_html_components as html
+
 def format_date(query):
     return re.sub(\
         r'[^\'\"]\d{4}\-\d{2}\-\d{2}[^\'\"]{0,1}',
@@ -32,3 +34,11 @@ def generate_table(dataframe):
         ]) for i in range(len(dataframe))] ,
         className = "table table-bordered table-hover",
     )
+
+def box_bootstrap3(title="Box", content=[]):
+    return html.Div([
+            html.Div([html.H3(title, className="box-title")],
+                className="box-header"),
+            html.Div(content, className="box-body"),
+            ],
+        className="box box-primary")
