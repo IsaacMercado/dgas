@@ -465,7 +465,7 @@
                 table = $('#tabla_combustible').DataTable({
                     "processing": true,
                     "serverSide": true,
-                    //"scrollY": 200,
+                    "scrollY": 500,
                     "scrollX": true,
                     'ajax': '/api/combustible/?format=datatables',
 
@@ -672,6 +672,12 @@
                         "order": [[0, "asc"]],
 
                         "columnDefs": [
+                            {
+                                width: 100, targets: 5
+                            },
+                            {
+                                width: 100, targets: 4
+                            },
                             {
                                 width: 100, targets: 6
                             },
