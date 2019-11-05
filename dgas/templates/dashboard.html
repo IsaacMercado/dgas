@@ -52,7 +52,7 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Novedadees</h3>
+                    <h3 class="box-title">Novedades</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -80,6 +80,61 @@
                             </div>
                         </div>
                         <!-- /.row -->
+
+                        <br>
+                        <hr>
+                        <h4>Recuerda registrarse para que puedas</h4>
+
+
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="col-sm-4 col-xs-4">
+                                <div class="description-block border-right">
+                                    <a class="btn btn-block btn-primary" href="{% url "public_app:vehiculos_list" %}">
+                                    <h5 class="description-header">Registrar tus vehículos</h5>
+                                    </a>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-4 col-xs-4">
+                                <div class="description-block">
+                                    <a class="btn btn-block btn-primary" href="{% url "users_app:colas_list" %}">
+                                    <h5 class="description-header">Consultar tus cargas</h5>
+                                    </a>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+
+                             <!-- /.col -->
+                            <div class="col-sm-4 col-xs-4">
+                                <div class="description-block">
+                                    <a class="btn btn-block btn-primary" href="{% url "users:user_perfil_detail" %}">
+                                    <h5 class="description-header">Actualizar tus datos</h5>
+                                    </a>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+
+                        </div>
+                        <!-- /.row -->
+
+
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="col-sm-12 col-xs-12">
+                                <div class="description-block border-right">
+                                    <center>
+                                        <h4>Imprimir el carnet de su vehiculo..</h4>
+                                        <img src="{% static '/images/carne_dgas.png' %}" >
+                                    </center>
+                                </div>
+                                <!-- /.description-block -->
+                            </div>
+                        </div>
+                        <!-- /.row -->
+
+
                     </div>
                     <!-- /.box-footer -->
 

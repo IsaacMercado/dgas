@@ -6,7 +6,7 @@ from dgas.users.models import GasUser, User, Municipio
 
 COMBUSTIBLE_TIPO_CHOICES = Choices('91', '95', 'Gasoil')
 CILINDROS_CHOICES = Choices('1', '2', '3', '4', '6', '8')
-CARGA_ESTADO_CHOICES = Choices('En plan', 'Cargando', 'En Camino', 'Descargando', 'Despachando', 'Cerrada')
+CARGA_ESTADO_CHOICES = Choices('En plan', 'Planificado', 'Cargando', 'En Camino', 'Descargando', 'Despachando', 'Cerrada')
 MUNICIPIOS_CHOICES = Choices('Libertador', 'Campo Elias', 'Sucre', 'Santos Marquina', 'Alberto Adriani')
 TIPO_VEHICULO_CHOICES = Choices(
     'Particular',
@@ -162,7 +162,7 @@ class ContadorMedida(models.Model):
 
 class Combustible(models.Model):
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE)
-    estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='En Camino')
+    estado = models.CharField(max_length=20, choices=CARGA_ESTADO_CHOICES, default='Planificado')
     nota = models.CharField(max_length=100, blank=True, null=True)
     fecha_planificacion = models.DateField(null=True, blank=True)
     fecha_apertura = models.DateTimeField(null=True, blank=True)
