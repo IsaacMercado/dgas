@@ -22,23 +22,25 @@
 
     <style type="text/css">
         @media screen {
-          #printSection {
-              display: none;
-          }
+            #printSection {
+                display: none;
+            }
         }
 
         @media print {
-          body * {
-            visibility:hidden;
-          }
-          #printSection, #printSection * {
-            visibility:visible;
-          }
-          #printSection {
-            position:absolute;
-            left:0;
-            top:0;
-          }
+            body * {
+                visibility: hidden;
+            }
+
+            #printSection, #printSection * {
+                visibility: visible;
+            }
+
+            #printSection {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
         }
 
         @page {
@@ -86,15 +88,19 @@
                                             class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
                                         Vehículo
                                     </button>
-                                    <button
-                                            title="Imprimir todas" onclick="printAllElements()"
-                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir todos los carnets
-                                    </button>
                                 </div>
                             </div>
 
                         </div>
                     </div>
+
+
+                    <br>
+                    <button
+                            title="Imprimir todas" onclick="printAllElements()"
+                            class="btn btn-primary"><i class="fa fa-print"></i> Imprimir todos los carnets
+                    </button>
+                    <br>
 
                     <table class="table">
                         <thead>
@@ -132,58 +138,71 @@
                                         {% endcomment %}
 
 
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_vehiculo_{{ vehiculo.placa }}">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#modal_vehiculo_{{ vehiculo.placa }}">
                                             Carnet del Vehículo
                                         </button>
-                                        <div id="modal_vehiculo_{{ vehiculo.placa }}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div id="modal_vehiculo_{{ vehiculo.placa }}" class="modal fade" tabindex="-1"
+                                             role="dialog" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                        <h4 class="modal-title" id="gridSystemModalLabel">Carnet del Vehículo - {{ vehiculo.placa }}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="gridSystemModalLabel">Carnet del
+                                                            Vehículo - {{ vehiculo.placa }}</h4>
                                                     </div>
                                                     <div class="modal-body">
 
-                                                        <div  id="printThis_{{ vehiculo.placa }}" class="body-message">
+                                                        <div id="printThis_{{ vehiculo.placa }}" class="body-message">
 
-															<div class='box' style="border-style: dashed; border-width: thin; padding: 5px; padding-left: 20px; padding-right: 20px;}">
+                                                            <div class='box'
+                                                                 style="border-style: dashed; border-width: thin; padding: 5px; padding-left: 20px; padding-right: 20px;}">
 
-															<center>
+                                                                <center>
 
-															<h4>Carnet del Vehículo</h4>
+                                                                    <h4>Carnet del Vehículo</h4>
 
-                                                            {% if user.photo_user == '' %}
-                                                                <img src="{% static 'img/no_photo.png' %}" class="img-circle" height="60"
-                                                                     width="60" alt="Sin foto">
-                                                            {% else %}
-                                                                <img src="{{ user.photo_user.thumbnail.60x60 }}" class="img-circle"
-                                                                     alt="Foto usuario"/>
-                                                            {% endif %}
-															<img src="{% static '/images/logo_login.png' %}" width="50"><br>
+                                                                    {% if user.photo_user == '' %}
+                                                                        <img src="{% static 'img/no_photo.png' %}"
+                                                                             class="img-circle" height="60"
+                                                                             width="60" alt="Sin foto">
+                                                                    {% else %}
+                                                                        <img src="{{ user.photo_user.thumbnail.60x60 }}"
+                                                                             class="img-circle"
+                                                                             alt="Foto usuario"/>
+                                                                    {% endif %}
+                                                                    <img src="{% static '/images/logo_login.png' %}"
+                                                                         width="50"><br>
 
 
-                                                            <b>Nombre:</b> {{ user.get_full_name|title|default:"Ninguno" }}<br>
-                                                            <b>Cedula:</b> {{ user.cedula|default:"Ninguna" }}<br>
+                                                                    <b>Nombre:</b> {{ user.get_full_name|title|default:"Ninguno" }}<br>
+                                                                    <b>Cedula:</b> {{ user.cedula|default:"Ninguna" }}<br>
 
-															<b>Municipio:</b> {{ user.municipio|default:"Ninguna" }}<br>
-															<b>Parroquia:</b> {{ user.parroquia|default:"Ninguna" }}<br>
-                                                            {% qr_from_text vehiculo.placa size=4 image_format="png" error_correction="L" %}<br>
-                                                            {{ vehiculo.placa }}
+                                                                    <b>Municipio:</b> {{ user.municipio|default:"Ninguna" }}<br>
+                                                                    <b>Parroquia:</b> {{ user.parroquia|default:"Ninguna" }}<br>
+                                                                    {% qr_from_text vehiculo.placa size=4 image_format="png" error_correction="L" %}<br>
+                                                                    {{ vehiculo.placa }}
 
-															</center>
+                                                                </center>
 
-															</div>
+                                                            </div>
                                                         </div>
 
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cerrar</button>
-                                                        <button id="btnPrint" type="button" class="btn btn-default" onclick="printElement('printThis_{{ vehiculo.placa }}')">Imprimir</button>
+                                                        <button class="btn" data-dismiss="modal" aria-hidden="true">
+                                                            Cerrar
+                                                        </button>
+                                                        <button id="btnPrint" type="button" class="btn btn-default"
+                                                                onclick="printElement('printThis_{{ vehiculo.placa }}')">
+                                                            Imprimir
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
 
 
                                     </div>
@@ -303,8 +322,8 @@
             deleteChilds();
 
             var count = 0;
-            var num_fila = 5 -1;
-            var tabla   = document.createElement("table");
+            var num_fila = 5 - 1;
+            var tabla = document.createElement("table");
             var tblBody = document.createElement("tbody");
 
             var placas = document.querySelectorAll("div[id^=printThis_]");
@@ -312,15 +331,15 @@
 
             for (var i = 0; i < placas.length; i++) {
                 //console.log(count);
-                if (count > num_fila){
+                if (count > num_fila) {
                     count = 1;
 
                     tblBody.appendChild(hilera);
                     var hilera = document.createElement("tr");
 
                     var celda = document.createElement("td");
-                    celda.style="border: 1px;";
-                    celda.valign="middle";
+                    celda.style = "border: 1px;";
+                    celda.valign = "middle";
 
                     celda.appendChild(placas[i].cloneNode(true));
                     hilera.appendChild(celda);
@@ -329,13 +348,14 @@
                     count = count + 1;
 
                     var celda = document.createElement("td");
-                    celda.style="border: 1px;";
-                    celda.valign="middle";
+                    celda.style = "border: 1px;";
+                    celda.valign = "middle";
 
                     celda.appendChild(placas[i].cloneNode(true));
                     hilera.appendChild(celda);
                 }
-            };
+            }
+            ;
 
             tblBody.appendChild(hilera);
 
@@ -360,7 +380,8 @@
                 var e = document.createElement("div");
                 e.id = "printSection";
                 document.body.appendChild(e);
-            };
+            }
+            ;
             return e
         };
 
@@ -447,8 +468,8 @@
                                 {% comment %}
                                 window.location.replace('{% url 'public_app:vehiculo_update'  %}');
                                 {% endcomment %}
-                                window.location.replace('/publico/vehiculos/update/'+placa_value);
-                            }else{
+                                window.location.replace('/publico/vehiculos/update/' + placa_value);
+                            } else {
                                 alert('Vehiculo ya esta registrado por otro usuario. \n Si usted es el propietario envia una foto del carnet de circulacion a soporte@combustiblemerida.com indicando el registro indecido de su vehículo')
                             }
 
