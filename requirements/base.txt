@@ -26,5 +26,10 @@ django-pure-pagination==0.3.0
 django-userforeignkey==0.3.0
 djangorestframework-datatables==0.4.1
 django-qr-code==1.0.0
+
+# Statistics
+pandas==0.25.2
+statsmodels==0.10.1
+django-plotly-dash==1.0.1
 plotly==4.1.1
-pandas==0.25.0
+numpy==1.17.3

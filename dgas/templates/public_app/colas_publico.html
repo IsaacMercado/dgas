@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static i18n %}
 {% load humanize %}
-{% block title %}Colas - Reporte{% endblock %}
+{% block title %}Planificacion diaria{% endblock %}
 
 
 {% block css %}
@@ -35,6 +35,10 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
+
+                    <button type="button" class="btn btn-default" id="today">Hoy</button>
+                    <button type="button" class="btn btn-default" id="tomorrow">Mañana</button>
+                    <br> <br>
 
                     <div class="row" id="combustible">
                         <div id="table-combustible" class="container col-md-12">
@@ -88,17 +92,17 @@
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/DataTables-1.10.18/js/dataTables.bootstrap.min.js' %}"></script>
     <script src="{% static 'bower_components/jquery-mask-plugin/dist/jquery.mask.min.js' %}"></script>
+    <script src="{% static 'plugins/moment/min/moment.min.js' %}"></script>
 
-    <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
+    {% comment %}
+     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.flash.min.js' %}"></script>
     <script src="{% static 'bower_components/jszip/dist/jszip.min.js' %}"></script>
-    {% comment %}
     <script src="{% static 'bower_components/pdfmake/build/pdfmake.min.js' %}"></script>
     <script src="{% static 'bower_components/pdfmake/build/vfs_fonts.js' %}"></script>
-    {% endcomment %}
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'plugins/DataTables/Buttons-1.5.6/js/buttons.print.min.js' %}"></script>
-
+    {% endcomment %}
 
     <script type="text/javascript">
 
@@ -119,27 +123,50 @@
                     'serverSide': true,
                     //"scrollY": 200,
                     "scrollX": true,
-                    'ajax': '/api/combustible/?format=datatables',
+                    "processing": true,
+                    'ajax': '/api/combustible_publico/?format=datatables',
 
                     "language": {
                         "url": "{% static 'plugins/DataTables/Spanish.json' %}"
                     },
 
-                     "order": [[0, "desc"]],
+                    "order": [[0, "desc"]],
 
                     'columns': [
                         {"title": "Id", "data": "id", "responsivePriority": 1,},
                         {"title": "Municipio", "data": "estacion.municipio", "responsivePriority": 1,},
                         {"title": "Estacion", "data": "estacion.nombre", "responsivePriority": 1,},
+                        {
+                            "title": "Fecha Plan",
+                            "data": "fecha_planificacion",
+                            "responsivePriority": 1,
+                            render: function (data, type, row) {
+                                if (type === "sort" || type === "type") {
+                                    return data;
+                                }
+                                return moment(data).format("DD/MM/YYYY");
+                            }
+                        },
+
                         {"title": "Direccion", "data": "estacion.direccion", "responsivePriority": 1,},
                         {"title": "Nota", "data": "nota", "responsivePriority": 1,},
+                        {"title": "Estado", "data": "estado", "responsivePriority": 1,},
+                        {
+                            "data": "estacion.operativa",
+                            "title": "Abierta",
+                            "render": function (data, type, row) {
+                                return (data == true) ? '<span class="glyphicon glyphicon-ok"></span>' : '<span class="glyphicon glyphicon-remove"></span > ';
+                            }
+                        },
                         //{"title": "Nro. Cupos/Aprox", "data": "cantidad_vehiculos", "responsivePriority": 1,},
                         //{"title": "Lt/Veh/Aprox", "data": "cantidad_maxima_por_vehiculo", "responsivePriority": 1,},
                         //{"title": "En Cola", "data": "total_cola", "responsivePriority": 1,},
+                        /*
                         {
                             "data": null,
                             "defaultContent": "<button>Detalle</button>"
                         }
+                        */
                     ],
 
                     "initComplete": function (settings, json) {
@@ -151,7 +178,7 @@
                 $('#tabla_combustible tbody').on('click', 'button', function () {
 
                     var data = table.row($(this).parents('tr')).data();
-                    //alert(data['id'] + "'s salary is: " + data['cantidad_maxima_por_vehiculo']);
+
                     combustible_id = data['id'];
 
                     $('#cola').show();
@@ -207,6 +234,16 @@
                     $('#cola').hide();
                     $('#combustible').show();
                     table_cola.destroy();
+
+                });
+
+                $('#tomorrow').on('click', function () {
+                   table.ajax.url('/api/combustible_publico/?format=datatables&q=t').load();
+
+                });
+
+                $('#today').on('click', function () {
+                    table.ajax.url('/api/combustible_publico/?format=datatables').load();
 
                 });
 

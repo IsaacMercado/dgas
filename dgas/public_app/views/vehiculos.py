@@ -9,7 +9,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import (
     DetailView, ListView,
-    UpdateView, CreateView, DeleteView
+    UpdateView, CreateView, DeleteView,
+    TemplateView
 )
 from django.views.generic import View
 from pure_pagination.mixins import PaginationMixin
@@ -82,3 +83,12 @@ class VehiculoUpdateView(LoginRequiredMixin, UpdateView):
         self.object.usuario_id = self.request.user.id
         self.object.save()
         return super(VehiculoUpdateView, self).form_valid(form)
+
+
+class VehiculosMultados(LoginRequiredMixin, TemplateView):
+    template_name = "public_app/vehiculos/bloqueados_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(VehiculosMultados, self).get_context_data(**kwargs)
+
+        return context

@@ -83,3 +83,9 @@ class SupervisorPlots(GroupRequiredMixin, View):
         return response
 
 
+class SupervisorDashPoltly(GroupRequiredMixin, TemplateView):
+    # required
+    group_required = u"Supervisor"
+    raise_exception = True
+
+    template_name = "supervisor_app/supervisor_estadisticas/details.html"

@@ -40,6 +40,10 @@
             top:0;
           }
         }
+
+        @page { 
+            size: landscape; 
+        }
     </style>
 
 {% endblock css %}
@@ -81,6 +85,10 @@
                                             title="Agregar vehículo" onclick="agregarVehiculo()"
                                             class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
                                         Vehículo
+                                    </button>
+                                    <button
+                                            title="Imprimir todas" onclick="printAllElements()"
+                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir placas
                                     </button>
                                 </div>
                             </div>
@@ -281,19 +289,93 @@
 
         function printElement(idElem) {
             var domClone = document.getElementById(idElem).cloneNode(true);
-            
-            var $printSection = document.getElementById("printSection");
-            
-            if (!$printSection) {
-                var $printSection = document.createElement("div");
-                $printSection.id = "printSection";
-                document.body.appendChild($printSection);
-            }
-            
-            $printSection.innerHTML = "";
-            $printSection.appendChild(domClone);
+
+            var e = checkElement("printSection");
+            deleteChilds();
+
+            e.appendChild(domClone);
             window.print();
+        };
+
+        function printAllElements() {
+
+            var e = checkElement("printSection");
+            deleteChilds();
+
+            var count = 0;
+            var num_fila = 5 -1;
+            var tabla   = document.createElement("table");
+            var tblBody = document.createElement("tbody");
+
+            var placas = document.querySelectorAll("div[id^=printThis_]");
+            var hilera = document.createElement("tr");
+
+            for (var i = 0; i < placas.length; i++) {
+                //console.log(count);
+                if (count > num_fila){
+                    count = 1;
+
+                    tblBody.appendChild(hilera);
+                    var hilera = document.createElement("tr");
+
+                    var celda = document.createElement("td");
+                    celda.style="border: 1px;"; 
+                    celda.valign="middle";
+
+                    celda.appendChild(placas[i].cloneNode(true));
+                    hilera.appendChild(celda);
+
+                } else {
+                    count = count + 1;
+
+                    var celda = document.createElement("td");
+                    celda.style="border: 1px;"; 
+                    celda.valign="middle";
+
+                    celda.appendChild(placas[i].cloneNode(true));
+                    hilera.appendChild(celda);
+                }
+            };
+
+            tblBody.appendChild(hilera);
+
+            var count = 0;
+            tabla.appendChild(tblBody);
+            e.appendChild(tabla);
+            window.print();
+        }; 
+
+        function deleteChilds() { 
+            var e = checkElement("printSection");
+            var child = e.lastElementChild;
+            while (child) { 
+                e.removeChild(child);
+                child = e.lastElementChild;
+            } 
+        };
+
+        function checkElement(div_id) {
+            var e = document.getElementById(div_id);
+            if (!e) {
+                var e = document.createElement("div");
+                e.id = "printSection";
+                document.body.appendChild(e);
+            };
+            return e
+        };
+
+        function createRow() {
+            var div_row = document.createElement('div');
+            div_row.className = 'row';
+            return div_row
+        };
+
+        function createColumn() {
+            var div_column = document.createElement('div');
+            div_column.className = 'col-md-4';
+            return div_column
         }
+
     </script>
 
     <script>

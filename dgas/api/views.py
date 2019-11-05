@@ -16,7 +16,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from dgas.gas_app.models import Vehiculo, Carga, Cola, Combustible, Estacion, Rebotado, RebotadoBloqueado, ColaConsulta
 from dgas.gas_app.serializer import CargaSerializer, VehiculoSerializer, VehiculoUserSerializer, \
     CombustibleSerializer, ColaSerializer, VehiculoSupervisorSerializer, \
-    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer, RebotadoBloqueadoSerializer
+    ColaCrudSerializer, EstacionSerializer, ColaPublicoSerializer, RebotadoSerializer, RebotadoBloqueadoSerializer, \
+    VehiculoBloqueadosSerializer
 from dgas.users.models import User
 
 
@@ -50,6 +51,18 @@ class VehiculoUserViewSet(viewsets.ModelViewSet):
 
     def post_save(self, obj):
         obj.usuario = self.request.user
+
+
+class VehiculoBloqueadosViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Vehiculo.objects.all()
+    serializer_class = VehiculoBloqueadosSerializer
+
+    def get_queryset(self):
+
+        qs = self.queryset.filter(bloqueado=True)
+
+        return qs
+
 
 
 class RebotadoViewSet(viewsets.ModelViewSet):
@@ -198,11 +211,12 @@ class UltimaColaList(APIView):
         return Response(uc)
 
 
+'''
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
     serializer_class = CombustibleSerializer
     #permission_classes = (AllowAny,)
-
+'''
 
 class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
@@ -234,6 +248,23 @@ class CombustibleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return qs
 
 
+class CombustiblePublicoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Combustible.objects.all()
+    serializer_class = CombustibleSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+
+        if self.request.GET.get('q'):
+            today = date.today() + timedelta(days=1)
+        else:
+            today = date.today()
+
+        qs = self.queryset.filter(fecha_planificacion=today)
+
+        return qs
+
+
 class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Combustible.objects.all()
     serializer_class = CombustibleSerializer
@@ -241,8 +272,6 @@ class CombustibleHistoricoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
 
     def get_queryset(self):
         #qs = self.queryset.filter(completado=True).annotate(total_cola=Count('colas'))
-
-
 
         qs = self.queryset.filter(completado=True) \
             .annotate(
@@ -346,7 +375,6 @@ class ContarCola(APIView):
         combustible = Combustible.objects.get(pk=combustible_id)
 
         cargado = Cola.objects.filter(combustible_id=combustible_id, cargado=True).count()
-        print(cargado)
         total = Cola.objects.filter(combustible_id=combustible_id).count()
         total_rebotados = Rebotado.objects.filter(combustible_id=combustible_id).count()
 
@@ -379,6 +407,12 @@ class ContarCola(APIView):
 class EstacionViewSet(viewsets.ModelViewSet):
     queryset = Estacion.objects.all()
     serializer_class = EstacionSerializer
+
+
+class EstacionPublicViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Estacion.objects.all()
+    serializer_class = EstacionSerializer
+    permission_classes = (AllowAny,)
 
 
 class BuscarPlacaPubico(mixins.ListModelMixin, generics.GenericAPIView):

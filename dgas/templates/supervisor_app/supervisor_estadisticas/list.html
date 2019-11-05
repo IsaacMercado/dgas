@@ -26,16 +26,9 @@
 
 {% block content %}
 
-    <div class="alert alert-success" id="success-alert" style="display: none">
-        <button type="button" class="close" data-dismiss="alert">x</button>
-        <strong>Mensaje: </strong>
-        Regitro procesado.
-    </div>
-
-    <!-- Small boxes (Stat box) -->
     <div class="row">
+
         <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3>{{ num_user }}</h3>
@@ -45,143 +38,126 @@
                 <div class="icon">
                     <i class="ion ion-bag"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
+
         <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
             <div class="small-box bg-green">
                 <div class="inner">
                     <h3>{{ num_vehiculos }}</h3>
-
                     <p>Vehículos registrados</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-stats-bars"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
+
         <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
             <div class="small-box bg-yellow">
                 <div class="inner">
                     <h3>{{ num_atendidos }}</h3>
-
                     <p>Usuarios atendidos en el día</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-person-add"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
+
         <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
             <div class="small-box bg-red">
                 <div class="inner">
                     <h3>{{ num_rebotados }}</h3>
-
                     <p>Número de rebotados al día</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-pie-graph"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
+
     </div>
-    <!-- /.row -->
 
 
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Consulta</h3>
+        </div>
 
-<div class="box box-primary">
-    <div class="box-header with-border">
-        <h3 class="box-title">Consulta</h3>
-    </div>
-    <!-- /.box-header -->
-    <!-- form start -->
-    <form role="form" id="formToPlot" action="javascript:toPagePlots()" data-url="{% url 'supervisor_app:supervisor_plots' %}">
-        <div class="box-body">
+        <form role="form" id="formToPlot" action="javascript:toPagePlots()" data-url="{% url 'supervisor_app:supervisor_plots' %}">
+            <div class="box-body">
+                <div class="row">
 
-        <div class="row">
-            <div class="col-xs-3">
-            
-                <div class="form-group">
-                    <label for="rangeDateConsult">Rango de Fechas</label>
-                    <div class="input-group date">
-                      <div class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                      </div>
-                      <input type="text" class="form-control pull-right"  name="daterange" id="rangeDateConsult">
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label for="rangeDateConsult">Rango de Fechas</label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="text" class="form-control pull-right"  name="daterange" id="rangeDateConsult">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label for="selectMunicipio">Municipio</label>
+                            <select class="form-control" id="selectMunicipio" name="municipioPlot">
+                                <option value="">Todos</option>
+                                {% for mun in municipios %}
+                                <option value="{{ mun.id }}">{{ mun.id }} - {{ mun }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label for="selectParroquia">Parroquía</label>
+                            <select class="form-control" id="selectParroquia" name="parroquiaPlot" disabled>
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label for="selectEstacion">Estación</label>
+                            <select class="form-control" id="selectEstacion" name="estacionPlot" disabled>
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="col-xs-3">
-            
-                <div class="form-group">
-                    <label for="selectMunicipio">Municipio</label>
-                    <select class="form-control" id="selectMunicipio" name="municipioPlot">
-                        <option value="">Todos</option>
-                        {% for mun in municipios %}
-                        <option value="{{ mun.id }}">{{ mun.id }} - {{ mun }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-            </div>
-            <div class="col-xs-3">
-            
-                <div class="form-group">
-                    <label for="selectParroquia">Parroquía</label>
-                    <select class="form-control" id="selectParroquia" name="parroquiaPlot" disabled>
-                        <option value="">Todos</option>
-                    </select>
-                </div>
-
-            </div>
-            <div class="col-xs-3">
-            
-                <div class="form-group">
-                    <label for="selectEstacion">Estación</label>
-                    <select class="form-control" id="selectEstacion" name="estacionPlot" disabled>
-                        <option value="">Todos</option>
-                    </select>
-                </div>
-
             </div>
 
-        </div>
-        
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Consultar</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="divPlotly" class="box box-primary">
+
+        <div class="box-header">
+            <h3 class="box-title">Resultados</h3>
         </div>
 
-        <!-- /.box-body -->
-
-        <div class="box-footer">
-            <button type="submit" class="btn btn-primary">Consultar</button>
+        <div class="box-body">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe id="iframePlots" class="embed-responsive-item"></iframe>
+            </div>
         </div>
-    </form>
-</div>
-     
-          <div class="box box-primary">
-            <div class="box-header">
-              <h3 class="box-title">Resultados</h3>
-            </div>
-            <div class="box-body">
-            
-                <div class="embed-responsive embed-responsive-16by9">
-                  <iframe id="iframePlots" class="embed-responsive-item"></iframe>
-                </div>
-               
-            </div>
-            <!-- /.box-body -->
-          </div>
 
+    </div>
 
 {% endblock content %}
 
@@ -198,19 +174,7 @@
                 "separator": " - ",
                 "applyLabel": "Aplicar",
                 "cancelLabel": "Cancelar",
-                "fromLabel": "From",
-                "toLabel": "To",
-                "customRangeLabel": "Custom",
-                "weekLabel": "S",
-                "daysOfWeek": [
-                    "Do",
-                    "Lu",
-                    "Ma",
-                    "Mi",
-                    "Ju",
-                    "Vi",
-                    "Sa"
-                ],
+                "daysOfWeek": ["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
                 "monthNames": [
                     "Enero",
                     "Febrero",
@@ -233,16 +197,28 @@
             endDate: moment(),
           });
         });
-    </script>
-    
-    <script>
+
         function toPagePlots(){
-            var params = $.param($('#formToPlot').serializeArray());
-            var newUrl = $('#formToPlot').attr('data-url') + '?' + params;
-            $("#iframePlots").attr('src', newUrl);
-        }
+            //$("#iframePlots").attr('src', $('#formToPlot').attr('data-url')+'?'+$('#formToPlot').serialize());
+            $("#divPlotly").append(
+                '<div id="loadingPlots" class="overlay">'+
+                    '<i class="fa fa-refresh fa-spin"></i>'+
+                '</div>'
+            );
+            $.ajax({
+                url: $('#formToPlot').attr('data-url')+'?'+$('#formToPlot').serialize(),
+                //timeout: 5*1000,
+                success: function (result) {
+                        $("#iframePlots").attr('srcdoc', result);
+                        console.log('Load sample:', result[1]);
+                        $("#loadingPlots").remove();
+                    }
+            });
+        };
+
     </script>
 
 
 {% endblock js %}
+
 

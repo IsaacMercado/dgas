@@ -21,7 +21,6 @@ class Dashboard(TemplateView):
         if self.request.user.groups.filter(name='Recolector').exists():
             context['estaciones'] = Estacion.objects.all()
 
-
         return context
 
 
