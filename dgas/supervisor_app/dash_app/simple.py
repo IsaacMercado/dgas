@@ -202,7 +202,7 @@ def callback_update_interval(n):
 def callback_select_municipio(municipios_ids):
     print(cache.get('my_new_key'), municipios_ids)
     if  municipios_ids:
-        return [{"label": es.nombre, "value": es.id} for es in md.Estacion.objects.filter(id__in=municipios_ids)]
+        return [{"label": es.nombre, "value": es.id} for es in md.Estacion.objects.filter(municipio_estacion__id__in=municipios_ids)]
     return []
 
 @app.callback(
@@ -290,39 +290,23 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
     else:
         stations = md.Estacion.objects.all()
 
-    df_stations = pd.read_sql(format_date(
-        stations.values('id','nombre').query
-        ), connections['default'])
-    df_stations.index = df_stations['id']
+    df_stations = pd.read_sql(format_date(stations.values('id','nombre').query), 
+        connections['default'], index_col='id')
 
-    # Calculo de metricas por estaciones
+    df_stations['atendidos'] = df_cola['id_estacion'].value_counts().reindex(df_stations.index, fill_value=0)
+    df_stations['rebotados'] = df_rebo['id_estacion'].value_counts().reindex(df_stations.index, fill_value=0)
 
-    df_stations['atendidos'] = df_stations['id'].apply(
-        lambda x: df_cola['id_estacion'][df_cola['id_estacion']==x].count()
-    )
+    df_stations['litros'] = df_cont.groupby(['id_estacion'])['cantidad'].max() - df_cont.groupby(['id_estacion'])['cantidad'].min()
+    df_stations['litros'] = df_stations['litros'].fillna(0.0)
 
-    df_stations['rebotados'] = df_stations['id'].apply(
-        lambda x: df_rebo['id_estacion'][df_rebo['id_estacion']==x].count()
-    )
+    df_stations['surtidos'] = df_comb.groupby(['estacion_id'])[
+            ['litros_surtidos_g91','litros_surtidos_g95','litros_surtidos_gsl']
+        ].sum().sum(axis=1).fillna(0).round(1)*1000
 
-    def size_range(x):
-        col = df_cont['cantidad'][df_cont['id_estacion']==x]
-        diff = col.max()-col.min()
-        return 0 if pd.isna(diff) else diff
-
-    df_stations['litros'] = df_stations['id'].apply(
-        #lambda x: df_cont[df_cont['id_estacion']==x].sort_values('date')['cantidad'].diff().sum()
-        size_range
-    )
-
-    df_stations['surtidos'] = df_stations['id'].apply(
-        lambda x: df_comb[df_comb['estacion_id']==x][
-                ['litros_surtidos_g91','litros_surtidos_g95','litros_surtidos_gsl']
-            ].sum().sum()*1000
-    )
-
-    df_stations['surtido_per'] = (df_stations['surtidos']/df_stations['atendidos']).round(1)
     df_stations['litros_per'] = (df_stations['litros']/df_stations['atendidos']).round(1)
+    df_stations['surtido_per'] = (df_stations['surtidos']/df_stations['atendidos']).round(1)
+
+    df_stations = df_stations[df_stations['atendidos']!=0]
 
     cache.set('df_stations', df_stations, 60*MINUTOS)
 
@@ -362,8 +346,6 @@ def callback_general_result(event):
      Input('table-estaciones', 'data')])
 def update_table(page_current, page_size, data):
 
-    print(page_current, page_size)
-
     df_stations = cache.get('df_stations')
     dfs = cache.get('dataframes')
 
@@ -372,7 +354,7 @@ def update_table(page_current, page_size, data):
     else:
         return [{'placa':'','vehiculo_id':''}]
 
-    count_placas = pd.value_counts(df_cola["vehiculo_id"][df_cola['id_estacion'].isin(df_stations['id'])])[:100]
+    count_placas = df_cola["vehiculo_id"][df_cola['id_estacion'].isin(df_stations.index)].value_counts()[:100]
     df_placas = pd.DataFrame(count_placas)
     df_placas['placa'] = count_placas.index
     return df_placas.iloc[
@@ -401,9 +383,7 @@ def callback_time_result(event, is_smooth):
     if init != end:
         df_dates = pd.DataFrame(pd.date_range(init, end), columns=['day'])
         df_dates.index = df_dates['day']
-        df_dates['count'] = df_dates['day'].apply(
-                lambda x: df_cola['date'][(df_cola['date']==x) & (df_cola['id_estacion'].isin(df_stations['id']))].count()
-            )
+        df_dates['count'] = df_cola['date'][df_cola['id_estacion'].isin(df_stations.index)].value_counts()[df_dates['day']]
 
         trazes = []
 
@@ -458,7 +438,7 @@ def callback_type_result(event):
 
     # Tipos de vehiculo
 
-    count_type = pd.value_counts(df_cola["type_car"][df_cola['id_estacion'].isin(df_stations['id'])])
+    count_type = df_cola["type_car"][df_cola['id_estacion'].isin(df_stations.index)].value_counts()
 
     return dcc.Graph(
             id='graph-02',

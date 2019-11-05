@@ -9,21 +9,24 @@ from django.db import connections
 from dgas.gas_app import models as md
 from dgas.users import models as us
 
-def load_data(date_str):
+def load_data(date_str=None, init=None, end=None):
 
-    results = {}
-    init = end = None
+    results = {'state':'error'}
 
     # Validando fecha
 
-    dates = input_to_date(date_str)
-
-    if not dates:
-        results['state'] = 'error'
+    if date_str:
+        dates = input_to_date(date_str)
+        if dates:
+            init, end = dates
+        else:
+            return results
     else:
-        init, end = dates
-        results['init'] = init
-        results['end'] = end
+        if not (init and end):
+            return results
+
+    results['init'] = init
+    results['end'] = end
 
     # Consultas en sql
 
