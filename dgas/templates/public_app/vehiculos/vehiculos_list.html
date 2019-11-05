@@ -41,8 +41,8 @@
           }
         }
 
-        @page { 
-            size: landscape; 
+        @page {
+            size: landscape;
         }
     </style>
 
@@ -88,7 +88,7 @@
                                     </button>
                                     <button
                                             title="Imprimir todas" onclick="printAllElements()"
-                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir placas
+                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir todos los carnets
                                     </button>
                                 </div>
                             </div>
@@ -161,10 +161,10 @@
                                                             {% endif %}
 															<img src="{% static '/images/logo_login.png' %}" width="50"><br>
 
-                                                            
+
                                                             <b>Nombre:</b> {{ user.get_full_name|title|default:"Ninguno" }}<br>
                                                             <b>Cedula:</b> {{ user.cedula|default:"Ninguna" }}<br>
-															
+
 															<b>Municipio:</b> {{ user.municipio|default:"Ninguna" }}<br>
 															<b>Parroquia:</b> {{ user.parroquia|default:"Ninguna" }}<br>
                                                             {% qr_from_text vehiculo.placa size=4 image_format="png" error_correction="L" %}<br>
@@ -319,7 +319,7 @@
                     var hilera = document.createElement("tr");
 
                     var celda = document.createElement("td");
-                    celda.style="border: 1px;"; 
+                    celda.style="border: 1px;";
                     celda.valign="middle";
 
                     celda.appendChild(placas[i].cloneNode(true));
@@ -329,7 +329,7 @@
                     count = count + 1;
 
                     var celda = document.createElement("td");
-                    celda.style="border: 1px;"; 
+                    celda.style="border: 1px;";
                     celda.valign="middle";
 
                     celda.appendChild(placas[i].cloneNode(true));
@@ -343,15 +343,15 @@
             tabla.appendChild(tblBody);
             e.appendChild(tabla);
             window.print();
-        }; 
+        };
 
-        function deleteChilds() { 
+        function deleteChilds() {
             var e = checkElement("printSection");
             var child = e.lastElementChild;
-            while (child) { 
+            while (child) {
                 e.removeChild(child);
                 child = e.lastElementChild;
-            } 
+            }
         };
 
         function checkElement(div_id) {
