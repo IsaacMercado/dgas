@@ -53,7 +53,7 @@ def range_data(init, end, cmunicipio=None, cestacion=None):
 
     df_stations['surtidos'] = df_comb.groupby(['estacion_id'])[
             ['litros_surtidos_g91','litros_surtidos_g95','litros_surtidos_gsl']
-        ].sum().sum(axis=1).fillna(0).round(1)*1000
+        ].sum().sum(axis=1).fillna(0).round(1)
 
     df_stations['litros_per'] = (df_stations['litros']/df_stations['atendidos']).round(1)
     df_stations['surtido_per'] = (df_stations['surtidos']/df_stations['atendidos']).round(1)
@@ -173,7 +173,7 @@ def plotly_consult(init, end, municipio=None, parroquia=None, estacion=None):
                         stations['atendidos'].sum(), 
                         stations['rebotados'].sum(),
                         stations['litros'].sum(),
-                        stations['surtidos'].sum()*1000,
+                        stations['surtidos'].sum(),
                     ]},
         ), 
         row=2, col=1)

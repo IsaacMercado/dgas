@@ -88,7 +88,7 @@
                                     </button>
                                     <button
                                             title="Imprimir todas" onclick="printAllElements()"
-                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir placas
+                                            class="btn btn-primary"><i class="fa fa-plus"></i> Imprimir todos los carnets
                                     </button>
                                 </div>
                             </div>
@@ -258,8 +258,7 @@
     </div>
     <!-- /.modal -->
 
-    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -363,18 +362,6 @@
             };
             return e
         };
-
-        function createRow() {
-            var div_row = document.createElement('div');
-            div_row.className = 'row';
-            return div_row
-        };
-
-        function createColumn() {
-            var div_column = document.createElement('div');
-            div_column.className = 'col-md-4';
-            return div_column
-        }
 
     </script>
 

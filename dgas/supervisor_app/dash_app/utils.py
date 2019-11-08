@@ -1,15 +1,20 @@
 import re
 from datetime import datetime, timedelta
 
+import pandas as pd
+from django.db import connections
+
 import dash_html_components as html
 
 def format_date(query):
-    return re.sub(\
+    return re.sub(
         r'[^\'\"]\d{4}\-\d{2}\-\d{2}[^\'\"]{0,1}',
         lambda m: " '"+m.group(0).replace(' ','')+"'::date ",
-        str(query)\
+        str(query)
     )
 
+def query_to_dataframe(query):
+    return pd.read_sql(format_date(query), connections['default'])
 
 def input_to_date(date_str):
     if not date_str:

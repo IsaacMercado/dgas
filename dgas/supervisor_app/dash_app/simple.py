@@ -8,7 +8,7 @@ from dash.exceptions import PreventUpdate
 
 from django_plotly_dash import DjangoDash
 from django.db import connections
-from django.db.models import F, Max, Min, Sum
+from django.db.models import F, Max, Min, Sum, Q, Count
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.core.cache import cache
@@ -16,7 +16,6 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from time import time
 import pandas as pd
-from six.moves.urllib.parse import quote
 from plotly import graph_objs as go
 
 from dgas.gas_app import models as md
@@ -179,6 +178,11 @@ app.layout = html.Div([
 
         dcc.Loading(id="loading-6", children=[html.Div(id='graph-div-03'),]),
         html.Br(),
+
+        ]),
+
+    box_bootstrap3( "Generales", [
+        dcc.Loading(id="loading-7", children=[html.Div(id='graph-div-04')]),
         ]),
 
     ])
@@ -301,7 +305,7 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
 
     df_stations['surtidos'] = df_comb.groupby(['estacion_id'])[
             ['litros_surtidos_g91','litros_surtidos_g95','litros_surtidos_gsl']
-        ].sum().sum(axis=1).fillna(0).round(1)*1000
+        ].sum().sum(axis=1).fillna(0).round(1)
 
     df_stations['litros_per'] = (df_stations['litros']/df_stations['atendidos']).round(1)
     df_stations['surtido_per'] = (df_stations['surtidos']/df_stations['atendidos']).round(1)
@@ -313,7 +317,6 @@ def callback_query(n_clicks, date, municipios, parroquias, estaciones):
     return df_stations[
             ['nombre','atendidos','rebotados','litros','surtidos','litros_per','surtido_per']
         ].to_dict('records')
-
 
 @app.callback(
     Output('table-general', 'data'), 
@@ -338,7 +341,6 @@ def callback_general_result(event):
                 'surtido_per': df_stations['surtido_per'].mean(),
             }]
 
-
 @app.callback(
     Output('table-vehiculo-cargas', 'data'),
     [Input('table-vehiculo-cargas', "page_current"),
@@ -360,8 +362,6 @@ def update_table(page_current, page_size, data):
     return df_placas.iloc[
             page_current*page_size:(page_current+ 1)*page_size
         ].to_dict('records')
-
-
 
 @app.callback(
     Output('graph-div-01', 'children'), 
@@ -494,5 +494,36 @@ def callback_cola_plot_result(event):
                     title={"text": 'Número de Atendidos por Estación'},
                     xaxis={'title': 'Estaciones'},
                     yaxis={'title': 'Atendidos'}
+                )
+            })
+
+@app.callback(
+    Output('graph-div-04', 'children'), 
+    [Input('submit-button', 'n_clicks')])
+def callback_municipio_plot_result(event):
+
+    values = md.Vehiculo.objects.exclude(Q(usuario__isnull=True)|Q(usuario__municipio__isnull=True)).\
+        values('usuario__municipio').\
+        order_by('usuario__municipio').\
+        annotate(nombre=F('usuario__municipio__municipio'), count=Count('usuario__municipio')).\
+        order_by('nombre')
+
+    # Distribucion por estaciones
+
+    return dcc.Graph(
+            id='graph-04',
+            figure={
+                'data': [
+                    go.Bar(
+                        x=[mun['nombre'] for mun in values], 
+                        y=[mun['count'] for mun in values],
+                        ),
+                ],
+                'layout': go.Layout(
+                    barmode = 'stack',
+                    autosize=True,
+                    title={"text": 'Número de Vehículos por Municipio'},
+                    xaxis={'title': 'Municipios'},
+                    yaxis={'title': 'Vehículos'}
                 )
             })
