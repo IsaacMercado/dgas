@@ -13,7 +13,7 @@ class ContadorInline(admin.TabularInline):
 class EstacionAdmin(admin.ModelAdmin):
     pass
     inlines = [ContadorInline]
-    #list_display = ('cedula','primer_apellido', 'primer_nombre')
+    list_display = ('codigo_cliente','nombre', 'municipio_estacion')
     #search_fields = ['cedula', 'primer_apellido']
 
 
